@@ -1,0 +1,38 @@
+# Pipeline and Model Parameters
+
+data_ingestion:
+  num_records: 500
+  min_rows: 50
+
+feature_engineering:
+  embedding_dim: 32
+  num_ray_actors: 2
+  batch_size: 128
+
+model:
+  input_dim: 32
+  hidden_dim: 64
+  num_classes: 4
+  checkpoint_dir: data/06_models
+
+model_training:
+  epochs: 3
+  batch_size: 32
+  learning_rate: 0.001
+
+model_evaluation:
+  min_accuracy_threshold: 0.25
+
+inference:
+  num_ray_actors: 2
+  batch_size: 128
+
+physical_ai:
+  num_episodes: 20
+  steps_per_episode: 100
+  embedding_dim: 32
+  rolling_window_size: 5
+  target_path: data/04_feature/physical_ai.lance
+  mining_filter: "slip_detected = true"
+  mining_limit: 10
+

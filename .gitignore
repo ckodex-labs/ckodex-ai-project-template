@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Kedro & Pipelines
+conf/local/
+data/01_raw/*
+!data/01_raw/.gitkeep
+data/02_intermediate/*
+!data/02_intermediate/.gitkeep
+data/03_primary/*
+!data/03_primary/.gitkeep
+data/04_feature/*
+!data/04_feature/.gitkeep
+data/05_model_input/*
+!data/05_model_input/.gitkeep
+data/06_models/*
+!data/06_models/.gitkeep
+data/07_model_output/*
+!data/07_model_output/.gitkeep
+data/08_reporting/*
+!data/08_reporting/.gitkeep
+!data/08_reporting/receipts/.gitkeep
+
+# Ray & Caches
+.ray/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+mlruns/
+docs/public/
+ci/.dagger/
+ci/.venv/
+
+# OS
+.DS_Store
+Thumbs.db

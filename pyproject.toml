@@ -1,0 +1,78 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ckodex_aiops"]
+
+
+[project]
+name = "ckodex-aiops"
+version = "0.1.0"
+description = "World-Class AI Platform Template: Kedro, UV, Ray Actors, Lance, Polars, PyTorch"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    { name = "CKODEX Systems Architecture", email = "engineering@ckodex.ai" }
+]
+license = { text = "Apache-2.0" }
+dependencies = [
+    "kedro>=1.6.0",
+    "lance-ray>=0.5.0",
+    "lancedb>=0.39.0",
+    "mlflow>=3.16.1",
+    "opentelemetry-api>=1.44.0",
+    "opentelemetry-sdk>=1.44.0",
+    "polars>=1.44.2",
+    "pyarrow>=25.0.1",
+    "pydantic>=2.13.5",
+    "pylance>=12.0.0",
+    "ray[default]>=2.58.0",
+    "rich>=15.0.0",
+    "safetensors>=0.8.0",
+    "torch>=2.14.0",
+    "typer>=0.27.2",
+]
+
+[project.scripts]
+ckodex-aiops = "ckodex_aiops.cli:app"
+
+[project.entry-points."kedro.project_commands"]
+ckodex_aiops = "ckodex_aiops.cli:kedro_commands"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.1",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.16.8",
+]
+
+[tool.kedro]
+package_name = "ckodex_aiops"
+project_name = "ckodex-aiops"
+kedro_init_version = "1.6.0"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = false
+warn_unused_configs = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+asyncio_mode = "auto"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::UserWarning",
+]

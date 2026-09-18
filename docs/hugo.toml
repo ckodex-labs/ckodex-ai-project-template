@@ -1,0 +1,37 @@
+baseURL = 'https://ckodex.cfyd.ai/'
+locale = 'en-us'
+title = 'CKODEX AIOps Platform Documentation'
+
+[params]
+  description = "High-Assurance AI Architecture & DevSecOps Platform"
+  author = "CKODEX Core Engineering"
+  version = "1.0.0"
+  signature = "GAL 1 Constitutional"
+  enableMermaid = true
+
+[menu]
+  [[menu.main]]
+    identifier = "architecture"
+    name = "Architecture"
+    url = "/architecture/"
+    weight = 10
+  [[menu.main]]
+    identifier = "devsecops"
+    name = "DevSecOps & CI/CD"
+    url = "/devsecops/"
+    weight = 20
+  [[menu.main]]
+    identifier = "security"
+    name = "Security & Secrets"
+    url = "/security/"
+    weight = 30
+  [[menu.main]]
+    identifier = "observability"
+    name = "Observability & OTEL"
+    url = "/observability/"
+    weight = 40
+  [[menu.main]]
+    identifier = "day2"
+    name = "Day-2 Operations"
+    url = "/day2-ops/"
+    weight = 50
