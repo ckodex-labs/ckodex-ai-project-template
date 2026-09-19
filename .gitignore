@@ -49,6 +49,8 @@ data/08_reporting/*
 !data/08_reporting/oscal/.gitkeep
 !data/08_reporting/compliance/.gitkeep
 !data/08_reporting/lifecycle/.gitkeep
+!data/08_reporting/attestations/.gitkeep
+!data/08_reporting/airgap/.gitkeep
 
 # Ray & Caches
 .ray/

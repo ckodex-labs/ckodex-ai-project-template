@@ -7,9 +7,11 @@ Complies with CKODEX Architectural Signature: Day-2 Native, Deep Observability.
 from __future__ import annotations
 
 import json
+import os
 import platform
 import shutil
 import time
+import warnings
 from pathlib import Path
 
 import click
@@ -51,6 +53,11 @@ from ckodex_aiops.kernel.state_vector import (
     Valence,
 )
 from ckodex_aiops.models.quantization import DynamicModelQuantizer
+
+# Suppress harmless third-party framework notices in CLI outputs
+os.environ.setdefault("MLFLOW_DISABLE_AGENT_HINT", "1")
+warnings.filterwarnings("ignore", message=".*lance is not fork-safe.*")
+warnings.filterwarnings("ignore", message=".*lancedb fork support is experimental.*")
 
 app = typer.Typer(
     name="ckodex-aiops",
