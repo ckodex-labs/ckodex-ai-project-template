@@ -134,6 +134,38 @@ airgap-verify bundle="data/08_reporting/airgap/bundle.tar.gz":
     uv run ckodex-aiops airgap-verify --path {{bundle}}
 
 # ==============================================================================
+# Governance, Authority & Subject Lifecycle (On/Offboarding)
+# ==============================================================================
+
+# Onboard a human operator with bounded capability lease
+onboard-operator id role="developer" ttl="24":
+    uv run ckodex-aiops onboard --type operator --id {{id}} --role {{role}} --ttl {{ttl}}
+
+# Onboard an autonomous AI agent with attenuated permissions
+onboard-agent id role="pipeline-executor" ttl="24":
+    uv run ckodex-aiops onboard --type agent --id {{id}} --role {{role}} --ttl {{ttl}}
+
+# Onboard a compute node into the Ray cluster
+onboard-node id role="ray-worker" ttl="24":
+    uv run ckodex-aiops onboard --type compute-node --id {{id}} --role {{role}} --ttl {{ttl}}
+
+# Offboard a governed subject (immediate lease revocation and secret wipe)
+offboard id reason="operational rotation":
+    uv run ckodex-aiops offboard --id {{id}} --reason "{{reason}}"
+
+# Audit governed subject lifecycle registry and cryptographic receipts
+lifecycle-audit:
+    uv run ckodex-aiops lifecycle --audit
+
+# Generate self-documenting procedural runbook (operator, agent, node)
+lifecycle-runbook type="operator":
+    uv run ckodex-aiops lifecycle --runbook {{type}}
+
+# Compile and export living Hugo documentation for lifecycle
+lifecycle-docs:
+    uv run ckodex-aiops lifecycle --export-docs
+
+# ==============================================================================
 # Containers & Local Compose Stack
 # ==============================================================================
 

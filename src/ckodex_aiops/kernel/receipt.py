@@ -69,5 +69,8 @@ class LineageReceipt:
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=2)
+
 
 ExecutionReceipt = LineageReceipt

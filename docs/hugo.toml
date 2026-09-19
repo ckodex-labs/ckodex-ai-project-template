@@ -35,3 +35,8 @@ title = 'CKODEX AIOps Platform Documentation'
     name = "Day-2 Operations"
     url = "/day2-ops/"
     weight = 50
+  [[menu.main]]
+    identifier = "lifecycle"
+    name = "Governance & On/Offboarding"
+    url = "/lifecycle/"
+    weight = 60

@@ -92,6 +92,7 @@ flowchart TD
 | **Distributed Tracing** | [OpenTelemetry](https://opentelemetry.io/) | W3C `traceparent` carrier injection/extraction across Ray RPC and Kedro node boundaries. |
 | **Day-2 Autonomic Control** | CKODEX Reconciler | Canonical loop: `OBSERVE -> DETECT -> DIAGNOSE -> RECOVER -> RECONCILE`. Automatically heals fragmentation and drift. |
 | **Supply-Chain Attestation** | In-toto + SLSA + OSCAL | SLSA v1.0 provenance statements and NIST SP 800-53 Rev 5 OSCAL component definitions. |
+| **Governance & Lifecycle** | Pure Semantic Kernel | Self-documenting on/offboarding engine: authority hierarchy, bounded `CapabilityLease` issuance/revocation, cryptographic lineage receipts, and automated Hugo docs. |
 
 ---
 
@@ -125,13 +126,14 @@ ckodex-cfyd-aiops/
 │   ├── 04_feature/              # Normalized features & IVF-PQ indices
 │   ├── 06_models/               # Safetensors model checkpoints (model.safetensors)
 │   ├── 07_model_output/         # Distributed inference predictions
-│   └── 08_reporting/            # Receipts, attestations, OSCAL, SBOMs, CortAIx CSR
+│   └── 08_reporting/            # Receipts, attestations, OSCAL, SBOMs, CortAIx CSR, Lifecycle
 ├── src/ckodex_aiops/
-│   ├── cli.py                   # Day-2 CLI (doctor, reconcile, attest, cockpit, sbom, csr-matrix)
+│   ├── cli.py                   # Day-2 CLI (doctor, reconcile, attest, cockpit, sbom, csr-matrix, onboard, offboard)
 │   ├── kernel/                  # Pure Semantic Kernel (ZERO external heavy dependencies)
 │   │   ├── state_vector.py      # StateVector S(e,t) product type & ConformanceTransition
 │   │   ├── reconciler.py        # Autonomic Day-2 Reconciler & Self-Healing Loop
 │   │   ├── conformance.py       # Multi-Dimensional Conformance Vector Engine
+│   │   ├── lifecycle.py         # Self-Documenting Subject Lifecycle Engine (On/Offboarding)
 │   │   ├── profiles.py          # Platform Profiles & Baselines (Rule #36)
 │   │   ├── receipt.py           # LineageReceipt & SHA-256 evidence digests
 │   │   ├── intent.py            # IntentEnvelope & CapabilityLease
@@ -250,10 +252,10 @@ make docs-serve
 
 ## 7. Verification Evidence & Quality Assurance
 
-The test suite enforces constitutional invariants across 63 tests:
+The test suite enforces constitutional invariants across 69 tests:
 
 ```text
-======================== 63 passed in 72.71s (0:01:12) =========================
+======================== 69 passed in 80.46s (0:01:20) =========================
 ✓ tests/test_airgap.py: PASS (Air-gap packaging, manifest hashing, tamper detection)
 ✓ tests/test_coactor.py: PASS (Actor & Co-Actor asynchronous telemetry buffering)
 ✓ tests/test_compliance.py: PASS (In-toto SLSA v1.0 provenance & NIST OSCAL)
@@ -263,6 +265,7 @@ The test suite enforces constitutional invariants across 63 tests:
 ✓ tests/test_kernel.py: PASS (State vector algebra, anti-dominance, SHA-256 receipts)
 ✓ tests/test_lance_dataset.py: PASS (Zero-copy Lance scanning, pushdown filters)
 ✓ tests/test_lance_ray.py: PASS (Ray Data ↔ Lance zero-copy streaming & compaction)
+✓ tests/test_lifecycle.py: PASS (Self-documenting on/offboarding, lease revocation, receipts)
 ✓ tests/test_otel.py: PASS (OTEL tracer lifecycle & W3C TraceContext propagation)
 ✓ tests/test_physical_ai.py: PASS (100 Hz sensor streams, window slicing, IVF-PQ)
 ✓ tests/test_pipelines.py: PASS (Kedro end-to-end DAG execution & node resolution)
@@ -278,8 +281,8 @@ The test suite enforces constitutional invariants across 63 tests:
 ✓ tests/test_tracking.py: PASS (Flight Recorder & MLflow experiment tracking)
 ✓ tests/test_validation.py: PASS (Shared validation contracts & preflight bounds)
 
-Ruff Linter & Formatter: 100% clean across 113 files (0 errors, 0 warnings).
-Hugo Living Documentation: 17 pages built in 23 ms (0 errors, 0 warnings).
+Ruff Linter & Formatter: 100% clean across 115 files (0 errors, 0 warnings).
+Hugo Living Documentation: 19 pages built in 26 ms (0 errors, 0 warnings).
 Platform Doctor: PASS (All hardware, compute, storage, and secrets subsystems healthy).
 ```
 

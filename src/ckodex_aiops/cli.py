@@ -32,6 +32,13 @@ from ckodex_aiops.adapters.ray.runtime import RayRuntimeManager
 from ckodex_aiops.adapters.serving.gateway import ModelServingGateway
 from ckodex_aiops.kernel.conformance import ConformanceEngine
 from ckodex_aiops.kernel.drift import StatisticalDriftDetector
+from ckodex_aiops.kernel.lifecycle import (
+    LifecycleManager,
+    LifecycleStatus,
+    OffboardingRequest,
+    OnboardingRequest,
+    SubjectType,
+)
 from ckodex_aiops.kernel.receipt import compute_sha256
 from ckodex_aiops.kernel.reconciler import AutonomicReconciler
 from ckodex_aiops.kernel.state_vector import (
@@ -737,6 +744,191 @@ def csr_matrix(
             border_style="green",
         )
     )
+
+
+@app.command()
+def onboard(
+    subject_type: str = typer.Option(
+        "operator", "--type", "-t", help="Subject type: operator, agent, tenant, compute-node"
+    ),
+    subject_id: str = typer.Option(..., "--id", "-i", help="Unique identifier for the subject."),
+    role: str = typer.Option(
+        "developer",
+        "--role",
+        "-r",
+        help="Assigned role (e.g. admin, mlops, developer, auditor, pipeline-executor).",
+    ),
+    tenant: str = typer.Option("cfyd", "--tenant", help="Tenant partition."),
+    workspace: str = typer.Option("aiops", "--workspace", help="Workspace partition."),
+    ttl_hours: float = typer.Option(24.0, "--ttl", help="Capability lease duration in hours."),
+    actor: str = typer.Option(
+        "principal:engineer", "--actor", help="Acting authority minting the onboarding."
+    ),
+) -> None:
+    """
+    Onboard an operator, autonomous agent, tenant, or compute node into the CKODEX authority tree.
+    """
+    type_map = {
+        "operator": SubjectType.OPERATOR,
+        "agent": SubjectType.AGENT,
+        "tenant": SubjectType.TENANT,
+        "compute-node": SubjectType.COMPUTE_NODE,
+        "node": SubjectType.COMPUTE_NODE,
+    }
+    stype = type_map.get(subject_type.lower())
+    if not stype:
+        console.print(
+            f"[red]Error:[/red] Invalid subject type '{subject_type}'. Choose from: {list(type_map.keys())}"
+        )
+        raise typer.Exit(1)
+
+    mgr = LifecycleManager()
+    req = OnboardingRequest(
+        subject_id=subject_id,
+        subject_type=stype,
+        role=role,
+        tenant=tenant,
+        workspace=workspace,
+        ttl_hours=ttl_hours,
+        actor=actor,
+    )
+    rec = mgr.onboard(req)
+    mgr.export_hugo_docs()
+
+    console.print(
+        Panel.fit(
+            f"[bold green]Subject Successfully Onboarded (Rule #2 & Rule #25)[/bold green]\n"
+            f"• Subject ID: [bold cyan]{rec.subject_id}[/bold cyan] ({rec.subject_type.value})\n"
+            f"• Authority URN: [dim]{rec.authority_path.to_urn()}[/dim]\n"
+            f"• Role: [bold]{rec.role}[/bold]\n"
+            f"• Capabilities: {', '.join(rec.capabilities)}\n"
+            f"• Lease ID: [dim]{rec.lease.lease_id}[/dim] (TTL: {ttl_hours}h)\n"
+            f"• Receipt Digest: [dim]{rec.history[-1].receipt_digest[:16]}...[/dim]",
+            border_style="green",
+        )
+    )
+
+
+@app.command()
+def offboard(
+    subject_id: str = typer.Option(..., "--id", "-i", help="Subject identifier to offboard."),
+    reason: str = typer.Option(
+        "operational rotation", "--reason", "-r", help="Justification for offboarding."
+    ),
+    actor: str = typer.Option(
+        "principal:engineer", "--actor", help="Acting authority initiating offboarding."
+    ),
+    force: bool = typer.Option(
+        False, "--force", "-f", help="Force offboarding even if already offboarded."
+    ),
+) -> None:
+    """
+    Offboard a governed subject: immediately revokes capability lease, wipes credentials, and records receipt.
+    """
+    mgr = LifecycleManager()
+    req = OffboardingRequest(
+        subject_id=subject_id,
+        reason=reason,
+        actor=actor,
+        force=force,
+    )
+    rec = mgr.offboard(req)
+    mgr.export_hugo_docs()
+
+    console.print(
+        Panel.fit(
+            f"[bold red]Subject Successfully Offboarded (Rule #27)[/bold red]\n"
+            f"• Subject ID: [bold cyan]{rec.subject_id}[/bold cyan] ({rec.subject_type.value})\n"
+            f"• Status: [bold red]{rec.status.value}[/bold red]\n"
+            f"• Reason: {rec.offboarding_reason}\n"
+            f"• Lease Revoked: [bold green]TRUE[/bold green] (Immediate Access Denial)\n"
+            f"• Lineage Receipt: [dim]{rec.metadata.get('offboarding_receipt', 'N/A')}[/dim]",
+            border_style="red",
+        )
+    )
+
+
+@app.command(name="lifecycle")
+def lifecycle_cmd(
+    audit: bool = typer.Option(
+        False, "--audit", "-a", help="Display full audit transition history."
+    ),
+    runbook: str | None = typer.Option(
+        None, "--runbook", help="Generate operational runbook for type: operator, agent, node."
+    ),
+    export_docs: bool = typer.Option(
+        False, "--export-docs", help="Compile and export Hugo documentation page."
+    ),
+) -> None:
+    """
+    Inspect governed subject registry, view audit trails, generate runbooks, or export living documentation.
+    """
+    mgr = LifecycleManager()
+
+    if runbook:
+        type_map = {
+            "operator": SubjectType.OPERATOR,
+            "agent": SubjectType.AGENT,
+            "tenant": SubjectType.TENANT,
+            "compute-node": SubjectType.COMPUTE_NODE,
+            "node": SubjectType.COMPUTE_NODE,
+        }
+        stype = type_map.get(runbook.lower(), SubjectType.OPERATOR)
+        rb = mgr.generate_runbook(stype)
+        console.print(rb)
+        return
+
+    if export_docs:
+        out = mgr.export_hugo_docs()
+        console.print(
+            f"[green]SUCCESS:[/green] Living documentation compiled to [bold]{out}[/bold]"
+        )
+        return
+
+    subjects = mgr.list_subjects()
+    if not subjects:
+        console.print(
+            "[yellow]Notice:[/yellow] No subjects currently registered. Use 'ckodex-aiops onboard' to register one."
+        )
+        return
+
+    table = Table(title="Governed Subject Lifecycle Registry (GAL 1)", border_style="dim")
+    table.add_column("Subject ID", style="bold cyan")
+    table.add_column("Type", style="magenta")
+    table.add_column("Role", style="bold")
+    table.add_column("Status", justify="center")
+    table.add_column("Lease Valid", justify="center")
+    table.add_column("Authority Path")
+
+    for s in subjects:
+        status_style = (
+            "green"
+            if s.is_active()
+            else "red"
+            if s.status == LifecycleStatus.OFFBOARDED
+            else "yellow"
+        )
+        lease_valid = "[green]YES[/green]" if s.lease.is_valid() else "[red]NO[/red]"
+        table.add_row(
+            s.subject_id,
+            s.subject_type.value,
+            s.role,
+            f"[{status_style}]{s.status.value}[/{status_style}]",
+            lease_valid,
+            s.authority_path.to_urn(),
+        )
+
+    console.print(table)
+
+    if audit:
+        console.print("\n[bold]Cryptographic Audit Trail (Lineage Receipts):[/bold]")
+        for s in subjects:
+            for t in s.history:
+                console.print(
+                    f"  • [cyan]{t.timestamp_utc}[/cyan] | [bold]{t.subject_id}[/bold]: "
+                    f"{t.from_status.value} -> [bold]{t.to_status.value}[/bold] "
+                    f"by [dim]{t.actor}[/dim] (Reason: {t.reason}) [dim]digest={t.receipt_digest[:12]}...[/dim]"
+                )
 
 
 @app.command()
