@@ -22,9 +22,12 @@ from rich.table import Table
 
 from ckodex_aiops.adapters.compliance.intoto import IntotoProvenanceAttestor
 from ckodex_aiops.adapters.compliance.oscal import OscalComplianceGenerator
+from ckodex_aiops.adapters.distribution.airgap import AirgapPackager
 from ckodex_aiops.adapters.observability.cockpit import AiopsCockpit
 from ckodex_aiops.adapters.ray.runtime import RayRuntimeManager
+from ckodex_aiops.adapters.serving.gateway import ModelServingGateway
 from ckodex_aiops.kernel.conformance import ConformanceEngine
+from ckodex_aiops.kernel.drift import StatisticalDriftDetector
 from ckodex_aiops.kernel.receipt import compute_sha256
 from ckodex_aiops.kernel.reconciler import AutonomicReconciler
 from ckodex_aiops.kernel.state_vector import (
@@ -36,6 +39,7 @@ from ckodex_aiops.kernel.state_vector import (
     StateVector,
     Valence,
 )
+from ckodex_aiops.models.quantization import DynamicModelQuantizer
 
 app = typer.Typer(
     name="ckodex-aiops",
@@ -754,6 +758,219 @@ def conformance() -> None:
     )
 
     console.print(table)
+
+
+@app.command()
+def drift(
+    baseline_dataset: str = typer.Option(
+        "data/01_raw/events.lance", "--baseline", "-b", help="Baseline Lance dataset path."
+    ),
+    observed_dataset: str = typer.Option(
+        "data/04_feature/features.lance", "--observed", "-o", help="Observed Lance dataset path."
+    ),
+) -> None:
+    """
+    Run statistical feature & sensor drift detection (Wasserstein distance & PSI).
+    """
+    console.print(
+        Panel.fit(
+            f"[bold cyan]CKODEX Statistical Drift Engine[/bold cyan]\n"
+            f"Baseline: [dim]{baseline_dataset}[/dim] | Observed: [dim]{observed_dataset}[/dim]",
+            border_style="cyan",
+        )
+    )
+
+    import lance
+
+    b_ds = lance.dataset(baseline_dataset)
+    o_ds = lance.dataset(observed_dataset)
+
+    b_df = pl.from_arrow(b_ds.to_table(limit=500))
+    o_df = pl.from_arrow(o_ds.to_table(limit=500))
+
+    numeric_cols = [
+        c
+        for c, dtype in b_df.schema.items()
+        if dtype in (pl.Float32, pl.Float64, pl.Int32, pl.Int64)
+    ][:6]
+
+    detector = StatisticalDriftDetector()
+    report = detector.evaluate_drift(
+        b_df, o_df, numeric_columns=numeric_cols, dataset_path=observed_dataset
+    )
+
+    table = Table(
+        title=f"Feature Drift Analysis (Drift Score: {report.drift_score})", border_style="dim"
+    )
+    table.add_column("Feature", style="bold")
+    table.add_column("Base Mean ± Std", justify="right")
+    table.add_column("Obs Mean ± Std", justify="right")
+    table.add_column("Wasserstein Dist", justify="right", style="cyan")
+    table.add_column("Drift Status", justify="center")
+
+    for m in report.feature_metrics:
+        b_str = f"{m.baseline_mean:.2f} ± {m.baseline_std:.2f}"
+        o_str = f"{m.observed_mean:.2f} ± {m.observed_std:.2f}"
+        st_str = (
+            "[bold red]DRIFT DETECTED[/bold red]" if m.drift_detected else "[green]STABLE[/green]"
+        )
+        table.add_row(m.feature_name, b_str, o_str, f"{m.wasserstein_distance:.4f}", st_str)
+
+    console.print(table)
+    console.print(
+        f"Resulting State Vector: [bold green]{report.state_vector.lifecycle}[/bold green] (Valence: {report.state_vector.valence})"
+    )
+
+
+@app.command(name="airgap-pack")
+def airgap_pack(
+    bundle_name: str = typer.Option(
+        "ckodex-aiops-production", "--name", "-n", help="Name of airgap package."
+    ),
+    out: str = typer.Option(
+        "data/08_reporting/airgap/bundle.tar.gz", "--out", "-o", help="Output tarball path."
+    ),
+) -> None:
+    """
+    Package models, datasets, receipts, SLSA provenance, and docs into a verified air-gap archive.
+    """
+    console.print(
+        Panel.fit(
+            f"[bold cyan]CKODEX Air-Gap Distribution Packager[/bold cyan]\nBundle: {bundle_name}",
+            border_style="cyan",
+        )
+    )
+
+    paths_to_include = [
+        "data/06_models/model.safetensors",
+        "data/08_reporting/attestations/provenance.intoto.jsonl",
+        "data/08_reporting/oscal/component_definition.json",
+        "docs/static/cockpit.html",
+        "conf/base/catalog.yml",
+        "conf/base/parameters.yml",
+    ]
+    meta = AirgapPackager.create_bundle(
+        bundle_name=bundle_name, files_to_include=paths_to_include, output_path=out
+    )
+
+    console.print(f"[green]SUCCESS:[/green] Hermetic bundle written to [bold]{out}[/bold]")
+    console.print(
+        f"Files Packaged: {meta['files_count']} | Root SHA-256: [dim]{meta['bundle_sha256']}[/dim]"
+    )
+
+
+@app.command(name="airgap-verify")
+def airgap_verify(
+    bundle_path: str = typer.Option(
+        "data/08_reporting/airgap/bundle.tar.gz", "--path", "-p", help="Path to airgap bundle."
+    ),
+) -> None:
+    """
+    Verify checksums and manifest of an air-gap package offline without network access.
+    """
+    console.print(
+        Panel.fit(
+            f"[bold cyan]CKODEX Air-Gap Bundle Verifier[/bold cyan]\nTarget: {bundle_path}",
+            border_style="cyan",
+        )
+    )
+
+    res = AirgapPackager.verify_bundle(bundle_path)
+    if res["valid"]:
+        console.print(
+            f"[bold green]VERIFIED:[/bold green] All {res['verified_count']} files match manifest digests exactly."
+        )
+        console.print(f"Bundle Root SHA-256: [dim]{res['bundle_sha256']}[/dim]")
+    else:
+        console.print(
+            f"[bold red]FAILED:[/bold red] Found {res['mismatch_count']} mismatched or corrupted files: {res['mismatch_files']}"
+        )
+        raise typer.Exit(1)
+
+
+@app.command()
+def quantize(
+    source: str = typer.Option(
+        "data/06_models/model.safetensors", "--source", "-s", help="Source model weights path."
+    ),
+    out: str = typer.Option(
+        "data/06_models/model_int8.pt", "--out", "-o", help="Quantized model weights output path."
+    ),
+    threshold: float = typer.Option(
+        0.98, "--threshold", "-t", help="Minimum cosine fidelity threshold."
+    ),
+) -> None:
+    """
+    Dynamically quantize model weights to Int8 and verify representation fidelity.
+    """
+    console.print(
+        Panel.fit(
+            "[bold cyan]CKODEX Dynamic Model Quantizer (Int8)[/bold cyan]", border_style="cyan"
+        )
+    )
+
+    report = DynamicModelQuantizer.quantize_model(
+        source_model_path=source, output_model_path=out, fidelity_threshold=threshold
+    )
+
+    table = Table(title="Model Quantization Metrics", border_style="dim")
+    table.add_column("Property", style="bold")
+    table.add_column("Value", style="cyan")
+
+    table.add_row(
+        "Original Checkpoint",
+        f"{report.original_path} ({report.original_size_bytes / 1024:.1f} KB)",
+    )
+    table.add_row(
+        "Quantized Checkpoint",
+        f"{report.quantized_path} ({report.quantized_size_bytes / 1024:.1f} KB)",
+    )
+    table.add_row("Compression Ratio", f"{report.compression_ratio}x")
+    table.add_row(
+        "Representation Fidelity",
+        f"{report.fidelity_cosine_similarity * 100:.2f}% Cosine Similarity",
+    )
+    table.add_row("Quantized SHA-256", report.quantized_sha256[:32] + "...")
+    table.add_row(
+        "Fidelity Verified",
+        "[bold green]PASS[/bold green]"
+        if report.fidelity_verified
+        else "[bold red]FAIL[/bold red]",
+    )
+
+    console.print(table)
+
+
+@app.command()
+def serve(
+    port: int = typer.Option(8080, "--port", "-p", help="HTTP Server port."),
+    model_path: str = typer.Option(
+        "data/06_models/model.safetensors",
+        "--model",
+        "-m",
+        help="Path to Safetensors model checkpoint.",
+    ),
+) -> None:
+    """
+    Launch high-performance zero-copy Model Serving HTTP Gateway.
+    """
+    console.print(
+        Panel.fit(
+            f"[bold cyan]CKODEX Model Serving Gateway[/bold cyan]\nPort: {port} | Model: {model_path}",
+            border_style="cyan",
+        )
+    )
+
+    gateway = ModelServingGateway(model_weights_path=model_path, port=port)
+    server = gateway.create_server()
+    console.print(
+        f"[green]Serving started on http://127.0.0.1:{port}[/green] (Press Ctrl+C to stop)"
+    )
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Shutting down server...[/yellow]")
+        server.server_close()
 
 
 @click.group(name="ckodex")

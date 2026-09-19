@@ -167,7 +167,40 @@ class ModelTrainer:
             # Convert tensors to CPU for saving if on MPS/CUDA
             state_dict = {k: v.contiguous().cpu() for k, v in self.model.state_dict().items()}
             safetensors.torch.save_file(state_dict, str(checkpoint_path))
-        else:
-            torch.save(self.model.state_dict(), str(checkpoint_path))
-
         return compute_sha256(checkpoint_path.read_bytes())
+
+
+def load_checkpoint(
+    model: torch.nn.Module, path: str | Path, device: str = "cpu"
+) -> torch.nn.Module:
+    """Loads weights from either .safetensors (memory-safe mmap) or .pt files."""
+    p = Path(path)
+    if not p.exists():
+        raise FileNotFoundError(f"Checkpoint '{path}' does not exist.")
+    if p.suffix == ".safetensors":
+        state_dict = safetensors.torch.load_file(str(p), device=device)
+        model.load_state_dict(state_dict)
+    else:
+        state_dict = torch.load(str(p), map_location=device, weights_only=True)
+        model.load_state_dict(state_dict)
+    model.to(device)
+    return model
+
+
+def save_checkpoint(model: torch.nn.Module, path: str | Path, format: str | None = None) -> str:
+    """Saves model weights to disk as safetensors or pt and returns SHA-256 digest."""
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    is_safetensors = (
+        (format == "safetensors")
+        or (p.suffix == ".safetensors")
+        or (format is None and p.suffix != ".pt")
+    )
+    if is_safetensors:
+        if p.suffix != ".safetensors":
+            p = p.with_suffix(".safetensors")
+        state_dict = {k: v.contiguous().cpu() for k, v in model.state_dict().items()}
+        safetensors.torch.save_file(state_dict, str(p))
+    else:
+        torch.save(model.state_dict(), str(p))
+    return compute_sha256(p.read_bytes())

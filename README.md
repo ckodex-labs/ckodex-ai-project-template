@@ -179,8 +179,21 @@ uv run ckodex-aiops doctor
 # Autonomic Day-2 Reconciler: Detects drift and auto-heals storage/models
 uv run ckodex-aiops reconcile --auto-heal
 
+# Statistical Feature & Sensor Drift Detection (Wasserstein distance)
+uv run ckodex-aiops drift
+
 # Multi-Dimensional Conformance Suite: Structural, Anti-Dominance, Degradation
 uv run ckodex-aiops conformance
+
+# Dynamic Model Quantization (Int8 post-training quantization with fidelity check)
+uv run ckodex-aiops quantize --source data/06_models/model.safetensors
+
+# Zero-Copy Model Serving HTTP Gateway with adaptive dynamic batching
+uv run ckodex-aiops serve --port 8080
+
+# Air-Gap Package Creation and Offline Verification
+uv run ckodex-aiops airgap-pack
+uv run ckodex-aiops airgap-verify
 
 # Interactive AIOps Mission Cockpit (Terminal UI + HTML export)
 uv run ckodex-aiops cockpit --export-html docs/static/cockpit.html
@@ -230,13 +243,15 @@ make docs-serve
 
 ## 7. Verification Evidence & Quality Assurance
 
-The test suite enforces constitutional invariants across 46 tests:
+The test suite enforces constitutional invariants across 53 tests:
 
 ```text
-======================== 46 passed in 69.97s (0:01:09) =========================
+======================== 53 passed in 71.30s (0:01:11) =========================
+✓ tests/test_airgap.py: PASS (Air-gap packaging, manifest hashing, tamper detection)
 ✓ tests/test_coactor.py: PASS (Actor & Co-Actor asynchronous telemetry buffering)
 ✓ tests/test_compliance.py: PASS (In-toto SLSA v1.0 provenance & NIST OSCAL)
 ✓ tests/test_conformance.py: PASS (Structural, Anti-Dominance, Degradation contracts)
+✓ tests/test_drift.py: PASS (Statistical Wasserstein distance & PSI drift detection)
 ✓ tests/test_kernel.py: PASS (State vector algebra, anti-dominance, SHA-256 receipts)
 ✓ tests/test_lance_dataset.py: PASS (Zero-copy Lance scanning, pushdown filters)
 ✓ tests/test_lance_ray.py: PASS (Ray Data ↔ Lance zero-copy streaming & compaction)
@@ -245,9 +260,11 @@ The test suite enforces constitutional invariants across 46 tests:
 ✓ tests/test_pipelines.py: PASS (Kedro end-to-end DAG execution & node resolution)
 ✓ tests/test_profiles.py: PASS (Profile registry, baseline promotion, drift detection)
 ✓ tests/test_pytorch_models.py: PASS (Classifier forward pass, streaming DataLoader)
+✓ tests/test_quantization.py: PASS (Int8 quantization, compression & cosine fidelity)
 ✓ tests/test_ray_actors.py: PASS (Ray embedding/inference actors & actor pool)
 ✓ tests/test_reconciler.py: PASS (Autonomic Day-2 Reconciler loop & self-healing)
 ✓ tests/test_secrets.py: PASS (Redacted SecretValue, SecretLease, Vault, KMS, Keyless)
+✓ tests/test_serving.py: PASS (Model serving gateway, /healthz, /livez, /infer)
 ✓ tests/test_tracking.py: PASS (Flight Recorder & MLflow experiment tracking)
 ✓ tests/test_validation.py: PASS (Shared validation contracts & preflight bounds)
 

@@ -47,3 +47,20 @@ Where:
 - **$\tau$ (Epoch)**: Nanosecond monotonic timeline position.
 
 An anti-state cannot be averaged away by large quantities of positive evidence. Non-negotiable anti-invariant violations dominate scores.
+
+---
+
+## 4. Real-Time Model Serving Gateway & Transport Purity (Rule #9)
+
+Model inference transport is strictly decoupled from domain execution logic:
+- **`ModelServingGateway`**: Zero-copy HTTP/REST and IPC router.
+- **Dynamic Adaptive Batching**: Aggregates concurrent inbound inference requests up to batch threshold or timeout window.
+- **W3C TraceContext Propagation**: Injects `traceparent` headers to preserve OpenTelemetry distributed trace lineage from edge gateway to GPU workers.
+
+---
+
+## 5. Air-Gap Portability & Offline Reproducibility (Rule #40)
+
+Air-gap operation is an architectural design property:
+- All assets (Safetensors checkpoints, Lance datasets, in-toto SLSA provenance, and Hugo static docs) package into deterministic, content-addressed `.tar.gz` distribution archives.
+- Offline verification (`ckodex-aiops airgap-verify`) validates internal SHA-256 manifests without requiring external internet or DNS resolution.

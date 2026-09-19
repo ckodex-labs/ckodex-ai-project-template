@@ -51,6 +51,30 @@ compact:
 profile-list:
 	uv run ckodex-aiops profile list
 
+reconcile:
+	uv run ckodex-aiops reconcile --auto-heal
+
+conformance:
+	uv run ckodex-aiops conformance
+
+drift:
+	uv run ckodex-aiops drift
+
+cockpit:
+	uv run ckodex-aiops cockpit --export-html docs/static/cockpit.html
+
+airgap-pack:
+	uv run ckodex-aiops airgap-pack
+
+airgap-verify:
+	uv run ckodex-aiops airgap-verify
+
+quantize:
+	uv run ckodex-aiops quantize
+
+serve:
+	uv run ckodex-aiops serve --port 8080
+
 docs-build:
 	hugo --source docs --cleanDestinationDir
 
