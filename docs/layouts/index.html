@@ -1,30 +1,76 @@
 {{ define "main" }}
 <section>
-  <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem;">CKODEX AIOps Platform</h1>
-  <p style="color: #8b949e; font-size: 1.2rem; margin-bottom: 2rem;">
-    High-Assurance AI Architecture & DevSecOps Platform: Kedro, UV, Ray Actors, Lance, Polars, PyTorch (Metal/CUDA), and Dagger.
+  <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem;">CKODEX AIOps Platform Documentation</h1>
+  <p style="color: #8b949e; font-size: 1.15rem; margin-bottom: 2rem;">
+    Structured according to the <strong>Diátaxis Documentation Framework</strong>: Tutorials, How-To Guides, Reference, and Explanation.
   </p>
 
   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem;">
-    <div style="background: #21262d; padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color);">
-      <h3 style="margin-top: 0; color: var(--accent-blue);">🏛 Pure Semantic Kernel</h3>
-      <p style="font-size: 0.95rem; margin-bottom: 0;">Deterministic domain invariants, state-vector product types $S(e,t)$, and zero cloud framework contamination.</p>
-    </div>
-    <div style="background: #21262d; padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color);">
-      <h3 style="margin-top: 0; color: var(--accent-green);">🛡 DevSecOps & SSDLC</h3>
-      <p style="font-size: 0.95rem; margin-bottom: 0;">Containerized Dagger pipelines, Syft SBOM generation, Grype vulnerability gate, and multi-arch OCI builds.</p>
-    </div>
-    <div style="background: #21262d; padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color);">
-      <h3 style="margin-top: 0; color: var(--accent-orange);">🔑 Zero-Trust Secrets</h3>
-      <p style="font-size: 0.95rem; margin-bottom: 0;">Layered HashiCorp Vault, KMS, Keyrings, and Keyless/OIDC abstractions with short-lived capability leases.</p>
-    </div>
-    <div style="background: #21262d; padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color);">
-      <h3 style="margin-top: 0; color: #bc8cff;">📡 Deep Observability</h3>
-      <p style="font-size: 0.95rem; margin-bottom: 0;">OpenTelemetry W3C context propagation, local air-gap flight recorder, and MLflow experiment tracking.</p>
-    </div>
+    <!-- Quadrant 1: Tutorials -->
+    <a href="/tutorials/" style="text-decoration: none; color: inherit;">
+      <div style="background: #21262d; padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color); height: 100%; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-blue)'" onmouseout="this.style.borderColor='var(--border-color)'">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <h3 style="margin: 0; color: var(--accent-blue);">🎓 Tutorials</h3>
+          <span style="font-size: 0.75rem; background: rgba(88, 166, 255, 0.15); color: var(--accent-blue); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">Learning-Oriented</span>
+        </div>
+        <p style="font-size: 0.92rem; color: #8b949e; margin-bottom: 0.75rem;">Hands-on lessons taking you step-by-step from zero to a fully attested, running pipeline.</p>
+        <ul style="font-size: 0.85rem; color: #c9d1d9; padding-left: 1.2rem; margin-bottom: 0;">
+          <li>Your First Pipeline & SLSA Attestation</li>
+          <li>Simulating and Healing Drift with Reconciler</li>
+        </ul>
+      </div>
+    </a>
+
+    <!-- Quadrant 2: How-To Guides -->
+    <a href="/how-to/" style="text-decoration: none; color: inherit;">
+      <div style="background: #21262d; padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color); height: 100%; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-green)'" onmouseout="this.style.borderColor='var(--border-color)'">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <h3 style="margin: 0; color: var(--accent-green);">🛠 How-To Guides</h3>
+          <span style="font-size: 0.75rem; background: rgba(63, 185, 80, 0.15); color: var(--accent-green); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">Problem-Oriented</span>
+        </div>
+        <p style="font-size: 0.92rem; color: #8b949e; margin-bottom: 0.75rem;">Practical recipes to solve concrete operational, security, and lifecycle tasks.</p>
+        <ul style="font-size: 0.85rem; color: #c9d1d9; padding-left: 1.2rem; margin-bottom: 0;">
+          <li>Quarantining Suspect Artifacts & Preserving Evidence</li>
+          <li>Executing Governed Replay Under Leases</li>
+          <li>Registering Risk Derogations & Air-Gap Packaging</li>
+        </ul>
+      </div>
+    </a>
+
+    <!-- Quadrant 3: Reference -->
+    <a href="/reference/" style="text-decoration: none; color: inherit;">
+      <div style="background: #21262d; padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color); height: 100%; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-orange)'" onmouseout="this.style.borderColor='var(--border-color)'">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <h3 style="margin: 0; color: var(--accent-orange);">📖 Reference</h3>
+          <span style="font-size: 0.75rem; background: rgba(210, 153, 34, 0.15); color: var(--accent-orange); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">Information-Oriented</span>
+        </div>
+        <p style="font-size: 0.92rem; color: #8b949e; margin-bottom: 0.75rem;">Authoritative specifications, schemas, contracts, and complete CLI command references.</p>
+        <ul style="font-size: 0.85rem; color: #c9d1d9; padding-left: 1.2rem; margin-bottom: 0;">
+          <li>CLI Commands Reference (32 Commands)</li>
+          <li>Semantic Kernel Primitives & StateVector S(e,t)</li>
+          <li>NIST OSCAL & CortAIx CSR 107 Matrix</li>
+        </ul>
+      </div>
+    </a>
+
+    <!-- Quadrant 4: Explanation -->
+    <a href="/explanation/" style="text-decoration: none; color: inherit;">
+      <div style="background: #21262d; padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color); height: 100%; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#bc8cff'" onmouseout="this.style.borderColor='var(--border-color)'">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <h3 style="margin: 0; color: #bc8cff;">💡 Explanation</h3>
+          <span style="font-size: 0.75rem; background: rgba(188, 140, 255, 0.15); color: #bc8cff; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">Understanding-Oriented</span>
+        </div>
+        <p style="font-size: 0.92rem; color: #8b949e; margin-bottom: 0.75rem;">Architectural rationale, theoretical context, and constitutional design invariants.</p>
+        <ul style="font-size: 0.85rem; color: #c9d1d9; padding-left: 1.2rem; margin-bottom: 0;">
+          <li>Why the Semantic Kernel Has Zero SDK Leakage</li>
+          <li>Four Truth Channels & State Coherence (Rule #12)</li>
+          <li>The Canonical Day-2 Control Loop</li>
+        </ul>
+      </div>
+    </a>
   </div>
 
-  <h2>System Signature</h2>
+  <h2>Constitutional Signature (GAL 1)</h2>
   <pre><code>AUTHORITY-BORN • INTENT-NATIVE • PURE-SEMANTIC-KERNEL • SHARED-VALIDATION •
 VECTOR-STATE • PROOF-BEFORE • RECEIPTS-AFTER • AIR-GAP-CAPABLE • DAY-2-NATIVE</code></pre>
 </section>
