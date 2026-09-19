@@ -167,6 +167,8 @@ class ModelTrainer:
             # Convert tensors to CPU for saving if on MPS/CUDA
             state_dict = {k: v.contiguous().cpu() for k, v in self.model.state_dict().items()}
             safetensors.torch.save_file(state_dict, str(checkpoint_path))
+        else:
+            torch.save(self.model.state_dict(), str(checkpoint_path))
         return compute_sha256(checkpoint_path.read_bytes())
 
 
