@@ -1,0 +1,66 @@
+# ==============================================================================
+# CKODEX AIOps Platform — Declarative Helmfile Configuration
+# Multi-Environment Deployment (local, staging, production)
+# Governed under CKODEX Constitutional Standard & CortAIx Factory CSR
+# ==============================================================================
+
+environments:
+  local:
+    values:
+      - global:
+          environment: local
+          assuranceLevel: GAL-1
+        replicaCount:
+          gateway: 1
+        resources:
+          gateway:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1
+              memory: 2Gi
+  staging:
+    values:
+      - global:
+          environment: staging
+          assuranceLevel: GAL-2
+        replicaCount:
+          gateway: 2
+        resources:
+          gateway:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 2
+              memory: 4Gi
+  production:
+    values:
+      - global:
+          environment: production
+          assuranceLevel: GAL-3
+        replicaCount:
+          gateway: 4
+        resources:
+          gateway:
+            requests:
+              cpu: 1
+              memory: 2Gi
+            limits:
+              cpu: 4
+              memory: 8Gi
+
+---
+
+releases:
+  - name: ckodex-aiops
+    namespace: "ckodex-aiops-{{ .Environment.Name }}"
+    createNamespace: true
+    chart: ./charts/ckodex-aiops
+    values:
+      - ./charts/ckodex-aiops/values.yaml
+      - global:
+          environment: "{{ .Environment.Name }}"
+    wait: true
+    timeout: 300

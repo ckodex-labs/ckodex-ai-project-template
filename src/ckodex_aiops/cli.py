@@ -20,8 +20,10 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from ckodex_aiops.adapters.compliance.csr import CortaixCsrMatrixGenerator
 from ckodex_aiops.adapters.compliance.intoto import IntotoProvenanceAttestor
 from ckodex_aiops.adapters.compliance.oscal import OscalComplianceGenerator
+from ckodex_aiops.adapters.compliance.sbom import SbomGenerator
 from ckodex_aiops.adapters.distribution.airgap import AirgapPackager
 from ckodex_aiops.adapters.observability.cockpit import AiopsCockpit
 from ckodex_aiops.adapters.ray.lance_ray import LanceRayEngine
@@ -681,6 +683,59 @@ def oscal(
     dest = OscalComplianceGenerator.write_oscal(output_path=out)
     console.print(
         f"[green]SUCCESS:[/green] NIST SP 800-53 OSCAL Component Definition written to [bold]{dest}[/bold]"
+    )
+
+
+@app.command()
+def sbom(
+    lockfile: str = typer.Option("uv.lock", "--lockfile", "-l", help="Path to uv.lock manifest."),
+    out_dir: str = typer.Option(
+        "data/08_reporting/sbom", "--out-dir", "-o", help="Directory to emit SBOM artifacts."
+    ),
+) -> None:
+    """
+    Generate industry-standard CycloneDX v1.5 and SPDX 2.3 JSON SBOMs from uv.lock.
+    """
+    packages = SbomGenerator.parse_uv_lock(lockfile)
+    cdx = SbomGenerator.generate_cyclonedx(
+        packages,
+        output_path=f"{out_dir}/cyclonedx.json",
+    )
+    spdx = SbomGenerator.generate_spdx(
+        packages,
+        output_path=f"{out_dir}/spdx.json",
+    )
+    console.print(
+        Panel.fit(
+            f"[bold green]SBOMs Generated Successfully[/bold green]\n"
+            f"• CycloneDX v1.5: [bold]{cdx['path']}[/bold] ({cdx['components_count']} components, SHA-256: [dim]{cdx['sha256'][:16]}...[/dim])\n"
+            f"• SPDX 2.3: [bold]{spdx['path']}[/bold] ({spdx['packages_count']} packages, SHA-256: [dim]{spdx['sha256'][:16]}...[/dim])",
+            border_style="green",
+        )
+    )
+
+
+@app.command(name="csr-matrix")
+def csr_matrix(
+    out_dir: str = typer.Option(
+        "data/08_reporting/compliance",
+        "--out-dir",
+        "-o",
+        help="Directory to emit CSR traceability reports.",
+    ),
+) -> None:
+    """
+    Generate CortAIx Factory CSR Traceability Matrix (JSON, CSV, Markdown).
+    """
+    res = CortaixCsrMatrixGenerator.generate_all(output_dir=out_dir)
+    console.print(
+        Panel.fit(
+            f"[bold green]CortAIx CSR Traceability Matrix Generated[/bold green]\n"
+            f"• Markdown Report: [bold]{res['markdown']}[/bold]\n"
+            f"• JSON Dataset: [bold]{res['json']}[/bold] (SHA-256: [dim]{res['json_sha256'][:16]}...[/dim])\n"
+            f"• CSV Matrix: [bold]{res['csv']}[/bold]",
+            border_style="green",
+        )
     )
 
 

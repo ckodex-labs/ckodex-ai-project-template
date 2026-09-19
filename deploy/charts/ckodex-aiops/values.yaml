@@ -1,0 +1,85 @@
+# Default values for ckodex-aiops.
+# Governed under CKODEX Constitutional Signature & CortAIx Factory CSR.
+
+global:
+  environment: local
+  assuranceLevel: GAL-1
+
+replicaCount:
+  gateway: 2
+  rayWorkers: 2
+
+image:
+  gateway:
+    repository: ghcr.io/ckodex/ckodex-aiops-gateway
+    pullPolicy: IfNotPresent
+    tag: "0.1.0"
+  ray:
+    repository: rayproject/ray
+    pullPolicy: IfNotPresent
+    tag: "2.35.0-py312"
+
+serviceAccount:
+  create: true
+  name: ckodex-aiops-sa
+  annotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  gateway:
+    type: ClusterIP
+    port: 8080
+  ray:
+    type: ClusterIP
+    gcsPort: 6379
+    dashboardPort: 8265
+    clientPort: 10001
+
+resources:
+  gateway:
+    limits:
+      cpu: "2"
+      memory: 4Gi
+    requests:
+      cpu: "500m"
+      memory: 1Gi
+  rayHead:
+    limits:
+      cpu: "4"
+      memory: 8Gi
+    requests:
+      cpu: "1"
+      memory: 2Gi
+
+vault:
+  enabled: true
+  addr: "http://vault.secrets.svc.cluster.local:8200"
+  role: "ckodex-aiops-workload"
+  agent:
+    inject: true
+
+otel:
+  enabled: true
+  endpoint: "http://otel-collector.observability.svc.cluster.local:4317"
+  samplingRatio: 1.0
+
+networkPolicy:
+  enabled: true
+  # CortAIx CSR CFY-NET-ING & CFY-NET-EGR: Deny all ingress/egress by default
+  allowIngressFromNamespaces:
+    - ingress-nginx
+    - observability

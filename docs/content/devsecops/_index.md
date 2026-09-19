@@ -58,3 +58,84 @@ Dagger builds multi-platform container manifests:
 dagger call build-multiplatform --source .
 ```
 Resulting in an OCI image index pointing to architecture-specific digest layers.
+
+---
+
+## 5. Unified Command Runner (`justfile`)
+
+The platform provides a modern, declarative `justfile` replacing ad-hoc shell scripts with self-documenting, repeatable recipes:
+
+```bash
+# List all operational recipes
+just
+
+# Inner-loop development & tests
+just lint
+just test
+just test-fast
+
+# Day-2 operations & preflight
+just doctor
+just reconcile
+just conformance
+just drift
+
+# Container & Kubernetes deployments
+just compose-up
+just helmfile-apply env=local
+
+# Security & Compliance
+just sbom
+just oscal
+just csr-matrix
+just airgap-pack
+```
+
+---
+
+## 6. Containerized Orchestration (`docker-compose.yml`)
+
+Local integration and developer environments run on `deploy/compose/docker-compose.yml`:
+- **Ray Distributed Mesh**: Dedicated Head node with Dashboard (`:8265`, `:10001`) and autoscaling Worker containers.
+- **MLflow Tracking Server**: Central experiment tracking, metrics, and artifact registry (`:5000`).
+- **HashiCorp Vault**: Zero-trust secrets management with AppRole authentication (`:8200`).
+- **Model Serving Gateway**: Low-latency FastAPI HTTP inference gateway (`:8080`).
+- **Living Documentation Cockpit**: Nginx reverse proxy serving the Hugo static documentation and AIOps Cockpit (`:8088`).
+
+---
+
+## 7. Declarative Kubernetes Deployments (`helmfile.yaml`)
+
+Production and staging deployments are managed via **Helmfile** and the `deploy/charts/ckodex-aiops` Helm chart:
+- **Zero-Trust NetworkPolicy**: Closed by default (`default-deny-all`), permitting ingress/egress solely to explicitly authorized endpoints (`CFY-NET-ING`, `CFY-NET-EGR`).
+- **Hardened Pod Security**: `readOnlyRootFilesystem: true`, `runAsNonRoot: true`, `allowPrivilegeEscalation: false`, all Linux capabilities dropped (`drop: ["ALL"]`).
+- **Vault Agent Sidecar Injection**: Zero long-lived credentials stored in manifests or environment variables.
+
+```bash
+# Preview declarative differences across environments
+helmfile --file deploy/helmfile.yaml --environment production diff
+
+# Apply changes with automatic reconciliation
+helmfile --file deploy/helmfile.yaml --environment production apply
+```
+
+---
+
+## 8. CortAIx Factory CSR Traceability Matrix
+
+The platform operationalizes the **107 CortAIx Factory Cybersecurity Requirements (CSR v1.1.0)** across FPR, TRR, and PRR gates:
+- **Automated Matrix Generation**: `just csr-matrix` compiles JSON, CSV, and Markdown traceability reports under `data/08_reporting/compliance/`.
+- **Release Gate Validation**:
+  - `FPR-TRAC`: Traceability continuously updated and hashed.
+  - `TRR-PLAN` & `TRR-DOCU`: Comprehensive 63+ test verification matrix and Hugo living docs.
+  - `PRR-REL-SBOM`: Dual-format CycloneDX and SPDX content-addressed dependency records.
+  - `PRR-REL-SIGN`: Cryptographic In-toto SLSA provenance statements.
+
+---
+
+## 9. NIST SP 800-53 OSCAL Component Definitions
+
+Machine-verifiable security postures are emitted as **OSCAL 1.2** documents (`just oscal`):
+- Five architectural components mapped: `ckodex-kernel`, `ckodex-secrets-engine`, `dagger-ssdlc-harness`, `ray-distributed-mesh`, and `autonomic-reconciler`.
+- Automated cross-referencing between NIST SP 800-53 controls (`AC-3`, `AU-2`, `SC-13`, `SA-11`, `CM-8`, `SC-28`, `SI-7`) and CortAIx CSR control identifiers.
+

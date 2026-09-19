@@ -39,19 +39,19 @@ class OscalComplianceGenerator:
                     {
                         "uuid": str(uuid.uuid4()),
                         "type": "software",
-                        "title": "CKODEX AIOps Kernel & Runtime Substrate",
-                        "description": "High-assurance Kedro + UV + Ray + Lance + PyTorch execution platform.",
-                        "purpose": "Secure execution of distributed AI pretraining, feature engineering, and inference.",
+                        "title": "CKODEX Pure Semantic Kernel",
+                        "description": "Zero-dependency deterministic domain invariants and state vector product types S(e,t).",
+                        "purpose": "Authoritative intent execution and anti-invariant state evaluation.",
                         "control-implementations": [
                             {
                                 "uuid": str(uuid.uuid4()),
                                 "source": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final",
-                                "description": "NIST SP 800-53 Rev 5 High-Assurance Baseline",
+                                "description": "NIST SP 800-53 Rev 5 & CortAIx CSR Baseline",
                                 "implemented-requirements": [
                                     {
                                         "uuid": str(uuid.uuid4()),
                                         "control-id": "ac-3",
-                                        "description": "Access Enforcement: Enforced via Zero-Trust capability leases and memory-safe SecretValue redaction.",
+                                        "description": "Access Enforcement: Enforced via Zero-Trust capability leases and intent admission.",
                                         "props": [
                                             {
                                                 "name": "implementation-status",
@@ -59,14 +59,18 @@ class OscalComplianceGenerator:
                                             },
                                             {
                                                 "name": "evidence-mechanism",
-                                                "value": "SecretLease & CapabilityLease verification",
+                                                "value": "CapabilityLease verification & AuthorityPath",
+                                            },
+                                            {
+                                                "name": "cortaix-csr-control",
+                                                "value": "CFY-DSG-ZERO",
                                             },
                                         ],
                                     },
                                     {
                                         "uuid": str(uuid.uuid4()),
                                         "control-id": "au-2",
-                                        "description": "Event Logging & 4-Channel Observability: Deep telemetry, execution traces, decision traces, and cryptographic evidence receipts.",
+                                        "description": "Event Logging & 4-Channel Observability: Deep telemetry, execution, decision, and evidence traces.",
                                         "props": [
                                             {
                                                 "name": "implementation-status",
@@ -74,44 +78,190 @@ class OscalComplianceGenerator:
                                             },
                                             {
                                                 "name": "evidence-mechanism",
-                                                "value": "FlightRecorderTracker & W3C TraceContext",
-                                            },
-                                        ],
-                                    },
-                                    {
-                                        "uuid": str(uuid.uuid4()),
-                                        "control-id": "sc-13",
-                                        "description": "Cryptographic Protection: SHA-256 content addressing, zero-copy Safetensors format, KMS envelope encryption.",
-                                        "props": [
-                                            {
-                                                "name": "implementation-status",
-                                                "value": "implemented",
+                                                "value": "LineageReceipt cryptographic SHA-256 digests",
                                             },
                                             {
-                                                "name": "evidence-mechanism",
-                                                "value": "Safetensors mmap headers & KmsKeyringSecretsAdapter",
-                                            },
-                                        ],
-                                    },
-                                    {
-                                        "uuid": str(uuid.uuid4()),
-                                        "control-id": "si-7",
-                                        "description": "Software, Firmware, and Information Integrity: SLSA v1.0 In-toto provenance, Syft SBOM, Grype CVE gating, Gitleaks audit.",
-                                        "props": [
-                                            {
-                                                "name": "implementation-status",
-                                                "value": "implemented",
-                                            },
-                                            {
-                                                "name": "evidence-mechanism",
-                                                "value": "In-toto Statement & Dagger SSDLC module",
+                                                "name": "cortaix-csr-control",
+                                                "value": "INC-LOG-CONS",
                                             },
                                         ],
                                     },
                                 ],
                             }
                         ],
-                    }
+                    },
+                    {
+                        "uuid": str(uuid.uuid4()),
+                        "type": "software",
+                        "title": "CKODEX Zero-Trust Secrets Engine",
+                        "description": "Composite secrets manager supporting HashiCorp Vault, cloud KMS, OS keyrings, and Keyless OIDC.",
+                        "purpose": "Elimination of static credentials, automatic secret redaction in memory, and dynamic TTL leasing.",
+                        "control-implementations": [
+                            {
+                                "uuid": str(uuid.uuid4()),
+                                "source": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final",
+                                "description": "NIST SP 800-53 Rev 5 & CortAIx CSR Baseline",
+                                "implemented-requirements": [
+                                    {
+                                        "uuid": str(uuid.uuid4()),
+                                        "control-id": "ia-5",
+                                        "description": "Authenticator Management: Time-bounded secret leases with automatic destruction.",
+                                        "props": [
+                                            {
+                                                "name": "implementation-status",
+                                                "value": "implemented",
+                                            },
+                                            {
+                                                "name": "evidence-mechanism",
+                                                "value": "SecretValue zeroization & Vault dynamic leases",
+                                            },
+                                            {"name": "cortaix-csr-control", "value": "CFY-SEC-HAR"},
+                                        ],
+                                    },
+                                    {
+                                        "uuid": str(uuid.uuid4()),
+                                        "control-id": "sc-13",
+                                        "description": "Cryptographic Protection: Envelope encryption using KMS root-of-trust and Safetensors mmap.",
+                                        "props": [
+                                            {
+                                                "name": "implementation-status",
+                                                "value": "implemented",
+                                            },
+                                            {
+                                                "name": "evidence-mechanism",
+                                                "value": "KmsKeyringSecretsAdapter & Safetensors",
+                                            },
+                                            {
+                                                "name": "cortaix-csr-control",
+                                                "value": "CFY-CRY-REST",
+                                            },
+                                        ],
+                                    },
+                                ],
+                            }
+                        ],
+                    },
+                    {
+                        "uuid": str(uuid.uuid4()),
+                        "type": "software",
+                        "title": "Dagger SSDLC & Supply-Chain Integrity Engine",
+                        "description": "Containerized hermetic CI/CD pipelines producing CycloneDX SBOMs, Grype CVE gating, Gitleaks, and in-toto SLSA provenance.",
+                        "purpose": "Continuous assurance and supply-chain non-repudiation.",
+                        "control-implementations": [
+                            {
+                                "uuid": str(uuid.uuid4()),
+                                "source": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final",
+                                "description": "NIST SP 800-53 Rev 5 & CortAIx CSR Baseline",
+                                "implemented-requirements": [
+                                    {
+                                        "uuid": str(uuid.uuid4()),
+                                        "control-id": "si-7",
+                                        "description": "Software and Information Integrity: In-toto v1.0 Statement with SLSA Provenance v1.0 attestor.",
+                                        "props": [
+                                            {
+                                                "name": "implementation-status",
+                                                "value": "implemented",
+                                            },
+                                            {
+                                                "name": "evidence-mechanism",
+                                                "value": "IntotoProvenanceAttestor & Syft SBOM",
+                                            },
+                                            {
+                                                "name": "cortaix-csr-control",
+                                                "value": "PRR-REL-SBOM",
+                                            },
+                                        ],
+                                    },
+                                    {
+                                        "uuid": str(uuid.uuid4()),
+                                        "control-id": "sa-11",
+                                        "description": "Developer Security Testing: Hermetic SAST, DAST, and secret detection gates.",
+                                        "props": [
+                                            {
+                                                "name": "implementation-status",
+                                                "value": "implemented",
+                                            },
+                                            {
+                                                "name": "evidence-mechanism",
+                                                "value": "Dagger module scan_secrets & scan_vulnerabilities",
+                                            },
+                                            {
+                                                "name": "cortaix-csr-control",
+                                                "value": "TST-BSL-SAST",
+                                            },
+                                        ],
+                                    },
+                                ],
+                            }
+                        ],
+                    },
+                    {
+                        "uuid": str(uuid.uuid4()),
+                        "type": "software",
+                        "title": "Ray Distributed Concurrency & Lance Storage Mesh",
+                        "description": "Stateful Actor/Co-Actor mesh with placement group gang scheduling and zero-copy columnar storage.",
+                        "purpose": "High-throughput, memory-safe distributed training and inference.",
+                        "control-implementations": [
+                            {
+                                "uuid": str(uuid.uuid4()),
+                                "source": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final",
+                                "description": "NIST SP 800-53 Rev 5 & CortAIx CSR Baseline",
+                                "implemented-requirements": [
+                                    {
+                                        "uuid": str(uuid.uuid4()),
+                                        "control-id": "sc-5",
+                                        "description": "Denial of Service Protection: Bounded ring buffers and non-blocking TelemetryCoactor.",
+                                        "props": [
+                                            {
+                                                "name": "implementation-status",
+                                                "value": "implemented",
+                                            },
+                                            {
+                                                "name": "evidence-mechanism",
+                                                "value": "TelemetryCoactor max_buffer_size backpressure",
+                                            },
+                                            {"name": "cortaix-csr-control", "value": "CFY-NET-ING"},
+                                        ],
+                                    }
+                                ],
+                            }
+                        ],
+                    },
+                    {
+                        "uuid": str(uuid.uuid4()),
+                        "type": "software",
+                        "title": "CKODEX Autonomic Reconciler & Conformance Engine",
+                        "description": "Day-2 control loop (OBSERVE -> DETECT -> DIAGNOSE -> RECOVER -> RECONCILE) and multi-dimensional transition tests.",
+                        "purpose": "Self-healing storage fragmentation, drift containment, and continuous compliance.",
+                        "control-implementations": [
+                            {
+                                "uuid": str(uuid.uuid4()),
+                                "source": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final",
+                                "description": "NIST SP 800-53 Rev 5 & CortAIx CSR Baseline",
+                                "implemented-requirements": [
+                                    {
+                                        "uuid": str(uuid.uuid4()),
+                                        "control-id": "si-4",
+                                        "description": "Information System Monitoring: Continuous anomaly detection, drift evaluation, and automated healing.",
+                                        "props": [
+                                            {
+                                                "name": "implementation-status",
+                                                "value": "implemented",
+                                            },
+                                            {
+                                                "name": "evidence-mechanism",
+                                                "value": "AutonomicReconciler & ConformanceEngine",
+                                            },
+                                            {
+                                                "name": "cortaix-csr-control",
+                                                "value": "INC-DET-ALER",
+                                            },
+                                        ],
+                                    }
+                                ],
+                            }
+                        ],
+                    },
                 ],
             }
         }

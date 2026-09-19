@@ -1,0 +1,129 @@
+# ==============================================================================
+# CKODEX AIOps Platform — Local Composition Stack
+# Services: Ray Cluster (Head + Worker), MLflow Tracking, HashiCorp Vault,
+#           Model Serving HTTP Gateway, and Hugo Mission Cockpit
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. Ray Cluster Head Node
+  # ----------------------------------------------------------------------------
+  ray-head:
+    image: rayproject/ray:2.35.0-py312
+    container_name: ckodex-ray-head
+    command: >
+      bash -c "ray start --head --port=6379 --object-manager-port=8076 --node-manager-port=8077 --dashboard-host=0.0.0.0 --dashboard-port=8265 --num-cpus=4 --block"
+    ports:
+      - "6379:6379"   # Ray GCS Redis port
+      - "8265:8265"   # Ray Dashboard
+      - "10001:10001" # Ray Client Server
+    volumes:
+      - ../../data:/workspace/data
+    environment:
+      - RAY_OVERRIDE_RUNTIME_ENV_DEFAULT_EXCLUDES=""
+    healthcheck:
+      test: ["CMD-SHELL", "ray status || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ckodex-mesh
+
+  # ----------------------------------------------------------------------------
+  # 2. Ray Cluster Worker Node
+  # ----------------------------------------------------------------------------
+  ray-worker:
+    image: rayproject/ray:2.35.0-py312
+    container_name: ckodex-ray-worker
+    command: >
+      bash -c "ray start --address=ray-head:6379 --num-cpus=4 --block"
+    depends_on:
+      ray-head:
+        condition: service_healthy
+    volumes:
+      - ../../data:/workspace/data
+    networks:
+      - ckodex-mesh
+
+  # ----------------------------------------------------------------------------
+  # 3. HashiCorp Vault (Zero-Trust Secrets Provider)
+  # ----------------------------------------------------------------------------
+  vault:
+    image: hashicorp/vault:1.16.2
+    container_name: ckodex-vault
+    ports:
+      - "8200:8200"
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=root
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - ckodex-mesh
+
+  # ----------------------------------------------------------------------------
+  # 4. MLflow Experiment Tracking Server
+  # ----------------------------------------------------------------------------
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.14.3
+    container_name: ckodex-mlflow
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri sqlite:////workspace/data/mlflow.db
+      --default-artifact-root /workspace/data/08_reporting/mlruns
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../../data:/workspace/data
+    networks:
+      - ckodex-mesh
+
+  # ----------------------------------------------------------------------------
+  # 5. Model Serving HTTP & IPC Gateway
+  # ----------------------------------------------------------------------------
+  aiops-gateway:
+    build:
+      context: ../..
+      dockerfile: deploy/compose/Dockerfile.gateway
+    container_name: ckodex-aiops-gateway
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../../data:/app/data
+      - ../../conf:/app/conf
+    environment:
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=root
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - RAY_ADDRESS=ray://ray-head:10001
+    depends_on:
+      ray-head:
+        condition: service_healthy
+      vault:
+        condition: service_healthy
+    networks:
+      - ckodex-mesh
+
+  # ----------------------------------------------------------------------------
+  # 6. Mission Cockpit & Hugo Living Documentation Server
+  # ----------------------------------------------------------------------------
+  cockpit-docs:
+    image: nginx:alpine
+    container_name: ckodex-cockpit-docs
+    ports:
+      - "1313:80"
+    volumes:
+      - ../../docs/public:/usr/share/nginx/html:ro
+    networks:
+      - ckodex-mesh
+
+networks:
+  ckodex-mesh:
+    driver: bridge

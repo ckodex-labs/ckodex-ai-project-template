@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ckodex-aiops.fullname" . }}-gateway
+  labels:
+    {{- include "ckodex-aiops.labels" . | nindent 4 }}
+    app.kubernetes.io/component: gateway
+spec:
+  type: {{ .Values.service.gateway.type }}
+  ports:
+    - port: {{ .Values.service.gateway.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "ckodex-aiops.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: gateway

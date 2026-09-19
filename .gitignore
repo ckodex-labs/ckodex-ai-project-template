@@ -45,6 +45,9 @@ data/07_model_output/*
 data/08_reporting/*
 !data/08_reporting/.gitkeep
 !data/08_reporting/receipts/.gitkeep
+!data/08_reporting/sbom/.gitkeep
+!data/08_reporting/oscal/.gitkeep
+!data/08_reporting/compliance/.gitkeep
 
 # Ray & Caches
 .ray/

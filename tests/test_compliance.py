@@ -36,12 +36,16 @@ def test_oscal_component_definition_generation(tmp_path):
     assert "components" in comp
     assert len(comp["components"]) >= 1
 
-    ctrl_impls = comp["components"][0]["control-implementations"][0]["implemented-requirements"]
-    control_ids = [c["control-id"] for c in ctrl_impls]
-    assert "ac-3" in control_ids
-    assert "au-2" in control_ids
-    assert "sc-13" in control_ids
-    assert "si-7" in control_ids
+    all_control_ids = [
+        req["control-id"]
+        for component in comp["components"]
+        for impl in component.get("control-implementations", [])
+        for req in impl.get("implemented-requirements", [])
+    ]
+    assert "ac-3" in all_control_ids
+    assert "au-2" in all_control_ids
+    assert "sc-13" in all_control_ids
+    assert "si-7" in all_control_ids
 
     out_file = tmp_path / "oscal_component.json"
     saved = OscalComplianceGenerator.write_oscal(output_path=out_file)

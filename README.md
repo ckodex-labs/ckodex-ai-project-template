@@ -101,12 +101,19 @@ flowchart TD
 ckodex-cfyd-aiops/
 ├── pyproject.toml               # UV configuration, dependencies, tools
 ├── uv.lock                      # Deterministic lockfile
+├── justfile                     # Modern, self-documenting command runner
 ├── Makefile                     # Standardized developer workflows
 ├── README.md                    # Platform architecture dossier
 ├── .github/workflows/ssdlc.yml  # GitHub Actions harness delegating to Dagger
 ├── ci/                          # Dagger SSDLC Python Module
 │   ├── dagger.json              # Dagger module manifest
 │   └── src/ckodex_cicd/main.py  # Lint, test, Syft SBOM, Grype gate, Gitleaks, multi-arch OCI
+├── deploy/                      # Multi-Cloud & Local Deployment Substrate
+│   ├── compose/
+│   │   ├── docker-compose.yml   # Ray Mesh, MLflow, Vault, Gateway, Docs Cockpit
+│   │   └── Dockerfile.gateway   # Model Serving Gateway container
+│   ├── helmfile.yaml            # Declarative multi-environment GitOps specification
+│   └── charts/ckodex-aiops/     # Hardened Zero-Trust Helm chart (NetworkPolicy, Seccomp)
 ├── docs/                        # Hugo Extended Living Documentation Site
 │   ├── hugo.toml                # Hugo configuration
 │   ├── content/                 # Living architectural & DevSecOps content
@@ -118,9 +125,9 @@ ckodex-cfyd-aiops/
 │   ├── 04_feature/              # Normalized features & IVF-PQ indices
 │   ├── 06_models/               # Safetensors model checkpoints (model.safetensors)
 │   ├── 07_model_output/         # Distributed inference predictions
-│   └── 08_reporting/            # Receipts, attestations, OSCAL, cockpit reports
+│   └── 08_reporting/            # Receipts, attestations, OSCAL, SBOMs, CortAIx CSR
 ├── src/ckodex_aiops/
-│   ├── cli.py                   # Day-2 CLI (doctor, reconcile, attest, cockpit, conformance)
+│   ├── cli.py                   # Day-2 CLI (doctor, reconcile, attest, cockpit, sbom, csr-matrix)
 │   ├── kernel/                  # Pure Semantic Kernel (ZERO external heavy dependencies)
 │   │   ├── state_vector.py      # StateVector S(e,t) product type & ConformanceTransition
 │   │   ├── reconciler.py        # Autonomic Day-2 Reconciler & Self-Healing Loop
@@ -130,7 +137,7 @@ ckodex-cfyd-aiops/
 │   │   ├── intent.py            # IntentEnvelope & CapabilityLease
 │   │   └── domain.py            # Pure domain entities
 │   ├── adapters/
-│   │   ├── compliance/          # In-toto SLSA v1.0 & NIST SP 800-53 OSCAL
+│   │   ├── compliance/          # In-toto SLSA, NIST OSCAL, CycloneDX/SPDX SBOM, CortAIx CSR
 │   │   ├── observability/       # OpenTelemetry OTEL manager & Mission Cockpit
 │   │   ├── secrets/             # Zero-Trust Vault, KMS/Keyring, Keyless OIDC
 │   │   ├── tracking/            # Flight Recorder & MLflow experiment tracking
@@ -138,7 +145,7 @@ ckodex-cfyd-aiops/
 │   │   └── lance/               # Columnar vector store adapter
 │   ├── models/                  # PyTorch Safetensors network & streaming datasets
 │   └── pipelines/               # Kedro pipeline modules (ingestion, features, train, eval, inference, physical_ai)
-└── tests/                       # 46 Comprehensive Unit & Conformance Test Suites
+└── tests/                       # 63 Comprehensive Unit & Conformance Test Suites
 ```
 
 ---
@@ -243,14 +250,15 @@ make docs-serve
 
 ## 7. Verification Evidence & Quality Assurance
 
-The test suite enforces constitutional invariants across 57 tests:
+The test suite enforces constitutional invariants across 63 tests:
 
 ```text
-======================== 57 passed in 79.13s (0:01:19) =========================
+======================== 63 passed in 72.71s (0:01:12) =========================
 ✓ tests/test_airgap.py: PASS (Air-gap packaging, manifest hashing, tamper detection)
 ✓ tests/test_coactor.py: PASS (Actor & Co-Actor asynchronous telemetry buffering)
 ✓ tests/test_compliance.py: PASS (In-toto SLSA v1.0 provenance & NIST OSCAL)
 ✓ tests/test_conformance.py: PASS (Structural, Anti-Dominance, Degradation contracts)
+✓ tests/test_csr.py: PASS (CortAIx Factory CSR 107 controls traceability matrix)
 ✓ tests/test_drift.py: PASS (Statistical Wasserstein distance & PSI drift detection)
 ✓ tests/test_kernel.py: PASS (State vector algebra, anti-dominance, SHA-256 receipts)
 ✓ tests/test_lance_dataset.py: PASS (Zero-copy Lance scanning, pushdown filters)
@@ -264,12 +272,13 @@ The test suite enforces constitutional invariants across 57 tests:
 ✓ tests/test_ray_actors.py: PASS (Ray embedding/inference actors & actor pool)
 ✓ tests/test_ray_advanced.py: PASS (Placement groups, zero-copy Plasma dispatch, full optimize)
 ✓ tests/test_reconciler.py: PASS (Autonomic Day-2 Reconciler loop & self-healing)
+✓ tests/test_sbom.py: PASS (CycloneDX v1.5 and SPDX 2.3 JSON SBOM generation)
 ✓ tests/test_secrets.py: PASS (Redacted SecretValue, SecretLease, Vault, KMS, Keyless)
 ✓ tests/test_serving.py: PASS (Model serving gateway, /healthz, /livez, /infer)
 ✓ tests/test_tracking.py: PASS (Flight Recorder & MLflow experiment tracking)
 ✓ tests/test_validation.py: PASS (Shared validation contracts & preflight bounds)
 
-Ruff Linter & Formatter: 100% clean across 97 files (0 errors, 0 warnings).
+Ruff Linter & Formatter: 100% clean across 113 files (0 errors, 0 warnings).
 Hugo Living Documentation: 17 pages built in 23 ms (0 errors, 0 warnings).
 Platform Doctor: PASS (All hardware, compute, storage, and secrets subsystems healthy).
 ```
