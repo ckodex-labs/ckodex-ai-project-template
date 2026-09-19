@@ -41,6 +41,14 @@ format:
 typecheck:
     uv run mypy src/ckodex_aiops
 
+# Build or update CocoIndex Code semantic index
+ccc-index:
+    ccc index
+
+# Search codebase semantically using CocoIndex Code
+ccc-search query:
+    ccc search "{{query}}"
+
 # ==============================================================================
 # Day-2 Operations & AIOps Control Plane
 # ==============================================================================
