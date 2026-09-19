@@ -57,3 +57,41 @@ Audits all node execution receipts:
 ```bash
 uv run ckodex-aiops verify
 ```
+
+### 7. Day-2 Autonomic Reconciler (`reconcile`)
+Executes the full Day-2 control loop (`OBSERVE -> DETECT -> DIAGNOSE -> RECOVER -> RECONCILE`) to automatically heal fragmentation, model drift, and cluster degradation:
+```bash
+# Run reconciliation with automated self-healing
+uv run ckodex-aiops reconcile --auto-heal
+
+# Dry-run diagnostic check without mutations
+uv run ckodex-aiops reconcile --no-auto-heal
+```
+
+### 8. Multi-Dimensional Conformance Suite (`conformance`)
+Evaluates structural bounds, adversarial ANTI-invariant dominance, and runtime degradation contracts:
+```bash
+uv run ckodex-aiops conformance
+```
+
+### 9. AIOps Mission Cockpit (`cockpit`)
+Launches the high-density terminal cockpit or exports a zero-dependency interactive HTML dashboard:
+```bash
+# Interactive terminal cockpit
+uv run ckodex-aiops cockpit
+
+# Export standalone HTML dashboard
+uv run ckodex-aiops cockpit --export-html docs/static/cockpit.html
+```
+
+### 10. In-toto SLSA Provenance Attestation (`attest`)
+Generates machine-verifiable in-toto v1.0 / SLSA Provenance v1.0 statements binding model checkpoints to execution receipts:
+```bash
+uv run ckodex-aiops attest --subject data/06_models/model.safetensors
+```
+
+### 11. NIST SP 800-53 OSCAL Generator (`oscal`)
+Exports machine-readable OSCAL component definitions mapping platform safeguards to NIST SP 800-53 controls:
+```bash
+uv run ckodex-aiops oscal --out data/08_reporting/oscal/component_definition.json
+```

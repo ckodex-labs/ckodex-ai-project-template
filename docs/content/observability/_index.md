@@ -40,3 +40,21 @@ The platform injects and extracts W3C `traceparent` (`version-trace_id-parent_id
 
 2. **MLflow Tracking Adapter**:
    - Streams parameters, metrics, model artifacts (`model.safetensors`), and state vector tags into centralized MLflow tracking servers.
+
+---
+
+## 4. Ray Actor & Co-Actor Concurrency Pattern (Rule #31)
+
+To eliminate latency spikes on compute-heavy forward passes, telemetry ingest is offloaded to a companion **`TelemetryCoactor`**:
+- **`InferenceActor`**: Dedicated to GPU/MPS compute threads. Dispatches telemetry metrics asynchronously via fire-and-forget Ray calls.
+- **`TelemetryCoactor`**: Maintains a bounded memory-safe ring buffer, computes rolling percentile latencies, and flushes aggregates without blocking model serving.
+
+---
+
+## 5. AIOps Autonomic Mission Cockpit (Rule #37 & #41)
+
+The platform provides a real-time operator cockpit that integrates all four truth channels into a unified display:
+- **State Vector Matrix**: Displays Presence, Valence, Anti, Coherence, Evidence, and Lifecycle in real-time.
+- **Lance Storage Topology**: Fragment counts, table versions, and disk consumption.
+- **Cryptographic Receipts**: Visual verification DAG of recent pipeline execution receipts.
+- **Static HTML Export**: Zero-dependency standalone HTML dashboard exportable to `docs/static/cockpit.html` for offline or web inspection.

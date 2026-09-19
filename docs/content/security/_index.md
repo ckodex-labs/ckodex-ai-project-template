@@ -50,3 +50,20 @@ flowchart TD
   str(secret) == "***REDACTED***"
   ```
 - Memory is scrubbed or wiped upon lease release.
+
+---
+
+## 4. Supply-Chain Attestation & Compliance (Rule #39)
+
+### In-toto v1.0 & SLSA Provenance v1.0
+Every model checkpoint is paired with a cryptographic In-toto statement:
+- Content-addresses model artifacts via SHA-256.
+- Documents build definition, external hyperparameters, and resolved dependencies.
+- Embeds execution lease receipts proving build authorization.
+
+### NIST SP 800-53 Rev 5 OSCAL
+The platform generates machine-verifiable OSCAL component definitions mapping technical implementations directly to federal assurance controls:
+- **AC-3**: Access Enforcement via Zero-Trust capability leases.
+- **AU-2**: 4-Channel Observability and immutable execution receipts.
+- **SC-13**: Cryptographic Protection via Safetensors and envelope KMS encryption.
+- **SI-7**: Software and Information Integrity via SLSA provenance, Syft SBOMs, and Grype gating.

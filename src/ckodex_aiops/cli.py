@@ -20,8 +20,13 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from ckodex_aiops.adapters.compliance.intoto import IntotoProvenanceAttestor
+from ckodex_aiops.adapters.compliance.oscal import OscalComplianceGenerator
+from ckodex_aiops.adapters.observability.cockpit import AiopsCockpit
 from ckodex_aiops.adapters.ray.runtime import RayRuntimeManager
+from ckodex_aiops.kernel.conformance import ConformanceEngine
 from ckodex_aiops.kernel.receipt import compute_sha256
+from ckodex_aiops.kernel.reconciler import AutonomicReconciler
 from ckodex_aiops.kernel.state_vector import (
     Anti,
     Coherence,
@@ -576,6 +581,179 @@ def mine(
 
     console.print(table)
     console.print(f"[dim]Affected Episodes: {result['episodes_affected']}[/dim]")
+
+
+@app.command()
+def reconcile(
+    profile: str = typer.Option(
+        "macos_metal_safetensors",
+        "--profile",
+        "-p",
+        help="Target baseline profile to reconcile against.",
+    ),
+    auto_heal: bool = typer.Option(
+        True,
+        "--auto-heal/--no-auto-heal",
+        help="Automatically execute bounded corrective mutations.",
+    ),
+) -> None:
+    """
+    Execute Day-2 Autonomic Reconciliation Loop (OBSERVE -> DETECT -> DIAGNOSE -> RECOVER -> RECONCILE).
+    """
+    console.print(
+        Panel.fit(
+            f"[bold cyan]CKODEX Day-2 Autonomic Reconciler[/bold cyan]\n"
+            f"Baseline: [bold green]{profile}[/bold green] | Auto-Heal: [bold yellow]{auto_heal}[/bold yellow]",
+            border_style="cyan",
+        )
+    )
+
+    reconciler = AutonomicReconciler(profile_name=profile)
+    receipt = reconciler.run_reconciliation(auto_heal=auto_heal)
+
+    table = Table(title="Reconciliation Execution Summary", border_style="dim")
+    table.add_column("Phase", style="bold")
+    table.add_column("Value / State", style="cyan")
+
+    table.add_row("Receipt ID", receipt.receipt_id)
+    table.add_row("Pre-Reconciliation Vector", str(receipt.initial_vector.lifecycle))
+    table.add_row("Anomalies Detected", str(len(receipt.anomalies_detected)))
+    table.add_row(
+        "Actions Executed",
+        str(receipt.actions_executed) if receipt.actions_executed else "None Required",
+    )
+    table.add_row(
+        "Post-Reconciliation Vector", f"[green]{receipt.resulting_vector.lifecycle}[/green]"
+    )
+    table.add_row("Evidence Digest (SHA-256)", receipt.evidence_digest[:32] + "...")
+
+    console.print(table)
+
+
+@app.command()
+def attest(
+    subject: str = typer.Option(
+        "data/06_models/model.safetensors", "--subject", "-s", help="Path to artifact to attest."
+    ),
+    out: str = typer.Option(
+        "data/08_reporting/attestations/provenance.intoto.jsonl",
+        "--out",
+        "-o",
+        help="Output attestation path.",
+    ),
+) -> None:
+    """
+    Generate cryptographic In-toto v1.0 Statement with SLSA Provenance v1.0.
+    """
+    console.print(
+        Panel.fit(
+            f"[bold cyan]CKODEX SLSA v1.0 In-toto Attestor[/bold cyan]\n"
+            f"Subject: [dim]{subject}[/dim]",
+            border_style="cyan",
+        )
+    )
+
+    stmt = IntotoProvenanceAttestor.generate_attestation(subject_path=subject)
+    dest = IntotoProvenanceAttestor.write_attestation(stmt, out)
+
+    console.print(f"[green]SUCCESS:[/green] In-toto provenance generated at [bold]{dest}[/bold]")
+    console.print(f"Artifact SHA-256: [dim]{stmt['subject'][0]['digest']['sha256']}[/dim]")
+
+
+@app.command()
+def oscal(
+    out: str = typer.Option(
+        "data/08_reporting/oscal/component_definition.json",
+        "--out",
+        "-o",
+        help="Output path for OSCAL JSON.",
+    ),
+) -> None:
+    """
+    Generate machine-verifiable NIST SP 800-53 Rev 5 OSCAL Component Definition.
+    """
+    dest = OscalComplianceGenerator.write_oscal(output_path=out)
+    console.print(
+        f"[green]SUCCESS:[/green] NIST SP 800-53 OSCAL Component Definition written to [bold]{dest}[/bold]"
+    )
+
+
+@app.command()
+def cockpit(
+    export_html: str | None = typer.Option(
+        None, "--export-html", help="Optional path to export static HTML dashboard."
+    ),
+) -> None:
+    """
+    Launch interactive AIOps Mission Cockpit dashboard.
+    """
+    ui = AiopsCockpit()
+    ui.render_terminal()
+
+    if export_html:
+        dest = ui.export_html(output_path=export_html)
+        console.print(f"[green]Exported HTML Cockpit to:[/green] [bold]{dest}[/bold]")
+
+
+@app.command()
+def conformance() -> None:
+    """
+    Run multi-dimensional transition conformance evaluation (Structural, Adversarial ANTI, Degradation).
+    """
+    console.print(
+        Panel.fit(
+            "[bold cyan]CKODEX Multi-Dimensional Conformance Suite[/bold cyan]", border_style="cyan"
+        )
+    )
+
+    init_vec = StateVector()
+
+    # 1. Structural
+    batch = [{"feature_0": 0.1, "feature_1": 0.2}]
+    res_struct = ConformanceEngine.evaluate_structural_transition(
+        init_vec, batch, expected_keys=["feature_0", "feature_1"]
+    )
+
+    # 2. Adversarial / Anti Dominance
+    res_anti = ConformanceEngine.evaluate_adversarial_anti_transition(
+        init_vec, is_lease_revoked=True, is_signature_tampered=False
+    )
+
+    # 3. Degradation
+    res_deg = ConformanceEngine.evaluate_degradation_recovery_transition(
+        init_vec, backend_available=False, retry_exhausted=False
+    )
+
+    table = Table(title="Transition Vector Evaluations", border_style="dim")
+    table.add_column("Dimension", style="bold")
+    table.add_column("Stimulus", style="dim")
+    table.add_column("Disposition", style="cyan")
+    table.add_column("Resulting Lifecycle", style="green")
+    table.add_column("Conformance", justify="center")
+
+    table.add_row(
+        res_struct.dimension,
+        res_struct.stimulus_name,
+        res_struct.disposition,
+        str(res_struct.resulting_vector.lifecycle),
+        "[green]CONFORMANT[/green]" if res_struct.passed else "[red]NON-CONFORMANT[/red]",
+    )
+    table.add_row(
+        res_anti.dimension,
+        res_anti.stimulus_name,
+        res_anti.disposition,
+        str(res_anti.resulting_vector.lifecycle),
+        "[green]CONFORMANT (ANTI-DOMINANT)[/green]" if not res_anti.passed else "[red]FAIL[/red]",
+    )
+    table.add_row(
+        res_deg.dimension,
+        res_deg.stimulus_name,
+        res_deg.disposition,
+        str(res_deg.resulting_vector.lifecycle),
+        "[green]CONFORMANT (DEGRADED)[/green]" if res_deg.passed else "[red]FAIL[/red]",
+    )
+
+    console.print(table)
 
 
 @click.group(name="ckodex")

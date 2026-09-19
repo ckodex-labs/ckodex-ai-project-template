@@ -26,6 +26,7 @@ class PlatformProfile:
     device: str = "auto"
     accelerator: str = "auto"
     checkpoint_format: str = "safetensors"
+    model_weights_path: str = "data/06_models/model.safetensors"
     batch_size: int = 64
     ray_actors: int = 2
     default_pipeline: str = "__default__"
@@ -33,6 +34,10 @@ class PlatformProfile:
     is_baseline: bool = False
     baseline_receipt_id: str | None = None
     baseline_digest: str | None = None
+
+    @property
+    def model_format(self) -> str:
+        return self.checkpoint_format
 
     def compute_digest(self) -> str:
         """Computes deterministic SHA-256 digest of profile configuration."""
@@ -146,6 +151,14 @@ class ProfileRegistry:
             available = ", ".join(cls._PROFILES.keys())
             raise KeyError(f"Profile '{name}' not found. Available profiles: {available}")
         return cls._PROFILES[name]
+
+    @classmethod
+    def get_baseline(cls, name: str) -> PlatformProfile:
+        """Retrieve authoritative baseline profile by name."""
+        profile = cls.get(name)
+        if not profile.is_baseline:
+            raise ValueError(f"Profile '{name}' has not been promoted to an official baseline.")
+        return profile
 
     @classmethod
     def promote_to_baseline(

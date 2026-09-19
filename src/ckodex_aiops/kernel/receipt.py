@@ -10,6 +10,7 @@ import json
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 
@@ -17,6 +18,16 @@ def compute_sha256(data: bytes | str) -> str:
     if isinstance(data, str):
         data = data.encode("utf-8")
     return hashlib.sha256(data).hexdigest()
+
+
+def hash_file(path: str | Path) -> str:
+    """Computes SHA-256 digest of a file on disk."""
+    p = Path(path)
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 @dataclass(frozen=True)
@@ -57,3 +68,6 @@ class LineageReceipt:
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+
+ExecutionReceipt = LineageReceipt
