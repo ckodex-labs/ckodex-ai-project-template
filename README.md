@@ -243,10 +243,10 @@ make docs-serve
 
 ## 7. Verification Evidence & Quality Assurance
 
-The test suite enforces constitutional invariants across 53 tests:
+The test suite enforces constitutional invariants across 57 tests:
 
 ```text
-======================== 53 passed in 71.30s (0:01:11) =========================
+======================== 57 passed in 79.13s (0:01:19) =========================
 ✓ tests/test_airgap.py: PASS (Air-gap packaging, manifest hashing, tamper detection)
 ✓ tests/test_coactor.py: PASS (Actor & Co-Actor asynchronous telemetry buffering)
 ✓ tests/test_compliance.py: PASS (In-toto SLSA v1.0 provenance & NIST OSCAL)
@@ -262,6 +262,7 @@ The test suite enforces constitutional invariants across 53 tests:
 ✓ tests/test_pytorch_models.py: PASS (Classifier forward pass, streaming DataLoader)
 ✓ tests/test_quantization.py: PASS (Int8 quantization, compression & cosine fidelity)
 ✓ tests/test_ray_actors.py: PASS (Ray embedding/inference actors & actor pool)
+✓ tests/test_ray_advanced.py: PASS (Placement groups, zero-copy Plasma dispatch, full optimize)
 ✓ tests/test_reconciler.py: PASS (Autonomic Day-2 Reconciler loop & self-healing)
 ✓ tests/test_secrets.py: PASS (Redacted SecretValue, SecretLease, Vault, KMS, Keyless)
 ✓ tests/test_serving.py: PASS (Model serving gateway, /healthz, /livez, /infer)

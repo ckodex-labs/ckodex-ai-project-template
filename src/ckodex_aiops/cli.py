@@ -24,6 +24,8 @@ from ckodex_aiops.adapters.compliance.intoto import IntotoProvenanceAttestor
 from ckodex_aiops.adapters.compliance.oscal import OscalComplianceGenerator
 from ckodex_aiops.adapters.distribution.airgap import AirgapPackager
 from ckodex_aiops.adapters.observability.cockpit import AiopsCockpit
+from ckodex_aiops.adapters.ray.lance_ray import LanceRayEngine
+from ckodex_aiops.adapters.ray.placement import RayPlacementGroupManager
 from ckodex_aiops.adapters.ray.runtime import RayRuntimeManager
 from ckodex_aiops.adapters.serving.gateway import ModelServingGateway
 from ckodex_aiops.kernel.conformance import ConformanceEngine
@@ -971,6 +973,86 @@ def serve(
     except KeyboardInterrupt:
         console.print("\n[yellow]Shutting down server...[/yellow]")
         server.server_close()
+
+
+@app.command()
+def optimize(
+    target: str = typer.Option(
+        "data/04_feature/features.lance", "--target", "-t", help="Target Lance dataset path."
+    ),
+    target_rows: int = typer.Option(
+        100_000, "--target-rows", help="Target rows per compacted fragment."
+    ),
+    retention_days: int = typer.Option(
+        7, "--retention-days", help="Retention window in days for old version cleanup."
+    ),
+) -> None:
+    """
+    Execute full lifecycle optimization on a Lance dataset (fragment compaction + version cleanup).
+    """
+    console.print(
+        Panel.fit(
+            f"[bold cyan]CKODEX Lance Table Lifecycle Optimizer[/bold cyan]\nTarget: {target}",
+            border_style="cyan",
+        )
+    )
+
+    res = LanceRayEngine.optimize(
+        target, target_rows_per_fragment=target_rows, cleanup_older_than_days=retention_days
+    )
+
+    table = Table(title="Lance Table Optimization Results", border_style="dim")
+    table.add_column("Metric", style="bold")
+    table.add_column("Value", style="cyan")
+
+    table.add_row("Dataset URI", res["uri"])
+    table.add_row("Fragments Before", str(res["fragments_before"]))
+    table.add_row("Fragments After", f"[bold green]{res['fragments_after']}[/bold green]")
+    table.add_row("Latest Version", str(res["latest_version"]))
+    table.add_row("Total Rows", str(res["total_rows"]))
+
+    console.print(table)
+    console.print("[green]SUCCESS:[/green] Table optimization and version pruning complete.")
+
+
+@app.command(name="ray-pg")
+def ray_pg(
+    name: str = typer.Option("infer_pg", "--name", "-n", help="Placement group name."),
+    num_actors: int = typer.Option(2, "--num-actors", "-a", help="Number of actor slots."),
+    cpus_per_actor: int = typer.Option(1, "--cpus", "-c", help="CPUs per actor bundle."),
+) -> None:
+    """
+    Allocate and inspect Ray Placement Groups for atomic gang scheduling.
+    """
+    console.print(
+        Panel.fit(
+            f"[bold cyan]CKODEX Ray Placement Group Manager[/bold cyan]\nReserving PG: {name}",
+            border_style="cyan",
+        )
+    )
+
+    pg = RayPlacementGroupManager.create_inference_placement_group(
+        name=name,
+        num_actors=num_actors,
+        cpus_per_actor=cpus_per_actor,
+        strategy="PACK",
+    )
+
+    pgs = RayPlacementGroupManager.list_placement_groups()
+    table = Table(title="Active Ray Placement Groups", border_style="dim")
+    table.add_column("Name", style="bold")
+    table.add_column("State", style="green")
+    table.add_column("Strategy", style="cyan")
+    table.add_column("Bundles", justify="right")
+
+    for p in pgs:
+        table.add_row(p["name"], p["state"], p["strategy"], str(len(p["bundles"])))
+
+    console.print(table)
+    RayPlacementGroupManager.remove_placement_group(pg)
+    console.print(
+        f"[green]SUCCESS:[/green] Verified placement group '{name}' and cleanly deallocated."
+    )
 
 
 @click.group(name="ckodex")

@@ -95,3 +95,15 @@ Exports machine-readable OSCAL component definitions mapping platform safeguards
 ```bash
 uv run ckodex-aiops oscal --out data/08_reporting/oscal/component_definition.json
 ```
+
+### 12. Full Lifecycle Lance Table Optimization (`optimize`)
+Executes full fragment compaction and version pruning according to retention policies:
+```bash
+uv run ckodex-aiops optimize --target data/04_feature/features.lance --target-rows 100000 --retention-days 7
+```
+
+### 13. Ray Placement Group Gang Scheduling (`ray-pg`)
+Atomically allocates, inspects, and verifies balanced CPU/GPU compute bundles for distributed actors:
+```bash
+uv run ckodex-aiops ray-pg --name infer_pg --num-actors 2 --cpus 1
+```

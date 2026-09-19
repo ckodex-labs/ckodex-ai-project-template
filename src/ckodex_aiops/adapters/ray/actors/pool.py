@@ -52,6 +52,36 @@ class ActorPoolManager:
         ]
         return cls(actors)
 
+    @classmethod
+    def create_inference_pool_with_placement_group(
+        cls,
+        size: int = 2,
+        model_state_dict: dict[str, Any] | None = None,
+        input_dim: int = 32,
+        hidden_dim: int = 64,
+        num_classes: int = 4,
+        placement_group: Any = None,
+    ) -> ActorPoolManager:
+        from ckodex_aiops.adapters.ray.actors.inference_actor import InferenceActor
+
+        actors = []
+        for i in range(size):
+            actor_cls = InferenceActor
+            if placement_group is not None:
+                actor_cls = actor_cls.options(
+                    placement_group=placement_group,
+                    placement_group_bundle_index=i % len(placement_group.bundle_specs),
+                )
+            actors.append(
+                actor_cls.remote(
+                    model_state_dict=model_state_dict,
+                    input_dim=input_dim,
+                    hidden_dim=hidden_dim,
+                    num_classes=num_classes,
+                )
+            )
+        return cls(actors)
+
     def dispatch_batch(self, method_name: str, batches: list[Any]) -> list[Any]:
         """
         Dispatches chunks to actors in round-robin fashion and gathers ray object refs.
@@ -61,6 +91,21 @@ class ActorPoolManager:
             actor = self.actors[i % len(self.actors)]
             method = getattr(actor, method_name)
             futures.append(method.remote(batch))
+
+        return ray.get(futures)
+
+    def dispatch_shared_batches(self, method_name: str, batches: list[Any]) -> list[Any]:
+        """
+        Puts large batches into Plasma Object Store once, then passes ObjectRefs to actors
+        for zero-copy deserialization without driver serializing repeatedly.
+        """
+        # Store in Ray plasma object store once
+        obj_refs = [ray.put(batch) for batch in batches]
+        futures = []
+        for i, ref in enumerate(obj_refs):
+            actor = self.actors[i % len(self.actors)]
+            method = getattr(actor, method_name)
+            futures.append(method.remote(ref))
 
         return ray.get(futures)
 

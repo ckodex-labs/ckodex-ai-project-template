@@ -14,10 +14,10 @@ import torch
 import ray
 
 
-@ray.remote
+@ray.remote(max_restarts=3, max_task_retries=3)
 class EmbeddingActor:
     """
-    Ray Actor for parallel, distributed vector generation.
+    Ray Actor for parallel, distributed vector generation with automatic restart fault tolerance.
     """
 
     def __init__(self, embedding_dim: int = 32, seed: int = 42) -> None:

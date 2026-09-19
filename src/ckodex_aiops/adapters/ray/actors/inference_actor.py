@@ -25,10 +25,10 @@ def resolve_accelerator_device(requested: str = "auto") -> torch.device:
     return torch.device("cpu")
 
 
-@ray.remote
+@ray.remote(max_restarts=3, max_task_retries=3)
 class InferenceActor:
     """
-    Ray Actor for stateful, low-latency PyTorch model inference.
+    Ray Actor for stateful, low-latency PyTorch model inference with automatic fault tolerance.
     """
 
     def __init__(

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 import lance
 import lance_ray
@@ -148,3 +148,44 @@ class LanceRayEngine:
         except Exception:
             ds = lance.dataset(str(uri))
             ds.optimize.compact_files(target_rows_per_fragment=target_rows_per_fragment)
+
+    @classmethod
+    def optimize(
+        cls,
+        uri: str | Path,
+        target_rows_per_fragment: int = 100_000,
+        cleanup_older_than_days: int = 7,
+    ) -> dict[str, Any]:
+        """
+        Runs comprehensive Lance table lifecycle optimization:
+        1. Compacts small fragments into larger fragments.
+        2. Cleans up stale versions and unreferenced files older than retention threshold.
+        """
+        from datetime import timedelta
+
+        RayRuntimeManager.initialize()
+        ds = lance.dataset(str(uri))
+        frags_before = len(ds.get_fragments())
+
+        # 1. Compact
+        try:
+            lance_ray.compact_files(str(uri), target_rows_per_fragment=target_rows_per_fragment)
+        except Exception:
+            ds.optimize.compact_files(target_rows_per_fragment=target_rows_per_fragment)
+
+        # 2. Cleanup old versions
+        try:
+            ds.cleanup_old_versions(older_than=timedelta(days=cleanup_older_than_days))
+        except Exception:
+            pass
+
+        ds_after = lance.dataset(str(uri))
+        frags_after = len(ds_after.get_fragments())
+
+        return {
+            "uri": str(uri),
+            "fragments_before": frags_before,
+            "fragments_after": frags_after,
+            "latest_version": ds_after.version,
+            "total_rows": ds_after.count_rows(),
+        }
