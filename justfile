@@ -113,6 +113,30 @@ verify:
 profile-list:
     uv run ckodex-aiops profile list
 
+# Day-2 Deep Observability: explain incident, receipt, or artifact
+explain target="data/06_models/model.safetensors":
+    uv run ckodex-aiops explain {{target}}
+
+# Day-2 Truth Channels: correlate telemetry, execution, decision, and evidence
+trace run_id="":
+    uv run ckodex-aiops trace {{run_id}}
+
+# Day-2 Designed Recovery: verify and recover from checkpoint
+recover checkpoint:
+    uv run ckodex-aiops recover --checkpoint {{checkpoint}}
+
+# Day-2 Governed Replay: execute fenced deterministic replay under lease
+replay receipt dry_run="true":
+    uv run ckodex-aiops replay --receipt {{receipt}} {{ if dry_run == "true" { "--dry-run" } else { "" } }}
+
+# Quarantine Registry: list isolated artifacts
+quarantine-list:
+    uv run ckodex-aiops quarantine list
+
+# Derogation Registry: list explicit accepted risk derogations
+derogation-list:
+    uv run ckodex-aiops derogation list
+
 # ==============================================================================
 # Compliance, Supply Chain & CortAIx CSR
 # ==============================================================================

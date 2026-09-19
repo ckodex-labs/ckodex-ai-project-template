@@ -47,6 +47,11 @@ class AiopsCockpit:
                 )[:5]
             ]
 
+        quar_dir = Path("data/08_reporting/quarantine")
+        quar_count = len(list(quar_dir.glob("quar_*.json"))) if quar_dir.exists() else 0
+        derog_dir = Path("data/08_reporting/derogations")
+        derog_count = len(list(derog_dir.glob("derog_*.json"))) if derog_dir.exists() else 0
+
         return {
             "timestamp": datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%SZ"),
             "profile": baseline.name,
@@ -57,6 +62,8 @@ class AiopsCockpit:
             "datasets": observed["datasets"],
             "models": observed["models"],
             "recent_receipts": recent_receipts,
+            "quarantine_count": quar_count,
+            "derogations_count": derog_count,
         }
 
     def render_terminal(self) -> None:
@@ -98,6 +105,8 @@ class AiopsCockpit:
         left_table.add_row("Evidence", str(vec.evidence))
         left_table.add_row("Lifecycle", str(vec.lifecycle))
         left_table.add_row("Anomalies Active", str(len(data["anomalies"])))
+        left_table.add_row("Quarantined Items", str(data["quarantine_count"]))
+        left_table.add_row("Active Derogations", str(data["derogations_count"]))
 
         layout["left"].update(
             Panel(left_table, border_style="green" if vec.is_healthy() else "yellow")
@@ -220,6 +229,8 @@ class AiopsCockpit:
         <tr><td>Coherence</td><td><span class="badge badge-positive">{vec.coherence}</span></td></tr>
         <tr><td>Evidence Status</td><td><span class="badge">{vec.evidence}</span></td></tr>
         <tr><td>Lifecycle Mode</td><td><span class="badge badge-positive">{vec.lifecycle}</span></td></tr>
+        <tr><td>Quarantined Items</td><td><span class="badge">{data["quarantine_count"]}</span></td></tr>
+        <tr><td>Active Derogations</td><td><span class="badge">{data["derogations_count"]}</span></td></tr>
       </table>
     </div>
 

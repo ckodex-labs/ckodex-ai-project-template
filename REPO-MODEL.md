@@ -18,6 +18,12 @@ generated: 2026-09-18T22:35:00Z | adapters: codegraph:cli, fallback | coverage: 
 - **cli.offboard** (cli) — Offboard subject, revoke capability leases, and record audit receipt `src/ckodex_aiops/cli.py:821`
 - **cli.airgap_pack** (cli) — Package hermetic air-gap bundle with wheels, docs, models, and checksums `src/ckodex_aiops/cli.py:1083`
 - **cli.oci_pack** (cli) — Package repository as OCI Image Layout v1.1.0 artifact with typed layers `src/ckodex_aiops/cli.py:1321`
+- **cli.explain** (cli) — Day-2 deep observability answering 11 constitutional operator diagnostic questions `src/ckodex_aiops/cli.py:1455`
+- **cli.trace** (cli) — Correlate Telemetry, Execution, Decision, and Evidence truth channels `src/ckodex_aiops/cli.py:1497`
+- **cli.recover** (cli) — Reconstruct state and verify cryptographic checkpoint integrity `src/ckodex_aiops/cli.py:1551`
+- **cli.replay** (cli) — Governed execution replay under capability lease and side-effect fencing `src/ckodex_aiops/cli.py:1580`
+- **cli.quarantine** (cli) — Quarantine suspect artifacts/subjects and preserve immutable evidence `src/ckodex_aiops/cli.py:1632`
+- **cli.derogation** (cli) — Explicit risk derogations with compensating controls and expiry `src/ckodex_aiops/cli.py:1718`
 - **kedro.pipeline_registry** (lib-export) — Registers Kedro pipeline DAGs: data ingestion, feature engineering, training, eval, inference, physical_ai `src/ckodex_aiops/pipeline_registry.py:20`
 - **ci.dagger** (ci) — Dagger hermetic SSDLC engine module configuring containerized CI pipelines `ci/dagger.json:1`
 - **ops.justfile** (bin) — Developer task automation recipes for testing, docs, and packaging `justfile:1`

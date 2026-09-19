@@ -12,7 +12,9 @@ import platform
 import shutil
 import time
 import warnings
+from datetime import UTC, datetime
 from pathlib import Path
+from uuid import uuid4
 
 import click
 import polars as pl
@@ -34,7 +36,10 @@ from ckodex_aiops.adapters.ray.placement import RayPlacementGroupManager
 from ckodex_aiops.adapters.ray.runtime import RayRuntimeManager
 from ckodex_aiops.adapters.serving.gateway import ModelServingGateway
 from ckodex_aiops.kernel.conformance import ConformanceEngine
+from ckodex_aiops.kernel.derogation import DerogationRegistry
 from ckodex_aiops.kernel.drift import StatisticalDriftDetector
+from ckodex_aiops.kernel.explanation import ExplanationEngine
+from ckodex_aiops.kernel.intent import AuthorityPath, CapabilityLease
 from ckodex_aiops.kernel.lifecycle import (
     LifecycleManager,
     LifecycleStatus,
@@ -42,8 +47,10 @@ from ckodex_aiops.kernel.lifecycle import (
     OnboardingRequest,
     SubjectType,
 )
+from ckodex_aiops.kernel.quarantine import QuarantineManager, QuarantineStatus
 from ckodex_aiops.kernel.receipt import compute_sha256
 from ckodex_aiops.kernel.reconciler import AutonomicReconciler
+from ckodex_aiops.kernel.recovery import GovernedReplayRequest, RecoveryEngine
 from ckodex_aiops.kernel.state_vector import (
     Anti,
     Coherence,
@@ -53,6 +60,7 @@ from ckodex_aiops.kernel.state_vector import (
     StateVector,
     Valence,
 )
+from ckodex_aiops.kernel.trace import TruthChannelsCorrelator
 from ckodex_aiops.models.quantization import DynamicModelQuantizer
 
 # Suppress harmless third-party framework notices in CLI outputs
@@ -1441,6 +1449,418 @@ def oci_guide(
     )
     for name, cmd in cmds.items():
         console.print(f"[bold yellow]# {name}:[/bold yellow]\n  {cmd}\n")
+
+
+# ==============================================================================
+# Day-2 Deep Observability: Explain, Trace, Recover, Replay (Rules #12, #33, #34, #37)
+# ==============================================================================
+
+
+@app.command(name="explain")
+def explain(
+    target: str = typer.Argument(
+        ..., help="Target receipt ID, artifact path, or incident identifier to explain."
+    ),
+) -> None:
+    """
+    Day-2 Deep Observability: Answering the 11 constitutional operator diagnostic questions (Rule #37).
+    """
+    engine = ExplanationEngine()
+    report = engine.explain(target)
+
+    console.print(
+        Panel.fit(
+            f"[bold cyan]CKODEX Deep Observability Explanation: {report.target}[/bold cyan]",
+            border_style="cyan",
+        )
+    )
+
+    table = Table(title="Diagnostic Findings", border_style="dim", expand=True)
+    table.add_column("Question", style="bold yellow", width=30)
+    table.add_column("Authoritative Machine Finding", style="white")
+
+    table.add_row("1. What happened?", report.what_happened)
+    table.add_row("2. Where?", f"[bold cyan]{report.where}[/bold cyan]")
+    table.add_row("3. Why?", report.why)
+    table.add_row("4. Under whose authority?", f"[dim]{report.authority_urn}[/dim]")
+    table.add_row(
+        "5. What changed?",
+        "\n".join(report.what_changed) if report.what_changed else "[dim]No mutations[/dim]",
+    )
+    table.add_row(
+        "6. What is affected (Blast Radius)?",
+        ", ".join(f"[bold magenta]{b}[/bold magenta]" for b in report.blast_radius),
+    )
+    table.add_row(
+        "7. Is state coherent?",
+        "[green]YES (Coherent)[/green]"
+        if report.is_coherent
+        else "[bold red]NO (Decoherent divergence)[/bold red]",
+    )
+    table.add_row(
+        "8. Is operation safely degraded?",
+        "[yellow]YES (Degraded)[/yellow]"
+        if report.is_safely_degraded
+        else "[green]NO (Normal / Full capability)[/green]",
+    )
+    table.add_row(
+        "9. What is prohibited?",
+        ", ".join(report.prohibited_capabilities)
+        if report.prohibited_capabilities
+        else "[dim]None[/dim]",
+    )
+    table.add_row(
+        "10. Can it recover automatically?",
+        "[green]YES[/green]"
+        if report.auto_recoverable
+        else "[red]NO (Requires human intervention)[/red]",
+    )
+    table.add_row(
+        "11. Evidence proving diagnosis?",
+        "\n".join(f"[dim]{e}[/dim]" for e in report.evidence_receipts)
+        if report.evidence_receipts
+        else "[dim]None recorded[/dim]",
+    )
+
+    console.print(table)
+
+
+@app.command(name="trace")
+def trace(
+    run_id: str = typer.Argument(
+        ..., help="Run ID or prefix to correlate across the four truth channels."
+    ),
+) -> None:
+    """
+    Day-2 Truth Channels: Correlate Telemetry, Execution, Decision, and Evidence traces (Rule #12).
+    """
+    correlator = TruthChannelsCorrelator()
+    trace_record = correlator.correlate(run_id)
+
+    console.print(
+        Panel.fit(
+            f"[bold cyan]Four Truth Channels Correlation: {trace_record.run_id}[/bold cyan]\n"
+            f"Coherence: {'[bold green]COHERENT[/bold green]' if trace_record.is_coherent else '[bold red]DECOHERENT[/bold red]'}",
+            border_style="cyan" if trace_record.is_coherent else "red",
+        )
+    )
+
+    if trace_record.coherence_violations:
+        console.print("[bold red]Decoherence Violations Detected:[/bold red]")
+        for v in trace_record.coherence_violations:
+            console.print(f" • [red]{v}[/red]")
+        console.print()
+
+    table = Table(title="Truth Channels Breakdown", border_style="dim")
+    table.add_column("Channel", style="bold")
+    table.add_column("Entries", justify="center")
+    table.add_column("Key Sample / Status", style="dim")
+
+    telemetry_summary = (
+        f"Latest: {trace_record.telemetry_channel[-1].metric_name}={trace_record.telemetry_channel[-1].metric_value:.4f}"
+        if trace_record.telemetry_channel
+        else "No telemetry stream"
+    )
+    execution_summary = (
+        f"Latest: {trace_record.execution_channel[-1].step_name} ({trace_record.execution_channel[-1].status})"
+        if trace_record.execution_channel
+        else "No execution trace"
+    )
+    decision_summary = (
+        f"Latest: {trace_record.decision_channel[-1].disposition} ({trace_record.decision_channel[-1].decision_type})"
+        if trace_record.decision_channel
+        else "No decision trace"
+    )
+    evidence_summary = (
+        f"Latest: {trace_record.evidence_channel[-1].identifier} ({trace_record.evidence_channel[-1].evidence_type})"
+        if trace_record.evidence_channel
+        else "No evidence trace"
+    )
+
+    table.add_row("1. Telemetry Trace", str(len(trace_record.telemetry_channel)), telemetry_summary)
+    table.add_row("2. Execution Trace", str(len(trace_record.execution_channel)), execution_summary)
+    table.add_row("3. Decision Trace", str(len(trace_record.decision_channel)), decision_summary)
+    table.add_row("4. Evidence Trace", str(len(trace_record.evidence_channel)), evidence_summary)
+
+    console.print(table)
+
+
+@app.command(name="recover")
+def recover(
+    checkpoint: str = typer.Option(
+        ..., "--checkpoint", "-c", help="Checkpoint ID to verify and recover."
+    ),
+    verify_only: bool = typer.Option(
+        False, "--verify-only", help="Verify checkpoint integrity without side effects."
+    ),
+) -> None:
+    """
+    Day-2 Designed Recovery: Reconstruct state and verify cryptographic checkpoint integrity (Rule #33).
+    """
+    engine = RecoveryEngine()
+    passed, msg, state_vec = engine.verify_checkpoint(checkpoint)
+
+    status_str = (
+        "[bold green]PASS (Verified)[/bold green]"
+        if passed
+        else "[bold red]FAIL (Tampered/Missing)[/bold red]"
+    )
+    console.print(
+        Panel.fit(
+            f"[bold cyan]Checkpoint Recovery & Integrity Audit: {checkpoint}[/bold cyan]\n"
+            f"• Status: {status_str}\n"
+            f"• Details: {msg}\n"
+            f"• Recovered State Vector: [bold]{state_vec.lifecycle.value}[/bold] (Valence: {state_vec.valence.value}, Coherence: {state_vec.coherence.value})",
+            border_style="green" if passed else "red",
+        )
+    )
+
+    if not verify_only and passed:
+        console.print(
+            "[bold green]✔ Recovery sequence verified. Ready to resume execution DAG.[/bold green]"
+        )
+
+
+@app.command(name="replay")
+def replay(
+    receipt: str = typer.Option(
+        ..., "--receipt", "-r", help="Source receipt ID to replay under bounded authority."
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Simulate replay without writing side-effects."
+    ),
+) -> None:
+    """
+    Day-2 Governed Replay: Execute deterministic, side-effect-fenced replay under capability lease (Rule #34).
+    """
+    engine = RecoveryEngine()
+    req = GovernedReplayRequest(
+        replay_id=f"replay_{uuid4().hex[:8]}",
+        source_receipt_id=receipt,
+        caller_identity="principal:operator",
+        authority=AuthorityPath(tenant="cfyd", workspace="aiops"),
+        lease=CapabilityLease(capabilities=("pipeline:read", "pipeline:execute")),
+        fenced_side_effects=("SIMULATION_MODE", "PROHIBIT_DATASET_OVERWRITE") if dry_run else (),
+    )
+
+    try:
+        new_receipt = engine.execute_replay(req)
+        console.print(
+            Panel.fit(
+                f"[bold green]Governed Replay Completed Successfully[/bold green]\n"
+                f"• Source Receipt: [bold cyan]{receipt}[/bold cyan]\n"
+                f"• New Replay Receipt: [bold]{new_receipt.receipt_id}[/bold]\n"
+                f"• Authority: [dim]{new_receipt.authority_urn}[/dim]\n"
+                f"• Mode: {'[yellow]DRY-RUN / FENCED[/yellow]' if dry_run else '[green]COMMITTED[/green]'}\n"
+                f"• Canonical Digest: [dim]{new_receipt.canonical_digest()}[/dim]",
+                border_style="green",
+            )
+        )
+    except Exception as e:
+        console.print(f"[bold red]Replay Failed:[/bold red] {e}")
+        raise typer.Exit(code=1)
+
+
+# ==============================================================================
+# Quarantine & Evidence Isolation (Rule #32)
+# ==============================================================================
+
+quarantine_app = typer.Typer(
+    name="quarantine",
+    help="Quarantine & Evidence Preservation Engine (Rule #32)",
+    add_completion=False,
+)
+app.add_typer(quarantine_app, name="quarantine")
+
+
+@quarantine_app.command(name="isolate")
+def quarantine_isolate(
+    target: str = typer.Argument(..., help="Path to suspect artifact or subject to isolate."),
+    anomaly: str = typer.Option(
+        "Manual isolation for security triage",
+        "--anomaly",
+        "-a",
+        help="Trigger anomaly description.",
+    ),
+    target_type: str = typer.Option(
+        "MODEL", "--type", "-t", help="Target type: MODEL, DATASET, LEASE, CONFIG."
+    ),
+) -> None:
+    """
+    Isolate suspect artifact or subject, freeze mutative effects, and preserve immutable evidence.
+    """
+    mgr = QuarantineManager()
+    rec = mgr.isolate_artifact(target_path=target, trigger_anomaly=anomaly, target_type=target_type)
+    console.print(
+        Panel.fit(
+            f"[bold red]Artifact Quarantined & Evidence Preserved[/bold red]\n"
+            f"• Quarantine ID: [bold]{rec.quarantine_id}[/bold]\n"
+            f"• Target URI: [cyan]{rec.target_uri}[/cyan]\n"
+            f"• Preserved Vault: [dim]{rec.quarantine_vault_path}[/dim]\n"
+            f"• Trigger Anomaly: [bold yellow]{rec.trigger_anomaly}[/bold yellow]\n"
+            f"• Evidence Digests: {len(rec.evidence_digests)} files hashed with SHA-256",
+            border_style="red",
+        )
+    )
+
+
+@quarantine_app.command(name="release")
+def quarantine_release(
+    quarantine_id: str = typer.Argument(..., help="Quarantine ID to release."),
+    justification: str = typer.Option(
+        ..., "--justification", "-j", help="Operator justification for release."
+    ),
+) -> None:
+    """
+    Revalidate and release an artifact from quarantine back to operational standing with LineageReceipt.
+    """
+    mgr = QuarantineManager()
+    rec, rcpt = mgr.release(quarantine_id=quarantine_id, justification=justification)
+    console.print(
+        Panel.fit(
+            f"[bold green]Artifact Released from Quarantine[/bold green]\n"
+            f"• Quarantine ID: [bold]{rec.quarantine_id}[/bold]\n"
+            f"• Status: [bold green]{rec.status.value}[/bold green]\n"
+            f"• Lineage Receipt: [bold cyan]{rcpt.receipt_id}[/bold cyan]\n"
+            f"• Justification: {justification}",
+            border_style="green",
+        )
+    )
+
+
+@quarantine_app.command(name="list")
+def quarantine_list(
+    show_all: bool = typer.Option(
+        False, "--all", "-a", help="Show all quarantine records including released."
+    ),
+) -> None:
+    """
+    List active or all quarantined artifacts and subjects.
+    """
+    mgr = QuarantineManager()
+    records = mgr.list_quarantined(active_only=not show_all)
+
+    table = Table(title="Quarantine Records Registry (Rule #32)", border_style="dim")
+    table.add_column("Quarantine ID", style="bold")
+    table.add_column("Status", justify="center")
+    table.add_column("Type", justify="center")
+    table.add_column("Target URI", style="cyan")
+    table.add_column("Trigger Anomaly", style="dim")
+
+    for r in records:
+        status_style = (
+            "red"
+            if r.status == QuarantineStatus.ISOLATED
+            else ("yellow" if r.status == QuarantineStatus.INVESTIGATING else "green")
+        )
+        table.add_row(
+            r.quarantine_id,
+            f"[{status_style}]{r.status.value}[/{status_style}]",
+            r.target_type,
+            r.target_uri,
+            r.trigger_anomaly,
+        )
+
+    console.print(table)
+
+
+# ==============================================================================
+# Explicit Risk Derogations (Rule #23)
+# ==============================================================================
+
+derogation_app = typer.Typer(
+    name="derogation",
+    help="Explicit Derogation & Accepted Risk Engine (Rule #23)",
+    add_completion=False,
+)
+app.add_typer(derogation_app, name="derogation")
+
+
+@derogation_app.command(name="create")
+def derogation_create(
+    requirement: str = typer.Option(
+        ..., "--requirement", "-r", help="Failed requirement ID or rule."
+    ),
+    scope: str = typer.Option(
+        ..., "--scope", "-s", help="Scope of the derogation (e.g. dev-cluster, model-eval)."
+    ),
+    approver: str = typer.Option(..., "--approver", "-a", help="Authorized principal approver."),
+    justification: str = typer.Option(
+        ..., "--justification", "-j", help="Business and technical rationale."
+    ),
+    controls: list[str] = typer.Option(
+        [], "--control", "-c", help="Mandatory compensating controls."
+    ),
+    days: float = typer.Option(7.0, "--days", "-d", help="Validity duration in days."),
+) -> None:
+    """
+    Record an explicit, time-bounded risk derogation with compensating controls (Rule #23).
+    """
+    reg = DerogationRegistry()
+    digest = compute_sha256(f"{requirement}:{scope}:{approver}:{justification}")
+    rec = reg.create_derogation(
+        failed_requirement=requirement,
+        scope=scope,
+        approver=approver,
+        justification=justification,
+        compensating_controls=controls or ["COMPENSATING_TELEMETRY_LOGGING"],
+        evidence_digest=digest,
+        duration_days=days,
+    )
+    console.print(
+        Panel.fit(
+            f"[bold yellow]Explicit Risk Derogation Registered (Rule #23)[/bold yellow]\n"
+            f"• Derogation ID: [bold]{rec.derogation_id}[/bold]\n"
+            f"• Failed Requirement: [bold red]{rec.failed_requirement}[/bold red]\n"
+            f"• Scope: [cyan]{rec.scope}[/cyan]\n"
+            f"• Approver: [bold]{rec.approver}[/bold]\n"
+            f"• Validity: {days} days (Expires: {datetime.fromtimestamp(rec.expires_at_epoch, UTC).isoformat()})\n"
+            f"• Compensating Controls: {', '.join(rec.compensating_controls)}\n\n"
+            f"[dim]Invariant: Derogation accepted risk does not rewrite vector state.[/dim]",
+            border_style="yellow",
+        )
+    )
+
+
+@derogation_app.command(name="list")
+def derogation_list(
+    show_all: bool = typer.Option(False, "--all", "-a", help="Show all records including expired."),
+) -> None:
+    """
+    List active or all recorded risk derogations.
+    """
+    reg = DerogationRegistry()
+    records = reg.list_derogations(active_only=not show_all)
+
+    table = Table(title="Risk Derogation Registry (Rule #23)", border_style="dim")
+    table.add_column("Derogation ID", style="bold")
+    table.add_column("Status", justify="center")
+    table.add_column("Requirement", style="red")
+    table.add_column("Scope", style="cyan")
+    table.add_column("Approver", style="dim")
+    table.add_column("Expires UTC", style="dim")
+
+    for r in records:
+        status_text = "[green]ACTIVE[/green]" if r.is_valid() else "[red]EXPIRED/REVOKED[/red]"
+        exp_str = datetime.fromtimestamp(r.expires_at_epoch, UTC).strftime("%Y-%m-%d %H:%M")
+        table.add_row(
+            r.derogation_id, status_text, r.failed_requirement, r.scope, r.approver, exp_str
+        )
+
+    console.print(table)
+
+
+@derogation_app.command(name="revoke")
+def derogation_revoke(
+    derogation_id: str = typer.Argument(..., help="Derogation ID to revoke."),
+    reason: str = typer.Option(..., "--reason", "-r", help="Reason for revocation."),
+) -> None:
+    """
+    Revoke an active derogation immediately.
+    """
+    reg = DerogationRegistry()
+    rec = reg.revoke_derogation(derogation_id, reason)
+    console.print(f"[bold red]Derogation {rec.derogation_id} explicitly REVOKED.[/bold red]")
 
 
 @click.group(name="ckodex")

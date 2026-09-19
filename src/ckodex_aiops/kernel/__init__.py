@@ -1,7 +1,19 @@
 """
 Pure Semantic Kernel for CKODEX AI Platform.
+Constitutional GAL 1: Pure Semantic Kernel, Zero Framework Leakage.
 """
 
+from ckodex_aiops.kernel.degradation import (
+    ContainmentScope,
+    DegradationManager,
+    DegradationReceipt,
+    DegradedModeContract,
+    RuntimeMode,
+)
+from ckodex_aiops.kernel.derogation import (
+    DerogationRecord,
+    DerogationRegistry,
+)
 from ckodex_aiops.kernel.domain import (
     DatasetContract,
     EvaluationMetrics,
@@ -9,16 +21,30 @@ from ckodex_aiops.kernel.domain import (
     InferenceResponse,
     ModelArtifactMetadata,
 )
+from ckodex_aiops.kernel.explanation import (
+    ExplanationEngine,
+    ExplanationReport,
+)
 from ckodex_aiops.kernel.intent import (
     AuthorityPath,
     CapabilityLease,
     IntentEnvelope,
     IntentLifecycle,
 )
+from ckodex_aiops.kernel.quarantine import (
+    QuarantineManager,
+    QuarantineRecord,
+    QuarantineStatus,
+)
 from ckodex_aiops.kernel.receipt import (
     EvidenceDigest,
     LineageReceipt,
     compute_sha256,
+)
+from ckodex_aiops.kernel.recovery import (
+    GovernedReplayRequest,
+    RecoveryCheckpoint,
+    RecoveryEngine,
 )
 from ckodex_aiops.kernel.state_vector import (
     Anti,
@@ -29,6 +55,14 @@ from ckodex_aiops.kernel.state_vector import (
     Presence,
     StateVector,
     Valence,
+)
+from ckodex_aiops.kernel.trace import (
+    CorrelatedTruthTrace,
+    DecisionChannelEntry,
+    EvidenceChannelEntry,
+    ExecutionChannelEntry,
+    TelemetryChannelEntry,
+    TruthChannelsCorrelator,
 )
 
 __all__ = [
@@ -52,4 +86,25 @@ __all__ = [
     "EvaluationMetrics",
     "InferenceRequest",
     "InferenceResponse",
+    "RuntimeMode",
+    "ContainmentScope",
+    "DegradedModeContract",
+    "DegradationReceipt",
+    "DegradationManager",
+    "DerogationRecord",
+    "DerogationRegistry",
+    "QuarantineStatus",
+    "QuarantineRecord",
+    "QuarantineManager",
+    "RecoveryCheckpoint",
+    "GovernedReplayRequest",
+    "RecoveryEngine",
+    "TelemetryChannelEntry",
+    "ExecutionChannelEntry",
+    "DecisionChannelEntry",
+    "EvidenceChannelEntry",
+    "CorrelatedTruthTrace",
+    "TruthChannelsCorrelator",
+    "ExplanationReport",
+    "ExplanationEngine",
 ]

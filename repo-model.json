@@ -113,6 +113,42 @@
       "intent": "Package repository as OCI Image Layout v1.1.0 artifact with typed layers"
     },
     {
+      "name": "cli.explain",
+      "kind": "cli",
+      "evidence": "src/ckodex_aiops/cli.py:1455",
+      "intent": "Day-2 deep observability answering 11 constitutional operator diagnostic questions"
+    },
+    {
+      "name": "cli.trace",
+      "kind": "cli",
+      "evidence": "src/ckodex_aiops/cli.py:1497",
+      "intent": "Correlate Telemetry, Execution, Decision, and Evidence truth channels"
+    },
+    {
+      "name": "cli.recover",
+      "kind": "cli",
+      "evidence": "src/ckodex_aiops/cli.py:1551",
+      "intent": "Reconstruct state and verify cryptographic checkpoint integrity"
+    },
+    {
+      "name": "cli.replay",
+      "kind": "cli",
+      "evidence": "src/ckodex_aiops/cli.py:1580",
+      "intent": "Governed execution replay under capability lease and side-effect fencing"
+    },
+    {
+      "name": "cli.quarantine",
+      "kind": "cli",
+      "evidence": "src/ckodex_aiops/cli.py:1632",
+      "intent": "Quarantine suspect artifacts/subjects and preserve immutable evidence"
+    },
+    {
+      "name": "cli.derogation",
+      "kind": "cli",
+      "evidence": "src/ckodex_aiops/cli.py:1718",
+      "intent": "Explicit risk derogations with compensating controls and expiry"
+    },
+    {
       "name": "kedro.pipeline_registry",
       "kind": "lib-export",
       "evidence": "src/ckodex_aiops/pipeline_registry.py:20",

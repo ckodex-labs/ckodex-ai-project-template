@@ -236,6 +236,25 @@ uv run ckodex-aiops oci guide --image ghcr.io/org/repo:1.0.0
 
 # Audit cryptographic SHA-256 lineage receipts
 uv run ckodex-aiops verify
+
+# Day-2 Deep Observability: explain incident, receipt, or artifact (Rule #37)
+uv run ckodex-aiops explain data/06_models/model.safetensors
+
+# Day-2 Four Truth Channels: correlate telemetry, execution, decision, and evidence (Rule #12)
+uv run ckodex-aiops trace rcpt_01519ee75d6b
+
+# Designed Recovery & Checkpoint Integrity Verification (Rule #33)
+uv run ckodex-aiops recover --checkpoint ckpt_1f4c98563c65
+
+# Governed Replay under capability lease and side-effect fencing (Rule #34)
+uv run ckodex-aiops replay --receipt rcpt_01519ee75d6b --dry-run
+
+# Quarantine suspect artifact or subject and preserve evidence (Rule #32)
+uv run ckodex-aiops quarantine isolate data/06_models/model.safetensors -a "Triage investigation"
+uv run ckodex-aiops quarantine list
+
+# Manage explicit time-bounded risk derogations (Rule #23)
+uv run ckodex-aiops derogation list
 ```
 
 ---
@@ -261,16 +280,19 @@ make docs-serve
 
 ## 7. Verification Evidence & Quality Assurance
 
-The test suite enforces constitutional invariants across 73 tests:
+The test suite enforces constitutional invariants across 84 tests:
 
 ```text
-======================== 73 passed in 80.46s (0:01:20) =========================
+======================== 84 passed in 56.25s (0:00:56) =========================
 ✓ tests/test_airgap.py: PASS (Air-gap packaging, manifest hashing, tamper detection)
 ✓ tests/test_coactor.py: PASS (Actor & Co-Actor asynchronous telemetry buffering)
 ✓ tests/test_compliance.py: PASS (In-toto SLSA v1.0 provenance & NIST OSCAL)
 ✓ tests/test_conformance.py: PASS (Structural, Anti-Dominance, Degradation contracts)
 ✓ tests/test_csr.py: PASS (CortAIx Factory CSR 107 controls traceability matrix)
+✓ tests/test_degradation.py: PASS (Degraded mode contracts, safe hold, capability fencing)
+✓ tests/test_derogation.py: PASS (Explicit accepted risk derogations & compensating controls)
 ✓ tests/test_drift.py: PASS (Statistical Wasserstein distance & PSI drift detection)
+✓ tests/test_explanation.py: PASS (Deep observability 11-question explanation engine)
 ✓ tests/test_kernel.py: PASS (State vector algebra, anti-dominance, SHA-256 receipts)
 ✓ tests/test_lance_dataset.py: PASS (Zero-copy Lance scanning, pushdown filters)
 ✓ tests/test_lance_ray.py: PASS (Ray Data ↔ Lance zero-copy streaming & compaction)
@@ -282,17 +304,20 @@ The test suite enforces constitutional invariants across 73 tests:
 ✓ tests/test_profiles.py: PASS (Profile registry, baseline promotion, drift detection)
 ✓ tests/test_pytorch_models.py: PASS (Classifier forward pass, streaming DataLoader)
 ✓ tests/test_quantization.py: PASS (Int8 quantization, compression & cosine fidelity)
+✓ tests/test_quarantine.py: PASS (Quarantine isolation, vault storage, evidence preservation)
 ✓ tests/test_ray_actors.py: PASS (Ray embedding/inference actors & actor pool)
 ✓ tests/test_ray_advanced.py: PASS (Placement groups, zero-copy Plasma dispatch, full optimize)
 ✓ tests/test_reconciler.py: PASS (Autonomic Day-2 Reconciler loop & self-healing)
+✓ tests/test_recovery.py: PASS (Designed checkpoint recovery & governed execution replay)
 ✓ tests/test_sbom.py: PASS (CycloneDX v1.5 and SPDX 2.3 JSON SBOM generation)
 ✓ tests/test_secrets.py: PASS (Redacted SecretValue, SecretLease, Vault, KMS, Keyless)
 ✓ tests/test_serving.py: PASS (Model serving gateway, /healthz, /livez, /infer)
+✓ tests/test_trace.py: PASS (Four truth channels cross-channel correlator & coherence)
 ✓ tests/test_tracking.py: PASS (Flight Recorder & MLflow experiment tracking)
 ✓ tests/test_validation.py: PASS (Shared validation contracts & preflight bounds)
 
-Ruff Linter & Formatter: 100% clean across 120 files (0 errors, 0 warnings).
-Hugo Living Documentation: 19 pages built in 22 ms (0 errors, 0 warnings).
+Ruff Linter & Formatter: 100% clean across 133 files (0 errors, 0 warnings).
+Hugo Living Documentation: 22 pages built in 20 ms (0 errors, 0 warnings).
 Platform Doctor: PASS (All hardware, compute, storage, and secrets subsystems healthy).
 ```
 

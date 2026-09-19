@@ -63,6 +63,18 @@ drift:
 cockpit:
 	uv run ckodex-aiops cockpit --export-html docs/static/cockpit.html
 
+explain:
+	uv run ckodex-aiops explain data/06_models/model.safetensors
+
+trace:
+	uv run ckodex-aiops trace rcpt
+
+quarantine-list:
+	uv run ckodex-aiops quarantine list
+
+derogation-list:
+	uv run ckodex-aiops derogation list
+
 airgap-pack:
 	uv run ckodex-aiops airgap-pack
 
