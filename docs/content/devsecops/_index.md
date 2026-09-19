@@ -139,3 +139,57 @@ Machine-verifiable security postures are emitted as **OSCAL 1.2** documents (`ju
 - Five architectural components mapped: `ckodex-kernel`, `ckodex-secrets-engine`, `dagger-ssdlc-harness`, `ray-distributed-mesh`, and `autonomic-reconciler`.
 - Automated cross-referencing between NIST SP 800-53 controls (`AC-3`, `AU-2`, `SC-13`, `SA-11`, `CM-8`, `SC-28`, `SI-7`) and CortAIx CSR control identifiers.
 
+---
+
+## 10. OCI Artifact Packaging & Distribution (OCI Spec v1.1.0)
+
+In compliance with **CKODEX Rule #39 (Supply-Chain Identity is Content-Addressed)** and **Rule #40 (Air-Gap is a Design Property)**, the workspace template is packaged as an immutable, content-addressed OCI Artifact using standard OCI Image Layout (`application/vnd.oci.image.manifest.v1+json`).
+
+### Multi-Layer Artifact Architecture
+
+```mermaid
+flowchart LR
+    Manifest["OCI Manifest v1<br/>(application/vnd.oci.image.manifest.v1+json)"]
+    Config["Template Config<br/>(application/vnd.ckodex.template.config.v1+json)"]
+    L0["Layer 0: template.tar.gz<br/>(Clean Scaffolding)"]
+    L1["Layer 1: cyclonedx.json<br/>(CycloneDX v1.5 SBOM)"]
+    L2["Layer 2: spdx.json<br/>(SPDX 2.3 SBOM)"]
+    L3["Layer 3: oscal_components.json<br/>(NIST SP 800-53 OSCAL)"]
+    L4["Layer 4: cortaix_csr.json<br/>(CortAIx CSR Matrix)"]
+
+    Manifest --> Config
+    Manifest --> L0
+    Manifest --> L1
+    Manifest --> L2
+    Manifest --> L3
+    Manifest --> L4
+```
+
+### Local Packaging & Inspection
+```bash
+# Package template into standard OCI Image Layout
+just oci-pack version=1.0.0 tag=latest
+
+# Inspect layout layers, config, and manifest without extracting
+just oci-inspect
+
+# Unpack template to scaffold a new workspace
+just oci-unpack /path/to/new-aiops-project
+```
+
+### Enterprise Registry Distribution (ORAS & Sigstore Cosign)
+```bash
+# Push layout to GitHub Packages / ECR / Harbor using CNCF ORAS
+oras copy --from-oci-layout dist/oci-template:latest ghcr.io/cfyd-ai/ckodex-aiops-template:v1.0.0
+
+# Sign OCI Artifact with Sigstore Cosign
+cosign sign --yes ghcr.io/cfyd-ai/ckodex-aiops-template:v1.0.0
+
+# Attach SLSA Provenance as an OCI Referrer
+cosign attest --yes --predicate data/08_reporting/attestations/statement.intoto.jsonl \
+  --type https://slsa.dev/provenance/v1 ghcr.io/cfyd-ai/ckodex-aiops-template:v1.0.0
+
+# Consumer instantiation from registry
+oras pull ghcr.io/cfyd-ai/ckodex-aiops-template:v1.0.0 --output ./my-new-project
+```
+

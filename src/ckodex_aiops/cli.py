@@ -27,6 +27,7 @@ from ckodex_aiops.adapters.compliance.intoto import IntotoProvenanceAttestor
 from ckodex_aiops.adapters.compliance.oscal import OscalComplianceGenerator
 from ckodex_aiops.adapters.compliance.sbom import SbomGenerator
 from ckodex_aiops.adapters.distribution.airgap import AirgapPackager
+from ckodex_aiops.adapters.distribution.oci import OciTemplatePackager
 from ckodex_aiops.adapters.observability.cockpit import AiopsCockpit
 from ckodex_aiops.adapters.ray.lance_ray import LanceRayEngine
 from ckodex_aiops.adapters.ray.placement import RayPlacementGroupManager
@@ -1307,6 +1308,139 @@ def ray_pg(
     console.print(
         f"[green]SUCCESS:[/green] Verified placement group '{name}' and cleanly deallocated."
     )
+
+
+oci_app = typer.Typer(
+    name="oci",
+    help="OCI Artifact Packaging & Distribution Engine (OCI Spec v1.1.0, ORAS, Cosign)",
+)
+app.add_typer(oci_app, name="oci")
+
+
+@oci_app.command(name="pack")
+def oci_pack(
+    source: str = typer.Option(".", "--source", "-s", help="Source root of the template."),
+    out: str = typer.Option(
+        "dist/oci-template", "--out", "-o", help="Output OCI Image Layout directory."
+    ),
+    version: str = typer.Option("1.0.0", "--version", "-v", help="Template version string."),
+    tag: str = typer.Option("latest", "--tag", "-t", help="Tag annotation for OCI index."),
+) -> None:
+    """
+    Package template as a multi-layer OCI Artifact with embedded SBOMs and OSCAL definitions.
+    """
+    res = OciTemplatePackager.pack_oci_layout(
+        source_root=source,
+        output_layout_dir=out,
+        template_version=version,
+        tag=tag,
+    )
+    console.print(
+        Panel.fit(
+            f"[bold green]OCI Artifact Packaged Successfully (OCI Spec v1.1.0)[/bold green]\n"
+            f"• Layout Directory: [bold]{res['layout_dir']}[/bold]\n"
+            f"• Manifest Digest: [bold cyan]{res['manifest_digest']}[/bold cyan] ({res['manifest_size']} bytes)\n"
+            f"• Config Digest: [dim]{res['config_digest'][:24]}...[/dim]\n"
+            f"• Layers Count: [bold]{res['layers_count']}[/bold] (Template + SBOMs + OSCAL + CSR)\n"
+            f"• Template Archive: [dim]{res['template_archive_digest'][:24]}...[/dim] ({res['template_archive_size'] / (1024 * 1024):.2f} MB)\n"
+            f"• Lineage Receipt: [dim]{res['receipt_id']}[/dim]",
+            border_style="green",
+        )
+    )
+
+
+@oci_app.command(name="inspect")
+def oci_inspect(
+    layout: str = typer.Option(
+        "dist/oci-template", "--layout", "-l", help="OCI Image Layout directory."
+    ),
+) -> None:
+    """
+    Inspect an OCI Image Layout directory and its manifest, config, and layer descriptors.
+    """
+    data = OciTemplatePackager.inspect_layout(layout)
+    console.print(Panel.fit(f"[bold cyan]OCI Artifact Inspection: {layout}[/bold cyan]"))
+
+    table = Table(title="Manifest & Config", border_style="dim")
+    table.add_column("Field", style="bold")
+    table.add_column("Value", style="green")
+
+    table.add_row("Manifest Digest", data["manifest_digest"])
+    table.add_row("Artifact Type", data["artifact_type"])
+    table.add_row("Template Name", data["config"].get("templateName", "unknown"))
+    table.add_row("Template Version", data["config"].get("version", "unknown"))
+    table.add_row("Python Constraint", data["config"].get("pythonVersion", "unknown"))
+    table.add_row(
+        "Constitutional Standard", data["config"].get("constitutionalStandard", "unknown")
+    )
+    console.print(table)
+
+    layer_table = Table(title="OCI Artifact Layers", border_style="dim")
+    layer_table.add_column("Title", style="bold cyan")
+    layer_table.add_column("Media Type")
+    layer_table.add_column("Digest", style="dim")
+    layer_table.add_column("Size", justify="right")
+
+    for layer in data["layers"]:
+        size_kb = (
+            f"{layer['size_bytes'] / 1024:.1f} KB"
+            if layer["size_bytes"] < 1024 * 1024
+            else f"{layer['size_bytes'] / (1024 * 1024):.2f} MB"
+        )
+        layer_table.add_row(
+            layer["title"], layer["media_type"], layer["digest"][:24] + "...", size_kb
+        )
+
+    console.print(layer_table)
+
+
+@oci_app.command(name="unpack")
+def oci_unpack(
+    layout: str = typer.Option(
+        "dist/oci-template", "--layout", "-l", help="OCI Image Layout directory."
+    ),
+    dest: str = typer.Option(
+        ..., "--dest", "-d", help="Destination directory to unpack the template into."
+    ),
+) -> None:
+    """
+    Unpack the template layer from an OCI layout into a new project directory.
+    """
+    res = OciTemplatePackager.unpack_template(layout_dir=layout, destination_dir=dest)
+    console.print(
+        Panel.fit(
+            f"[bold green]Template Successfully Instantiated from OCI Artifact[/bold green]\n"
+            f"• Destination: [bold]{res['destination_dir']}[/bold]\n"
+            f"• Verified Layer Digest: [dim]{res['extracted_layer_digest']}[/dim]\n"
+            f"• Files Unpacked: [bold]{res['files_unpacked']}[/bold]\n\n"
+            f"[dim]Next steps:[/dim]\n"
+            f"  cd {dest} && just install && just doctor",
+            border_style="green",
+        )
+    )
+
+
+@oci_app.command(name="guide")
+def oci_guide(
+    image_ref: str = typer.Option(
+        "ghcr.io/cfyd-ai/ckodex-aiops-template:v1.0.0",
+        "--image-ref",
+        "-r",
+        help="Target OCI registry reference.",
+    ),
+    layout: str = typer.Option(
+        "dist/oci-template", "--layout", "-l", help="OCI Image Layout directory."
+    ),
+) -> None:
+    """
+    Display production ORAS and Cosign commands to push, pull, sign, and attest the OCI artifact.
+    """
+    cmds = OciTemplatePackager.generate_oras_commands(image_ref=image_ref, layout_dir=layout)
+    console.print(
+        Panel.fit("[bold cyan]OCI Artifact Distribution Guide (ORAS + Cosign)[/bold cyan]")
+    )
+    for name, cmd in cmds.items():
+        console.print(f"[bold yellow]# {name}:[/bold yellow]\n  {cmd}\n")
 
 
 @click.group(name="ckodex")

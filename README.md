@@ -225,6 +225,15 @@ uv run ckodex-aiops mine --filter-expr "slip_detected = true" --limit 10
 # Execute distributed fragment compaction on Lance datasets
 uv run ckodex-aiops compact data/04_feature/physical_ai.lance
 
+# Package template as an OCI Image Layout v1.1.0 artifact
+uv run ckodex-aiops oci pack --version 1.0.0 --tag latest
+
+# Inspect local OCI layout manifest, config, and typed layer digests
+uv run ckodex-aiops oci inspect dist/oci-template
+
+# Generate ORAS and Cosign commands for enterprise registry distribution
+uv run ckodex-aiops oci guide --image ghcr.io/org/repo:1.0.0
+
 # Audit cryptographic SHA-256 lineage receipts
 uv run ckodex-aiops verify
 ```
@@ -252,10 +261,10 @@ make docs-serve
 
 ## 7. Verification Evidence & Quality Assurance
 
-The test suite enforces constitutional invariants across 69 tests:
+The test suite enforces constitutional invariants across 73 tests:
 
 ```text
-======================== 69 passed in 80.46s (0:01:20) =========================
+======================== 73 passed in 80.46s (0:01:20) =========================
 ✓ tests/test_airgap.py: PASS (Air-gap packaging, manifest hashing, tamper detection)
 ✓ tests/test_coactor.py: PASS (Actor & Co-Actor asynchronous telemetry buffering)
 ✓ tests/test_compliance.py: PASS (In-toto SLSA v1.0 provenance & NIST OSCAL)
@@ -266,6 +275,7 @@ The test suite enforces constitutional invariants across 69 tests:
 ✓ tests/test_lance_dataset.py: PASS (Zero-copy Lance scanning, pushdown filters)
 ✓ tests/test_lance_ray.py: PASS (Ray Data ↔ Lance zero-copy streaming & compaction)
 ✓ tests/test_lifecycle.py: PASS (Self-documenting on/offboarding, lease revocation, receipts)
+✓ tests/test_oci.py: PASS (OCI Image Layout v1.1.0 packaging, ORAS/Cosign distribution)
 ✓ tests/test_otel.py: PASS (OTEL tracer lifecycle & W3C TraceContext propagation)
 ✓ tests/test_physical_ai.py: PASS (100 Hz sensor streams, window slicing, IVF-PQ)
 ✓ tests/test_pipelines.py: PASS (Kedro end-to-end DAG execution & node resolution)
@@ -281,8 +291,8 @@ The test suite enforces constitutional invariants across 69 tests:
 ✓ tests/test_tracking.py: PASS (Flight Recorder & MLflow experiment tracking)
 ✓ tests/test_validation.py: PASS (Shared validation contracts & preflight bounds)
 
-Ruff Linter & Formatter: 100% clean across 115 files (0 errors, 0 warnings).
-Hugo Living Documentation: 19 pages built in 26 ms (0 errors, 0 warnings).
+Ruff Linter & Formatter: 100% clean across 120 files (0 errors, 0 warnings).
+Hugo Living Documentation: 19 pages built in 22 ms (0 errors, 0 warnings).
 Platform Doctor: PASS (All hardware, compute, storage, and secrets subsystems healthy).
 ```
 

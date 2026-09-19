@@ -141,6 +141,22 @@ airgap-pack name="ckodex-aiops-production" out="data/08_reporting/airgap/bundle.
 airgap-verify bundle="data/08_reporting/airgap/bundle.tar.gz":
     uv run ckodex-aiops airgap-verify --path {{bundle}}
 
+# Package template as an OCI Image Layout artifact (OCI Spec v1.1.0)
+oci-pack version="1.0.0" tag="latest":
+    uv run ckodex-aiops oci pack --version {{version}} --tag {{tag}}
+
+# Inspect OCI Image Layout artifact manifest, config, and layers
+oci-inspect layout="dist/oci-template":
+    uv run ckodex-aiops oci inspect --layout {{layout}}
+
+# Unpack template layer from OCI artifact to scaffold new project
+oci-unpack dest layout="dist/oci-template":
+    uv run ckodex-aiops oci unpack --layout {{layout}} --dest {{dest}}
+
+# Show ORAS and Cosign OCI distribution and signing guide
+oci-guide ref="ghcr.io/cfyd-ai/ckodex-aiops-template:v1.0.0":
+    uv run ckodex-aiops oci guide --image-ref {{ref}}
+
 # ==============================================================================
 # Governance, Authority & Subject Lifecycle (On/Offboarding)
 # ==============================================================================
