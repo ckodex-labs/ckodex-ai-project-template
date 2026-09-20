@@ -100,4 +100,4 @@ $$D(S) = \begin{cases}
 ### The Axiom of Non-Averaging:
 $$\forall k \ge 1, \quad \left( \sum_{j=1}^k \text{POSITIVE}_j \right) \oplus \text{ANTI} \equiv \text{ANTI}$$
 
-No quantity of high performance, fast throughput, or passing test suites can average out a single hard invariant violation. Anti-dominance is implemented directly in [`src/ckodex_aiops/kernel/engine.py`](file:///Users/mchorfa/Documents/projects/runbase/ckodex-cfyd-aiops/src/ckodex_aiops/kernel/engine.py) to guarantee that the system remains safe under all adversarial conditions.
+No quantity of high performance, fast throughput, or passing test suites can average out a single hard invariant violation. Anti-dominance is implemented directly in `src/ckodex_aiops/kernel/engine.py` to guarantee that the system remains safe under all adversarial conditions.

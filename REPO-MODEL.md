@@ -1,4 +1,4 @@
-# REPO-MODEL — ckodex-cfyd-aiops @ 9862431
+# REPO-MODEL — ckx-ai-project-template @ 9862431
 generated: 2026-09-18T22:35:00Z | adapters: codegraph:cli, fallback | coverage: 35/163 (0.215)
 
 ## Entry points

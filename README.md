@@ -1,4 +1,4 @@
-# CKODEX AIOps Platform: World-Class AI & DevSecOps Architecture
+# ckx-ai-project-template: World-Class AI Operations & DevSecOps Template
 
 [![Python 3.12](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
 [![UV](https://img.shields.io/badge/package%20manager-uv-green.svg)](https://astral.sh/uv)
@@ -99,7 +99,7 @@ flowchart TD
 ## 3. Directory Layout
 
 ```text
-ckodex-cfyd-aiops/
+ckx-ai-project-template/
 ├── pyproject.toml               # UV configuration, dependencies, tools
 ├── uv.lock                      # Deterministic lockfile
 ├── justfile                     # Modern, self-documenting command runner

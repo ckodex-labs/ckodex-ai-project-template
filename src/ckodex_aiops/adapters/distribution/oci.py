@@ -187,7 +187,7 @@ class OciTemplatePackager:
         # 4. Create OCI Config Blob
         config_payload = {
             "schemaVersion": 1,
-            "templateName": "ckodex-cfyd-aiops",
+            "templateName": "ckx-ai-project-template",
             "version": template_version,
             "description": "World-Class Kedro + UV + Ray + Lance + Polars + PyTorch AIOps Architecture",
             "constitutionalStandard": "GAL 1",

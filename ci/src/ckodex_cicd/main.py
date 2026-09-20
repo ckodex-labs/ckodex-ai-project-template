@@ -91,7 +91,7 @@ class CkodexCicd:
             .with_entrypoint([])
             .with_mounted_directory("/src", source)
             .with_workdir("/src")
-            .with_exec(["syft", "dir:.", "-o", "spdx-json=/src/sbom.spdx.json"])
+            .with_exec(["/syft", "dir:.", "-o", "spdx-json=/src/sbom.spdx.json"])
             .file("/src/sbom.spdx.json")
         )
 
@@ -105,7 +105,7 @@ class CkodexCicd:
             .with_entrypoint([])
             .with_file("/tmp/sbom.spdx.json", sbom)
             .with_exec(
-                ["grype", "sbom:/tmp/sbom.spdx.json", "--fail-on", "critical", "--output", "table"]
+                ["/grype", "sbom:/tmp/sbom.spdx.json", "--fail-on", "critical", "--output", "table"]
             )
         )
 
@@ -118,7 +118,7 @@ class CkodexCicd:
             .with_entrypoint([])
             .with_mounted_directory("/src", source)
             .with_workdir("/src")
-            .with_exec(["gitleaks", "dir", "--verbose", "--redact", "--source=/src"])
+            .with_exec(["gitleaks", "dir", "--verbose", "--redact", "/src"])
         )
 
     @function

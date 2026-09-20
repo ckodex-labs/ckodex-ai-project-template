@@ -48,7 +48,7 @@ Build the documentation site using Dagger with an overridden `baseURL` matching 
 
 ```bash
 # Export the compiled site into docs/public
-just docs-pages-build base_url="https://ckodex-labs.github.io/ckodex-ai-project-template/"
+just docs-pages-build base_url="https://ckodex-labs.github.io/ckx-ai-project-template/"
 ```
 
 Inspect the generated static artifacts:
@@ -93,8 +93,7 @@ jobs:
         with:
           version: "0.21.8"
           verb: call
-          args: build-docs --source . --base-url "https://ckodex-labs.github.io/ckodex-ai-project-template/" export --path ./public
-          workdir: ci
+          args: -m ./ci build-docs --source . --base-url "https://ckodex-labs.github.io/ckx-ai-project-template/" export --path ./public
 
       - name: Upload GitHub Pages Artifact
         uses: actions/upload-pages-artifact@v3

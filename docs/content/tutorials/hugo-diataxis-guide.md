@@ -119,7 +119,7 @@ Once your pull request merges into `main`:
 1. The `.github/workflows/pages.yml` workflow triggers.
 2. Dagger compiles the Hugo site with the repository's GitHub Pages `baseURL`:
    ```bash
-   dagger call -m ./ci build-docs --source . --base-url "https://ckodex-labs.github.io/ckodex-ai-project-template/" export --path ./public
+   dagger call -m ./ci build-docs --source . --base-url "https://ckodex-labs.github.io/ckx-ai-project-template/" export --path ./public
    ```
 3. GitHub Pages securely deploys the content to the live public URL.
 

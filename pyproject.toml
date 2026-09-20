@@ -7,7 +7,7 @@ packages = ["src/ckodex_aiops"]
 
 
 [project]
-name = "ckodex-aiops"
+name = "ckx-ai-project-template"
 version = "0.2.0"
 description = "World-Class AI Platform Template: Kedro, UV, Ray Actors, Lance, Polars, PyTorch"
 readme = "README.md"
@@ -35,11 +35,22 @@ dependencies = [
 ]
 
 [project.scripts]
+ckx = "ckodex_aiops.cli:app"
 ckodex-aiops = "ckodex_aiops.cli:app"
 ckodex = "ckodex_aiops.cli:app"
 
 [project.entry-points."kedro.project_commands"]
 ckodex_aiops = "ckodex_aiops.cli:kedro_commands"
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu", marker = "sys_platform == 'linux'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [dependency-groups]
 dev = [

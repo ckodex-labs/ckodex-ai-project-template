@@ -1,6 +1,6 @@
-baseURL = 'https://ckodex.cfyd.ai/'
+baseURL = 'https://ckodex-labs.github.io/ckx-ai-project-template/'
 locale = 'en-us'
-title = 'CKODEX AIOps Platform Documentation'
+title = 'ckx-ai-project-template Documentation'
 
 [params]
   description = "High-Assurance AI Architecture & DevSecOps Platform (Diátaxis Framework)"

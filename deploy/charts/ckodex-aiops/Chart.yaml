@@ -1,5 +1,5 @@
 apiVersion: v2
-name: ckodex-aiops
+name: ckx-ai-project-template
 description: CKODEX World-Class AI Operations & Model Serving Platform
 type: application
 version: 0.2.0

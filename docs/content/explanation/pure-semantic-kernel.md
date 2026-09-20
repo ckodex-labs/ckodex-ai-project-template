@@ -51,7 +51,7 @@ CKODEX cleanly decouples these two planes:
 ### The Semantic Kernel Answers:
 > *"Given a valid and authorized contract, what does this operation mean and how must its state evolve?"*
 
-It has **zero external third-party dependencies**. In [`src/ckodex_aiops/kernel/`](file:///Users/mchorfa/Documents/projects/runbase/ckodex-cfyd-aiops/src/ckodex_aiops/kernel/), the only imported modules are Python standard library primitives (`dataclasses`, `enum`, `typing`, `hashlib`, `datetime`, `uuid`).
+It has **zero external third-party dependencies**. In `src/ckodex_aiops/kernel/`, the only imported modules are Python standard library primitives (`dataclasses`, `enum`, `typing`, `hashlib`, `datetime`, `uuid`).
 
 ### The Runtime Substrate Answers:
 > *"How is intent framed, serialized, delivered across the wire, scheduled on silicon, and recorded in persistent physical media?"*

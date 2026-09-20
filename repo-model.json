@@ -1,7 +1,7 @@
 {
   "schema": "cfy-comprehend/repo-model@v1",
   "header": {
-    "repo": "ckodex-cfyd-aiops",
+    "repo": "ckx-ai-project-template",
     "commit": "9862431",
     "generated_at": "2026-09-18T22:35:00Z",
     "adapters": [

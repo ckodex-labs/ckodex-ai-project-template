@@ -12,7 +12,7 @@ permissions:
   security-events: write
 
 jobs:
-  # Thin GitHub Actions layer dispatching to Dagger Python SDK module
+  # Thin GitHub Actions layer dispatching to Dagger Python SDK module from repository root
   lint:
     name: Lint & Format (Ruff via Dagger)
     runs-on: ubuntu-latest
@@ -25,8 +25,7 @@ jobs:
         with:
           version: "0.21.8"
           verb: call
-          args: lint --source .
-          workdir: ci
+          args: -m ./ci lint --source .
 
   typecheck:
     name: Static Type Analysis (Mypy via Dagger)
@@ -40,8 +39,7 @@ jobs:
         with:
           version: "0.21.8"
           verb: call
-          args: typecheck --source .
-          workdir: ci
+          args: -m ./ci typecheck --source .
 
   security:
     name: Security & Vulnerability Audit (Dagger)
@@ -55,16 +53,14 @@ jobs:
         with:
           version: "0.21.8"
           verb: call
-          args: scan-secrets --source .
-          workdir: ci
+          args: -m ./ci scan-secrets --source .
 
       - name: Audit CVEs (Grype & Syft via Dagger)
         uses: dagger/dagger-for-github@v7
         with:
           version: "0.21.8"
           verb: call
-          args: scan-vulnerabilities --source .
-          workdir: ci
+          args: -m ./ci scan-vulnerabilities --source .
 
   test:
     name: High-Assurance Unit Tests (Pytest via Dagger)
@@ -78,8 +74,7 @@ jobs:
         with:
           version: "0.21.8"
           verb: call
-          args: test --source .
-          workdir: ci
+          args: -m ./ci test --source .
 
   conformance:
     name: Conformance Invariant Evaluation (Dagger)
@@ -93,8 +88,7 @@ jobs:
         with:
           version: "0.21.8"
           verb: call
-          args: conformance --source .
-          workdir: ci
+          args: -m ./ci conformance --source .
 
   docs:
     name: Living Documentation Build (Hugo via Dagger)
@@ -108,8 +102,7 @@ jobs:
         with:
           version: "0.21.8"
           verb: call
-          args: build-docs --source .
-          workdir: ci
+          args: -m ./ci build-docs --source .
 
   package-oci:
     name: OCI Artifact Packaging (Dagger)
@@ -124,5 +117,4 @@ jobs:
         with:
           version: "0.21.8"
           verb: call
-          args: pack-oci-template --source .
-          workdir: ci
+          args: -m ./ci pack-oci-template --source .

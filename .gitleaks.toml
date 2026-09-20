@@ -1,0 +1,9 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allow mock test fixtures and sample reporting data"
+paths = [
+    '''tests/test_secrets\.py''',
+    '''data/08_reporting/.*''',
+]
