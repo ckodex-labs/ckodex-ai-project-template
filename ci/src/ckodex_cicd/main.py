@@ -55,6 +55,7 @@ class CkodexCicd:
                 "run",
                 "mypy",
                 "src/ckodex_aiops/kernel",
+                "src/ckodex_aiops/hooks",
                 "src/ckodex_aiops/validation",
                 "src/ckodex_aiops/models",
                 "src/ckodex_aiops/adapters/tracking",
