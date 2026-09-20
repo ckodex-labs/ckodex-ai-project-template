@@ -36,6 +36,7 @@ dependencies = [
 
 [project.scripts]
 ckodex-aiops = "ckodex_aiops.cli:app"
+ckodex = "ckodex_aiops.cli:app"
 
 [project.entry-points."kedro.project_commands"]
 ckodex_aiops = "ckodex_aiops.cli:kedro_commands"

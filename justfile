@@ -265,6 +265,10 @@ dagger-lint:
 dagger-scan:
     dagger call -m ./ci scan-vulnerabilities --source .
 
+# Package OCI template artifact via hermetic containerized Dagger pipeline
+dagger-oci:
+    dagger call -m ./ci pack-oci-template --source . export --path dist/oci-template
+
 # ==============================================================================
 # Living Documentation (Hugo Extended)
 # ==============================================================================

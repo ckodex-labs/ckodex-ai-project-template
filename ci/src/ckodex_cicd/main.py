@@ -128,6 +128,27 @@ class CkodexCicd:
         )
 
     @function
+    def pack_oci_template(self, source: dagger.Directory) -> dagger.Directory:
+        """Package template as an OCI Image Layout artifact with embedded SBOMs and OSCAL."""
+        return (
+            self._base_python(source)
+            .with_exec(
+                [
+                    "uv",
+                    "run",
+                    "ckodex-aiops",
+                    "oci",
+                    "pack",
+                    "--source",
+                    ".",
+                    "--out",
+                    "/dist/oci-template",
+                ]
+            )
+            .directory("/dist/oci-template")
+        )
+
+    @function
     async def all(self, source: dagger.Directory) -> str:
         """Execute complete SSDLC pipeline: Lint, Test, Scan, Docs, and Build."""
         # 1. Lint

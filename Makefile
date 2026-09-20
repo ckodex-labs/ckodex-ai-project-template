@@ -81,6 +81,15 @@ airgap-pack:
 airgap-verify:
 	uv run ckodex-aiops airgap-verify
 
+oci-pack:
+	uv run ckodex-aiops oci pack --out dist/oci-template
+
+oci-inspect:
+	uv run ckodex-aiops oci inspect --layout dist/oci-template
+
+oci-guide:
+	uv run ckodex-aiops oci guide
+
 quantize:
 	uv run ckodex-aiops quantize
 
@@ -101,6 +110,9 @@ dagger-lint:
 
 dagger-scan:
 	dagger call -m ./ci scan-vulnerabilities --source .
+
+dagger-oci:
+	dagger call -m ./ci pack-oci-template --source . export --path dist/oci-template
 
 clean:
 	rm -rf .pytest_cache .ruff_cache __pycache__ data/02_intermediate/_bench.lance docs/public
