@@ -87,7 +87,6 @@ just helmfile-apply env=local
 # Security & Compliance
 just sbom
 just oscal
-just csr-matrix
 just airgap-pack
 ```
 
@@ -121,27 +120,15 @@ helmfile --file deploy/helmfile.yaml --environment production apply
 
 ---
 
-## 8. CortAIx Factory CSR Traceability Matrix
-
-The platform operationalizes the **107 CortAIx Factory Cybersecurity Requirements (CSR v1.1.0)** across FPR, TRR, and PRR gates:
-- **Automated Matrix Generation**: `just csr-matrix` compiles JSON, CSV, and Markdown traceability reports under `data/08_reporting/compliance/`.
-- **Release Gate Validation**:
-  - `FPR-TRAC`: Traceability continuously updated and hashed.
-  - `TRR-PLAN` & `TRR-DOCU`: Comprehensive 63+ test verification matrix and Hugo living docs.
-  - `PRR-REL-SBOM`: Dual-format CycloneDX and SPDX content-addressed dependency records.
-  - `PRR-REL-SIGN`: Cryptographic In-toto SLSA provenance statements.
-
----
-
-## 9. NIST SP 800-53 OSCAL Component Definitions
+## 8. NIST SP 800-53 OSCAL Component Definitions
 
 Machine-verifiable security postures are emitted as **OSCAL 1.2** documents (`just oscal`):
 - Five architectural components mapped: `ckodex-kernel`, `ckodex-secrets-engine`, `dagger-ssdlc-harness`, `ray-distributed-mesh`, and `autonomic-reconciler`.
-- Automated cross-referencing between NIST SP 800-53 controls (`AC-3`, `AU-2`, `SC-13`, `SA-11`, `CM-8`, `SC-28`, `SI-7`) and CortAIx CSR control identifiers.
+- Automated mappings to NIST SP 800-53 controls (`AC-3`, `AU-2`, `SC-13`, `SA-11`, `CM-8`, `SC-28`, `SI-7`, `SI-4`).
 
 ---
 
-## 10. OCI Artifact Packaging & Distribution (OCI Spec v1.1.0)
+## 9. OCI Artifact Packaging & Distribution (OCI Spec v1.1.0)
 
 In compliance with **CKODEX Rule #39 (Supply-Chain Identity is Content-Addressed)** and **Rule #40 (Air-Gap is a Design Property)**, the workspace template is packaged as an immutable, content-addressed OCI Artifact using standard OCI Image Layout (`application/vnd.oci.image.manifest.v1+json`).
 
@@ -155,14 +142,12 @@ flowchart LR
     L1["Layer 1: cyclonedx.json<br/>(CycloneDX v1.5 SBOM)"]
     L2["Layer 2: spdx.json<br/>(SPDX 2.3 SBOM)"]
     L3["Layer 3: oscal_components.json<br/>(NIST SP 800-53 OSCAL)"]
-    L4["Layer 4: cortaix_csr.json<br/>(CortAIx CSR Matrix)"]
 
     Manifest --> Config
     Manifest --> L0
     Manifest --> L1
     Manifest --> L2
     Manifest --> L3
-    Manifest --> L4
 ```
 
 ### Local Packaging & Inspection

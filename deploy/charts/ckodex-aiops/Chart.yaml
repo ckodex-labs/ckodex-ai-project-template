@@ -2,15 +2,15 @@ apiVersion: v2
 name: ckodex-aiops
 description: CKODEX World-Class AI Operations & Model Serving Platform
 type: application
-version: 0.1.0
-appVersion: "0.1.0"
+version: 0.2.0
+appVersion: "0.2.0"
 keywords:
   - aiops
   - ray
   - lance
   - pytorch
   - zero-trust
-  - cortaix
+  - nist-sp-800-53
 maintainers:
   - name: CKODEX Systems Architecture
     email: engineering@ckodex.ai

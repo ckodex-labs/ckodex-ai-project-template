@@ -24,7 +24,6 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from ckodex_aiops.adapters.compliance.csr import CortaixCsrMatrixGenerator
 from ckodex_aiops.adapters.compliance.intoto import IntotoProvenanceAttestor
 from ckodex_aiops.adapters.compliance.oscal import OscalComplianceGenerator
 from ckodex_aiops.adapters.compliance.sbom import SbomGenerator
@@ -738,30 +737,6 @@ def sbom(
     )
 
 
-@app.command(name="csr-matrix")
-def csr_matrix(
-    out_dir: str = typer.Option(
-        "data/08_reporting/compliance",
-        "--out-dir",
-        "-o",
-        help="Directory to emit CSR traceability reports.",
-    ),
-) -> None:
-    """
-    Generate CortAIx Factory CSR Traceability Matrix (JSON, CSV, Markdown).
-    """
-    res = CortaixCsrMatrixGenerator.generate_all(output_dir=out_dir)
-    console.print(
-        Panel.fit(
-            f"[bold green]CortAIx CSR Traceability Matrix Generated[/bold green]\n"
-            f"• Markdown Report: [bold]{res['markdown']}[/bold]\n"
-            f"• JSON Dataset: [bold]{res['json']}[/bold] (SHA-256: [dim]{res['json_sha256'][:16]}...[/dim])\n"
-            f"• CSV Matrix: [bold]{res['csv']}[/bold]",
-            border_style="green",
-        )
-    )
-
-
 @app.command()
 def onboard(
     subject_type: str = typer.Option(
@@ -1349,7 +1324,7 @@ def oci_pack(
             f"• Layout Directory: [bold]{res['layout_dir']}[/bold]\n"
             f"• Manifest Digest: [bold cyan]{res['manifest_digest']}[/bold cyan] ({res['manifest_size']} bytes)\n"
             f"• Config Digest: [dim]{res['config_digest'][:24]}...[/dim]\n"
-            f"• Layers Count: [bold]{res['layers_count']}[/bold] (Template + SBOMs + OSCAL + CSR)\n"
+            f"• Layers Count: [bold]{res['layers_count']}[/bold] (Template + SBOMs + OSCAL)\n"
             f"• Template Archive: [dim]{res['template_archive_digest'][:24]}...[/dim] ({res['template_archive_size'] / (1024 * 1024):.2f} MB)\n"
             f"• Lineage Receipt: [dim]{res['receipt_id']}[/dim]",
             border_style="green",

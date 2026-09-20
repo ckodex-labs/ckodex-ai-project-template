@@ -2,7 +2,7 @@
 OCI Artifact Packaging & Distribution Engine (CKODEX Rule #39 & Rule #40).
 Complies with OCI Image Format Specification v1.1.0 and OCI Artifact Guidelines:
 - Content-addressed OCI Image Layout (`index.json`, `oci-layout`, `blobs/sha256/`).
-- Multi-layer OCI Artifact: Template archive, CycloneDX/SPDX SBOMs, OSCAL 1.2 components, CortAIx CSR.
+- Multi-layer OCI Artifact: Template archive, CycloneDX/SPDX SBOMs, NIST SP 800-53 OSCAL components.
 - Standard OCI annotations and interoperability with ORAS, Cosign, Crane, Skopeo, and Docker/Podman.
 """
 
@@ -31,7 +31,6 @@ MEDIA_TYPE_TEMPLATE_LAYER = "application/vnd.ckodex.template.layer.v1.tar+gzip"
 MEDIA_TYPE_CYCLONEDX_SBOM = "application/vnd.cyclonedx+json"
 MEDIA_TYPE_SPDX_SBOM = "application/spdx+json"
 MEDIA_TYPE_OSCAL_DEFINITION = "application/vnd.oscal.component-definition+json"
-MEDIA_TYPE_CORTAIX_CSR = "application/vnd.cortaix.csr.matrix+json"
 ARTIFACT_TYPE_CKODEX_TEMPLATE = "application/vnd.ckodex.template.v1"
 
 
@@ -120,7 +119,6 @@ class OciTemplatePackager:
         1. CycloneDX SBOM
         2. SPDX SBOM
         3. NIST SP 800-53 OSCAL Component Definition
-        4. CortAIx CSR Traceability Matrix
         """
         root = Path(source_root).resolve()
         layout_dir = Path(output_layout_dir).resolve()
@@ -169,11 +167,6 @@ class OciTemplatePackager:
                 root / "data/08_reporting/oscal/component_definition.json",
                 MEDIA_TYPE_OSCAL_DEFINITION,
                 "oscal_components.json",
-            ),
-            (
-                root / "data/08_reporting/compliance/cortaix_csr_traceability_matrix.json",
-                MEDIA_TYPE_CORTAIX_CSR,
-                "cortaix_csr.json",
             ),
         ]
 

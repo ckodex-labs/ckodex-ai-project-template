@@ -138,24 +138,20 @@ derogation-list:
     uv run ckodex-aiops derogation list
 
 # ==============================================================================
-# Compliance, Supply Chain & CortAIx CSR
+# Compliance & Supply Chain
 # ==============================================================================
 
 # Generate CycloneDX and SPDX Software Bill of Materials (SBOM)
 sbom:
     uv run ckodex-aiops sbom --out-dir data/08_reporting/sbom
 
-# Generate NIST SP 800-53 Rev 5 & CortAIx CSR OSCAL Component Definition
+# Generate NIST SP 800-53 Rev 5 OSCAL Component Definition
 oscal:
     uv run ckodex-aiops oscal --out data/08_reporting/oscal/component_definition.json
 
 # Mint cryptographic In-toto SLSA v1.0 Provenance statement
 attest subject="data/06_models/model.safetensors":
     uv run ckodex-aiops attest --subject {{subject}}
-
-# Generate CortAIx CSR (Cybersecurity Requirements) Traceability Matrix
-csr-matrix:
-    uv run ckodex-aiops csr-matrix --out-dir data/08_reporting/compliance
 
 # Package hermetic, content-addressed air-gap distribution archive
 airgap-pack name="ckodex-aiops-production" out="data/08_reporting/airgap/bundle.tar.gz":

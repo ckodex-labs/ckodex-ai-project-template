@@ -1,7 +1,7 @@
 # ==============================================================================
 # CKODEX AIOps Platform — Declarative Helmfile Configuration
 # Multi-Environment Deployment (local, staging, production)
-# Governed under CKODEX Constitutional Standard & CortAIx Factory CSR
+# Governed under CKODEX Constitutional Standard (GAL 1)
 # ==============================================================================
 
 environments:

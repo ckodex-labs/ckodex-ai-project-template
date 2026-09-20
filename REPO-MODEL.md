@@ -13,7 +13,6 @@ generated: 2026-09-18T22:35:00Z | adapters: codegraph:cli, fallback | coverage: 
 - **cli.attest** (cli) — Mint in-toto SLSA v1.0 provenance statements with content-addressed digests `src/ckodex_aiops/cli.py:657`
 - **cli.oscal** (cli) — Export NIST SP 800-53 Rev 5 OSCAL machine-verifiable component definition `src/ckodex_aiops/cli.py:687`
 - **cli.sbom** (cli) — Generate ISO/IEC 5962:2021 SPDX 2.3 and CycloneDX v1.5 JSON SBOM manifests `src/ckodex_aiops/cli.py:705`
-- **cli.csr_matrix** (cli) — Export CortAIx Factory CSR 107-control assurance and traceability matrix `src/ckodex_aiops/cli.py:734`
 - **cli.onboard** (cli) — Onboard human operator or autonomous agent with capability lease and Hugo runbook `src/ckodex_aiops/cli.py:758`
 - **cli.offboard** (cli) — Offboard subject, revoke capability leases, and record audit receipt `src/ckodex_aiops/cli.py:821`
 - **cli.airgap_pack** (cli) — Package hermetic air-gap bundle with wheels, docs, models, and checksums `src/ckodex_aiops/cli.py:1083`

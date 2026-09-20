@@ -20,7 +20,7 @@ This section provides exact, technical descriptions of the platform's contracts,
   Formal specifications for `RuntimeMode`, `ContainmentScope`, and active containment contracts.
 
 - **[Compliance & Assurance Matrix](/reference/compliance-matrix/)**  
-  NIST SP 800-53 Rev 5 OSCAL schema, CortAIx Factory CSR 107 controls, and CycloneDX v1.5 / SPDX 2.3 SBOM specs.
+  NIST SP 800-53 Rev 5 OSCAL schema, In-toto SLSA v1.0 provenance, and CycloneDX v1.5 / SPDX 2.3 SBOM specs.
 
 - **[Storage & Concurrency Reference](/reference/storage-topology/)**  
   Columnar Lance datasets, secondary IVF-PQ vector indexing, PyArrow zero-copy integration, and Ray actor pool topologies.

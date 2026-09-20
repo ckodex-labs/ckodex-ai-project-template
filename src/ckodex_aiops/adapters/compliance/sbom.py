@@ -1,5 +1,5 @@
 """
-Software Bill of Materials (SBOM) Generation Engine (CKODEX Rule #39 & CortAIx CSR PRR-REL-SBOM).
+Software Bill of Materials (SBOM) Generation Engine (CKODEX Rule #39).
 Generates content-addressed CycloneDX v1.5 and SPDX 2.3 JSON representations
 from locked UV dependency manifests and installed packages.
 """

@@ -7,7 +7,7 @@ weight: 60
 # How to Package OCI Artifacts with ORAS and Cosign
 
 ## Goal
-Package the complete repository scaffold, typed compliance layers (SBOMs, OSCAL, CortAIx CSR), and configuration into an OCI Image Layout v1.1.0 artifact for enterprise container registry distribution.
+Package the complete repository scaffold, typed compliance layers (SBOMs, OSCAL), and configuration into an OCI Image Layout v1.1.0 artifact for enterprise container registry distribution.
 
 ---
 

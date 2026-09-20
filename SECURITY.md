@@ -6,7 +6,7 @@ The **CKODEX AIOps Platform** is engineered according to high-assurance zero-tru
 - **Zero Standing Privilege (Rule #2 & #25)**: Execution strictly requires explicit, time-bounded, attenuated `CapabilityLease` instances.
 - **Memory-Safe Secrets**: Secrets wrapped in `SecretValue` are scrubbed from heap memory upon lease expiration and redacted in `__repr__` and `__str__`.
 - **Zero-Pickle Safetensors (CVE-Resistant)**: Checkpoints use native memory-mapped Safetensors, completely eliminating Python `pickle` deserialization attacks.
-- **Supply-Chain Integrity (Rule #39 & CortAIx CSR `PRR-REL-SBOM`)**: Content-addressed CycloneDX and SPDX SBOMs generated from `uv.lock`, verified with Anchore Grype and signed via In-toto SLSA v1.0.
+- **Supply-Chain Integrity (Rule #39 & NIST SP 800-53 `SI-7`)**: Content-addressed CycloneDX and SPDX SBOMs generated from `uv.lock`, verified with Anchore Grype and signed via In-toto SLSA v1.0.
 
 ---
 

@@ -43,10 +43,6 @@ def mock_repo_root(tmp_path: Path) -> Path:
     (reporting / "oscal" / "component_definition.json").write_text(
         '{"oscal-version": "1.2"}', encoding="utf-8"
     )
-    (reporting / "compliance").mkdir(parents=True, exist_ok=True)
-    (reporting / "compliance" / "cortaix_csr_traceability_matrix.json").write_text(
-        '{"framework": "cortAIx-Factory-CSR"}', encoding="utf-8"
-    )
 
     return root
 
@@ -100,7 +96,7 @@ def test_pack_and_inspect_oci_layout(mock_repo_root: Path, tmp_path: Path):
     assert inspection["artifact_type"] == ARTIFACT_TYPE_CKODEX_TEMPLATE
     assert inspection["config"]["version"] == "2.0.0"
     assert inspection["config"]["constitutionalStandard"] == "GAL 1"
-    assert len(inspection["layers"]) >= 5  # Template + 2 SBOMs + OSCAL + CSR
+    assert len(inspection["layers"]) >= 4  # Template + 2 SBOMs + OSCAL
 
 
 def test_unpack_template_roundtrip(mock_repo_root: Path, tmp_path: Path):

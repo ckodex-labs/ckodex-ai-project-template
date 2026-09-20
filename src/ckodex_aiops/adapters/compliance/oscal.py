@@ -46,7 +46,7 @@ class OscalComplianceGenerator:
                             {
                                 "uuid": str(uuid.uuid4()),
                                 "source": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final",
-                                "description": "NIST SP 800-53 Rev 5 & CortAIx CSR Baseline",
+                                "description": "NIST SP 800-53 Rev 5 Baseline",
                                 "implemented-requirements": [
                                     {
                                         "uuid": str(uuid.uuid4()),
@@ -60,10 +60,6 @@ class OscalComplianceGenerator:
                                             {
                                                 "name": "evidence-mechanism",
                                                 "value": "CapabilityLease verification & AuthorityPath",
-                                            },
-                                            {
-                                                "name": "cortaix-csr-control",
-                                                "value": "CFY-DSG-ZERO",
                                             },
                                         ],
                                     },
@@ -79,10 +75,6 @@ class OscalComplianceGenerator:
                                             {
                                                 "name": "evidence-mechanism",
                                                 "value": "LineageReceipt cryptographic SHA-256 digests",
-                                            },
-                                            {
-                                                "name": "cortaix-csr-control",
-                                                "value": "INC-LOG-CONS",
                                             },
                                         ],
                                     },
@@ -100,7 +92,7 @@ class OscalComplianceGenerator:
                             {
                                 "uuid": str(uuid.uuid4()),
                                 "source": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final",
-                                "description": "NIST SP 800-53 Rev 5 & CortAIx CSR Baseline",
+                                "description": "NIST SP 800-53 Rev 5 Baseline",
                                 "implemented-requirements": [
                                     {
                                         "uuid": str(uuid.uuid4()),
@@ -115,7 +107,6 @@ class OscalComplianceGenerator:
                                                 "name": "evidence-mechanism",
                                                 "value": "SecretValue zeroization & Vault dynamic leases",
                                             },
-                                            {"name": "cortaix-csr-control", "value": "CFY-SEC-HAR"},
                                         ],
                                     },
                                     {
@@ -130,10 +121,6 @@ class OscalComplianceGenerator:
                                             {
                                                 "name": "evidence-mechanism",
                                                 "value": "KmsKeyringSecretsAdapter & Safetensors",
-                                            },
-                                            {
-                                                "name": "cortaix-csr-control",
-                                                "value": "CFY-CRY-REST",
                                             },
                                         ],
                                     },
@@ -151,7 +138,7 @@ class OscalComplianceGenerator:
                             {
                                 "uuid": str(uuid.uuid4()),
                                 "source": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final",
-                                "description": "NIST SP 800-53 Rev 5 & CortAIx CSR Baseline",
+                                "description": "NIST SP 800-53 Rev 5 Baseline",
                                 "implemented-requirements": [
                                     {
                                         "uuid": str(uuid.uuid4()),
@@ -165,10 +152,6 @@ class OscalComplianceGenerator:
                                             {
                                                 "name": "evidence-mechanism",
                                                 "value": "IntotoProvenanceAttestor & Syft SBOM",
-                                            },
-                                            {
-                                                "name": "cortaix-csr-control",
-                                                "value": "PRR-REL-SBOM",
                                             },
                                         ],
                                     },
@@ -184,10 +167,6 @@ class OscalComplianceGenerator:
                                             {
                                                 "name": "evidence-mechanism",
                                                 "value": "Dagger module scan_secrets & scan_vulnerabilities",
-                                            },
-                                            {
-                                                "name": "cortaix-csr-control",
-                                                "value": "TST-BSL-SAST",
                                             },
                                         ],
                                     },
@@ -205,7 +184,7 @@ class OscalComplianceGenerator:
                             {
                                 "uuid": str(uuid.uuid4()),
                                 "source": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final",
-                                "description": "NIST SP 800-53 Rev 5 & CortAIx CSR Baseline",
+                                "description": "NIST SP 800-53 Rev 5 Baseline",
                                 "implemented-requirements": [
                                     {
                                         "uuid": str(uuid.uuid4()),
@@ -220,7 +199,6 @@ class OscalComplianceGenerator:
                                                 "name": "evidence-mechanism",
                                                 "value": "TelemetryCoactor max_buffer_size backpressure",
                                             },
-                                            {"name": "cortaix-csr-control", "value": "CFY-NET-ING"},
                                         ],
                                     }
                                 ],
@@ -237,7 +215,7 @@ class OscalComplianceGenerator:
                             {
                                 "uuid": str(uuid.uuid4()),
                                 "source": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final",
-                                "description": "NIST SP 800-53 Rev 5 & CortAIx CSR Baseline",
+                                "description": "NIST SP 800-53 Rev 5 Baseline",
                                 "implemented-requirements": [
                                     {
                                         "uuid": str(uuid.uuid4()),
@@ -251,10 +229,6 @@ class OscalComplianceGenerator:
                                             {
                                                 "name": "evidence-mechanism",
                                                 "value": "AutonomicReconciler & ConformanceEngine",
-                                            },
-                                            {
-                                                "name": "cortaix-csr-control",
-                                                "value": "INC-DET-ALER",
                                             },
                                         ],
                                     }

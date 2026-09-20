@@ -99,8 +99,8 @@ Standing privileges are replaced by time-bounded, cryptographically signed `Capa
 ```python
 lease = CapabilityLease(
     lease_id="lease-sec-88412",
-    subject_id="agent://cortaix/reconciler-worker-04",
-    parent_authority="tenant://cortaix/ns/prod/plane/control",
+    subject_id="agent://ckodex/reconciler-worker-04",
+    parent_authority="tenant://ckodex/ns/prod/plane/control",
     allowed_actions=["reconcile:read", "reconcile:apply_remediation"],
     denied_actions=["authority:delegate", "ledger:purge"],
     resource_scope="urn:ckodex:service:inference-cluster-01",

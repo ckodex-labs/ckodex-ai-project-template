@@ -26,7 +26,6 @@ just [RECIPE]
 | `cockpit` | Launch interactive terminal UI & export HTML | `--profile`, `--export-html` |
 | `compact` | Distributed fragment compaction on Lance dataset | `TARGET` (argument) |
 | `conformance` | Evaluate transition conformance suite | None |
-| `csr-matrix` | Export CortAIx Factory CSR 107-control matrix | `--out-dir` |
 | `derogation` | Manage explicit technical risk derogations | `create`, `list`, `revoke` |
 | `doctor` | Preflight diagnostic inspection of hardware & storage | None |
 | `drift` | Statistical Wasserstein distance & PSI drift detector | `--baseline`, `--observed` |

@@ -1,5 +1,4 @@
-# Default values for ckodex-aiops.
-# Governed under CKODEX Constitutional Signature & CortAIx Factory CSR.
+# Governed under CKODEX Constitutional Signature (GAL 1).
 
 global:
   environment: local
@@ -79,7 +78,7 @@ otel:
 
 networkPolicy:
   enabled: true
-  # CortAIx CSR CFY-NET-ING & CFY-NET-EGR: Deny all ingress/egress by default
+  # NIST SP 800-53 SC-5: Deny all ingress/egress by default
   allowIngressFromNamespaces:
     - ingress-nginx
     - observability

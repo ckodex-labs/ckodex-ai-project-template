@@ -83,12 +83,6 @@
       "intent": "Generate ISO/IEC 5962:2021 SPDX 2.3 and CycloneDX v1.5 JSON SBOM manifests"
     },
     {
-      "name": "cli.csr_matrix",
-      "kind": "cli",
-      "evidence": "src/ckodex_aiops/cli.py:734",
-      "intent": "Export CortAIx Factory CSR 107-control assurance and traceability matrix"
-    },
-    {
       "name": "cli.onboard",
       "kind": "cli",
       "evidence": "src/ckodex_aiops/cli.py:758",

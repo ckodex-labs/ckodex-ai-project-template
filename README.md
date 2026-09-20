@@ -126,9 +126,9 @@ ckodex-cfyd-aiops/
 │   ├── 04_feature/              # Normalized features & IVF-PQ indices
 │   ├── 06_models/               # Safetensors model checkpoints (model.safetensors)
 │   ├── 07_model_output/         # Distributed inference predictions
-│   └── 08_reporting/            # Receipts, attestations, OSCAL, SBOMs, CortAIx CSR, Lifecycle
+│   └── 08_reporting/            # Receipts, attestations, OSCAL, SBOMs, Lifecycle
 ├── src/ckodex_aiops/
-│   ├── cli.py                   # Day-2 CLI (doctor, reconcile, attest, cockpit, sbom, csr-matrix, onboard, offboard)
+│   ├── cli.py                   # Day-2 CLI (doctor, reconcile, attest, cockpit, sbom, onboard, offboard)
 │   ├── kernel/                  # Pure Semantic Kernel (ZERO external heavy dependencies)
 │   │   ├── state_vector.py      # StateVector S(e,t) product type & ConformanceTransition
 │   │   ├── reconciler.py        # Autonomic Day-2 Reconciler & Self-Healing Loop
@@ -139,7 +139,7 @@ ckodex-cfyd-aiops/
 │   │   ├── intent.py            # IntentEnvelope & CapabilityLease
 │   │   └── domain.py            # Pure domain entities
 │   ├── adapters/
-│   │   ├── compliance/          # In-toto SLSA, NIST OSCAL, CycloneDX/SPDX SBOM, CortAIx CSR
+│   │   ├── compliance/          # In-toto SLSA, NIST OSCAL, CycloneDX/SPDX SBOM
 │   │   ├── observability/       # OpenTelemetry OTEL manager & Mission Cockpit
 │   │   ├── secrets/             # Zero-Trust Vault, KMS/Keyring, Keyless OIDC
 │   │   ├── tracking/            # Flight Recorder & MLflow experiment tracking
@@ -280,15 +280,14 @@ make docs-serve
 
 ## 7. Verification Evidence & Quality Assurance
 
-The test suite enforces constitutional invariants across 84 tests:
+The test suite enforces constitutional invariants across 81 tests:
 
 ```text
-======================== 84 passed in 56.25s (0:00:56) =========================
+======================== 81 passed in 55.10s (0:00:55) =========================
 ✓ tests/test_airgap.py: PASS (Air-gap packaging, manifest hashing, tamper detection)
 ✓ tests/test_coactor.py: PASS (Actor & Co-Actor asynchronous telemetry buffering)
 ✓ tests/test_compliance.py: PASS (In-toto SLSA v1.0 provenance & NIST OSCAL)
 ✓ tests/test_conformance.py: PASS (Structural, Anti-Dominance, Degradation contracts)
-✓ tests/test_csr.py: PASS (CortAIx Factory CSR 107 controls traceability matrix)
 ✓ tests/test_degradation.py: PASS (Degraded mode contracts, safe hold, capability fencing)
 ✓ tests/test_derogation.py: PASS (Explicit accepted risk derogations & compensating controls)
 ✓ tests/test_drift.py: PASS (Statistical Wasserstein distance & PSI drift detection)
