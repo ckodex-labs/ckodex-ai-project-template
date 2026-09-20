@@ -13,16 +13,15 @@ from ckodex_aiops.adapters.serving.gateway import ModelServingGateway
 
 def test_model_serving_gateway_lifecycle():
     """Serving gateway must respond to /healthz, /livez, and /v1/models/classifier/infer."""
-    # Find ephemeral port
-    port = 18991
     gateway = ModelServingGateway(
         model_weights_path="data/06_models/model.safetensors",
-        input_dim=16,
+        input_dim=32,
         num_classes=3,
         device="cpu",
-        port=port,
+        port=0,
     )
     server = gateway.create_server(host="127.0.0.1")
+    port = server.server_port
 
     t = threading.Thread(target=server.serve_forever, daemon=True)
     t.start()
