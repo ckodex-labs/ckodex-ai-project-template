@@ -185,11 +185,12 @@ class ProfileRegistry:
         Detects configuration drift between observed runtime parameters and baseline expectations.
         """
         profile = cls.get(profile_name)
-        drift_report = {
+        discrepancies: list[dict[str, Any]] = []
+        drift_report: dict[str, Any] = {
             "profile": profile.name,
             "is_baseline": profile.is_baseline,
             "drift_detected": False,
-            "discrepancies": [],
+            "discrepancies": discrepancies,
         }
 
         for key, expected_val in profile.parameters.items():

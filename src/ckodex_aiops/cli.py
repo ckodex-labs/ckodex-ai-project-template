@@ -1050,8 +1050,8 @@ def drift(
     b_ds = lance.dataset(baseline_dataset)
     o_ds = lance.dataset(observed_dataset)
 
-    b_df = pl.from_arrow(b_ds.to_table(limit=500))
-    o_df = pl.from_arrow(o_ds.to_table(limit=500))
+    b_df = pl.DataFrame(b_ds.to_table(limit=500))
+    o_df = pl.DataFrame(o_ds.to_table(limit=500))
 
     numeric_cols = [
         c

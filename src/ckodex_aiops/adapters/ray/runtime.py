@@ -5,6 +5,7 @@ Handles cluster discovery, local fallback, health telemetry, and state vector re
 
 from __future__ import annotations
 
+import logging
 import os
 from typing import Any
 
@@ -55,7 +56,7 @@ class RayRuntimeManager:
                 num_cpus=num_cpus,
                 ignore_reinit_error=ignore_reinit_error,
                 runtime_env=runtime_env or {},
-                logging_level="WARNING",
+                logging_level=logging.WARNING,
             )
             return True
         except Exception:
@@ -64,7 +65,7 @@ class RayRuntimeManager:
                 ray.init(
                     num_cpus=num_cpus or 2,
                     ignore_reinit_error=True,
-                    logging_level="WARNING",
+                    logging_level=logging.WARNING,
                 )
                 return True
             except Exception:

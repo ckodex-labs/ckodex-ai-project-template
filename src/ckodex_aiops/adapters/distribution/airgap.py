@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import tarfile
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -33,7 +34,7 @@ class AirgapPackager:
     def create_bundle(
         cls,
         bundle_name: str,
-        files_to_include: list[str | Path],
+        files_to_include: Sequence[str | Path],
         output_path: str | Path,
     ) -> dict[str, Any]:
         """

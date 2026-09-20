@@ -261,9 +261,29 @@ dagger-ci:
 dagger-lint:
     dagger call -m ./ci lint --source .
 
+# Run Dagger static type analysis
+dagger-typecheck:
+    dagger call -m ./ci typecheck --source .
+
+# Run Dagger test suite
+dagger-test:
+    dagger call -m ./ci test --source .
+
+# Run Dagger conformance evaluation
+dagger-conformance:
+    dagger call -m ./ci conformance --source .
+
+# Run Dagger secret audit
+dagger-secrets:
+    dagger call -m ./ci scan-secrets --source .
+
 # Run Dagger vulnerability and SBOM scan
 dagger-scan:
     dagger call -m ./ci scan-vulnerabilities --source .
+
+# Run Dagger living docs build
+dagger-docs:
+    dagger call -m ./ci build-docs --source . export --path docs/public
 
 # Package OCI template artifact via hermetic containerized Dagger pipeline
 dagger-oci:

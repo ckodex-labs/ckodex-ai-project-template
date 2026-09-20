@@ -8,7 +8,7 @@ packages = ["src/ckodex_aiops"]
 
 [project]
 name = "ckodex-aiops"
-version = "0.1.0"
+version = "0.2.0"
 description = "World-Class AI Platform Template: Kedro, UV, Ray Actors, Lance, Polars, PyTorch"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -68,6 +68,7 @@ warn_return_any = false
 warn_unused_configs = true
 disallow_untyped_defs = false
 check_untyped_defs = true
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

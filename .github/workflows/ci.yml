@@ -1,0 +1,128 @@
+name: CKODEX SSDLC (Dagger Engine)
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  # Thin GitHub Actions layer dispatching to Dagger Python SDK module
+  lint:
+    name: Lint & Format (Ruff via Dagger)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Ruff Lint via Dagger
+        uses: dagger/dagger-for-github@v7
+        with:
+          version: "0.21.8"
+          verb: call
+          args: lint --source .
+          workdir: ci
+
+  typecheck:
+    name: Static Type Analysis (Mypy via Dagger)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Mypy via Dagger
+        uses: dagger/dagger-for-github@v7
+        with:
+          version: "0.21.8"
+          verb: call
+          args: typecheck --source .
+          workdir: ci
+
+  security:
+    name: Security & Vulnerability Audit (Dagger)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Scan Secrets (Gitleaks via Dagger)
+        uses: dagger/dagger-for-github@v7
+        with:
+          version: "0.21.8"
+          verb: call
+          args: scan-secrets --source .
+          workdir: ci
+
+      - name: Audit CVEs (Grype & Syft via Dagger)
+        uses: dagger/dagger-for-github@v7
+        with:
+          version: "0.21.8"
+          verb: call
+          args: scan-vulnerabilities --source .
+          workdir: ci
+
+  test:
+    name: High-Assurance Unit Tests (Pytest via Dagger)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Pytest Suite via Dagger
+        uses: dagger/dagger-for-github@v7
+        with:
+          version: "0.21.8"
+          verb: call
+          args: test --source .
+          workdir: ci
+
+  conformance:
+    name: Conformance Invariant Evaluation (Dagger)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Evaluate Conformance via Dagger
+        uses: dagger/dagger-for-github@v7
+        with:
+          version: "0.21.8"
+          verb: call
+          args: conformance --source .
+          workdir: ci
+
+  docs:
+    name: Living Documentation Build (Hugo via Dagger)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build Hugo Site via Dagger
+        uses: dagger/dagger-for-github@v7
+        with:
+          version: "0.21.8"
+          verb: call
+          args: build-docs --source .
+          workdir: ci
+
+  package-oci:
+    name: OCI Artifact Packaging (Dagger)
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, security, test, conformance, docs]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Package OCI Artifact via Dagger
+        uses: dagger/dagger-for-github@v7
+        with:
+          version: "0.21.8"
+          verb: call
+          args: pack-oci-template --source .
+          workdir: ci

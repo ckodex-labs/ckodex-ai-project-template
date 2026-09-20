@@ -24,8 +24,8 @@ class MLflowTracker:
     ) -> None:
         self.experiment_name = experiment_name
         self.tracking_uri = tracking_uri
-        self._mlflow = None
-        self._active_run = None
+        self._mlflow: Any = None
+        self._active_run: Any = None
         self._init_mlflow()
 
     def _init_mlflow(self) -> None:
@@ -121,7 +121,7 @@ class MLflowTracker:
         receipt_path = Path(f"data/08_reporting/receipts/{receipt.receipt_id}.json")
         if receipt_path.exists():
             self._mlflow.log_artifact(str(receipt_path), artifact_path="lineage_receipts")
-        self._mlflow.set_tag(f"receipt.{receipt.receipt_id}", receipt.to_digest_string())
+        self._mlflow.set_tag(f"receipt.{receipt.receipt_id}", receipt.canonical_digest())
 
     def end_run(self, status: str = "FINISHED") -> None:
         if self._mlflow is not None and self._active_run is not None:

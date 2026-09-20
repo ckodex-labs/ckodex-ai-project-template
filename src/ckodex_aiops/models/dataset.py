@@ -33,6 +33,7 @@ class PolarsTorchDataset(Dataset):
         vec_list = df[feature_col].to_list()
         self.features = torch.tensor(np.array(vec_list), dtype=torch.float32)
 
+        self.labels: torch.Tensor | None
         if label_col in df.columns:
             labels = df[label_col].to_numpy()
             self.labels = torch.tensor(labels, dtype=torch.long)

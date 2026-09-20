@@ -108,8 +108,23 @@ dagger-ci:
 dagger-lint:
 	dagger call -m ./ci lint --source .
 
+dagger-typecheck:
+	dagger call -m ./ci typecheck --source .
+
+dagger-test:
+	dagger call -m ./ci test --source .
+
+dagger-conformance:
+	dagger call -m ./ci conformance --source .
+
+dagger-secrets:
+	dagger call -m ./ci scan-secrets --source .
+
 dagger-scan:
 	dagger call -m ./ci scan-vulnerabilities --source .
+
+dagger-docs:
+	dagger call -m ./ci build-docs --source . export --path docs/public
 
 dagger-oci:
 	dagger call -m ./ci pack-oci-template --source . export --path dist/oci-template

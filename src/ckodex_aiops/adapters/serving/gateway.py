@@ -63,6 +63,11 @@ class InferenceHandler(BaseHTTPRequestHandler):
                     )
                     return
 
+                if self.model is None:
+                    self._set_headers(503)
+                    self.wfile.write(b'{"error":"Model not loaded"}')
+                    return
+
                 # Extract W3C TraceContext from incoming headers
                 carrier = {k.lower(): v for k, v in self.headers.items()}
                 start_time = time.perf_counter()

@@ -123,7 +123,7 @@ class DegradationManager:
                 prohibited_capabilities=("model:train", "dataset:write", "weights:update"),
                 freshness_tolerance_seconds=1800.0,
                 security_guarantees=("Immutable read isolation", "Zero credential escalation"),
-                data_integrity_guarantees=("No corrupt checkpoints written to storage"),
+                data_integrity_guarantees=("No corrupt checkpoints written to storage",),
                 recovery_criteria=(
                     "Reconciler confirms model weights SHA-256 match baseline",
                     "Drift PSI < 0.10",
@@ -144,9 +144,9 @@ class DegradationManager:
                 freshness_tolerance_seconds=86400.0,
                 security_guarantees=("Strict local execution", "Zero network egress"),
                 data_integrity_guarantees=(
-                    "All disk hashes cryptographically verified against receipts"
+                    "All disk hashes cryptographically verified against receipts",
                 ),
-                recovery_criteria=("Connectivity restored and OIDC workload token refreshed"),
+                recovery_criteria=("Connectivity restored and OIDC workload token refreshed",),
                 max_exposure_window_seconds=86400.0,
             )
         )
@@ -167,8 +167,8 @@ class DegradationManager:
                 ),
                 freshness_tolerance_seconds=300.0,
                 security_guarantees=("All mutative leases revoked", "Egress locked"),
-                data_integrity_guarantees=("Complete freeze on dataset modifications"),
-                recovery_criteria=("Human operator or automated reconciler clears contradiction"),
+                data_integrity_guarantees=("Complete freeze on dataset modifications",),
+                recovery_criteria=("Human operator or automated reconciler clears contradiction",),
                 max_exposure_window_seconds=1800.0,
             )
         )
