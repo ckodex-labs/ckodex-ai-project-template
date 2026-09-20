@@ -259,21 +259,24 @@ uv run ckodex-aiops derogation list
 
 ---
 
-## 6. DevSecOps & Dagger SSDLC Engine
+## 6. DevSecOps, Dagger SSDLC & Diátaxis Living Documentation
 
-All CI/CD automation runs in hermetic, containerized Dagger sandboxes:
+All CI/CD automation runs in hermetic, containerized Dagger sandboxes with thin GitHub Actions dispatching:
 
 ```bash
 # Execute complete SSDLC pipeline in parallel DAG
-make dagger-ci
+just dagger-ci
 
 # Or run individual stages
-make dagger-lint
-make dagger-scan
+just dagger-lint
+just dagger-test
 
-# Build and preview living Hugo documentation site
-make docs-build
-make docs-serve
+# Build and preview living Hugo documentation site (Diátaxis Framework)
+just docs-build
+just docs-serve
+
+# Build documentation for GitHub Pages deployment via Dagger
+just docs-pages-build
 ```
 
 ---
@@ -315,8 +318,8 @@ The test suite enforces constitutional invariants across 81 tests:
 ✓ tests/test_tracking.py: PASS (Flight Recorder & MLflow experiment tracking)
 ✓ tests/test_validation.py: PASS (Shared validation contracts & preflight bounds)
 
-Ruff Linter & Formatter: 100% clean across 133 files (0 errors, 0 warnings).
-Hugo Living Documentation: 22 pages built in 20 ms (0 errors, 0 warnings).
+Ruff Linter & Formatter: 100% clean across 161 files (0 errors, 0 warnings).
+Hugo Living Documentation: 53 pages built in 29 ms across 4 Diátaxis quadrants (0 errors, 0 warnings).
 Platform Doctor: PASS (All hardware, compute, storage, and secrets subsystems healthy).
 ```
 

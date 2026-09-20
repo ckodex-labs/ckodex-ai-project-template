@@ -20,3 +20,4 @@ The How-To guides provide actionable, step-by-step procedures for solving concre
 - **Distribution & Supply Chain**:
   - [How to Package and Verify Air-Gap Bundles](/how-to/airgap-distribution/)
   - [How to Package OCI Artifacts with ORAS and Cosign](/how-to/oci-distribution/)
+  - [How to Build and Deploy Hugo Documentation to GitHub Pages with Dagger](/how-to/hugo-dagger-github-pages/)

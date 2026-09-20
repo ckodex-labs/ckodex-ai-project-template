@@ -1,0 +1,48 @@
+name: Deploy Hugo Docs to GitHub Pages (Dagger Engine)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Hugo Docs (Dagger)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Build and Export Static Site via Dagger
+        uses: dagger/dagger-for-github@v7
+        with:
+          version: "0.21.8"
+          verb: call
+          args: build-docs --source . --base-url "https://ckodex-labs.github.io/ckodex-ai-project-template/" export --path ./public
+          workdir: ci
+
+      - name: Upload GitHub Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  deploy:
+    name: Deploy to GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy Pages Site
+        id: deployment
+        uses: actions/deploy-pages@v4

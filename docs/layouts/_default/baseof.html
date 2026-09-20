@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ .Site.Language.Locale | default "en" }}">
+<html lang="{{ .Site.Language.Lang | default "en" }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -162,14 +162,14 @@
 </head>
 <body>
   <header>
-    <a href="/" class="brand">
+    <a href="{{ "/" | relURL }}" class="brand">
       <span>{{ .Site.Title }}</span>
       <span class="badge">{{ .Site.Params.signature }}</span>
     </a>
     <nav>
       <ul>
         {{ range .Site.Menus.main }}
-        <li><a href="{{ .URL }}">{{ .Name }}</a></li>
+        <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
         {{ end }}
       </ul>
     </nav>
@@ -180,7 +180,7 @@
       <h3>Navigation</h3>
       <ul>
         {{ range .Site.Menus.main }}
-        <li><a href="{{ .URL }}">{{ .Name }}</a></li>
+        <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
         {{ end }}
       </ul>
     </aside>

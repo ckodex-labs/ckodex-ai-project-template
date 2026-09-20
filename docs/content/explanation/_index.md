@@ -24,3 +24,6 @@ This section provides deep architectural background, theoretical foundations, an
 
 - **[Zero-Trust Authority & Capability Attenuation](/explanation/zero-trust-authority/)**  
   How the standing authority hierarchy and ephemeral, bounded capability leases prevent privilege escalation.
+
+- **[Why Diátaxis, Hugo, and Dagger: Hermetic Documentation as Code](/explanation/diataxis-and-docs-as-code/)**  
+  Why documentation is treated as a compiled, immutable engineering artifact and built hermetically in containerized CI.

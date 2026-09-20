@@ -24,3 +24,6 @@ This section provides exact, technical descriptions of the platform's contracts,
 
 - **[Storage & Concurrency Reference](/reference/storage-topology/)**  
   Columnar Lance datasets, secondary IVF-PQ vector indexing, PyArrow zero-copy integration, and Ray actor pool topologies.
+
+- **[Diátaxis Documentation & Dagger CI API Reference](/reference/diataxis-documentation-spec/)**  
+  Specification for the four Diátaxis quadrants, Hugo layouts, frontmatter schema, and Dagger CI documentation engine.

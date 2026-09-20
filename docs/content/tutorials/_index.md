@@ -27,3 +27,8 @@ By completing these tutorials, you will learn how to:
 2. **[Observing & Healing Drift with the Day-2 Reconciler](/tutorials/first-reconciliation/)**  
    *Duration: ~10 minutes*  
    Inject synthetic fragment drift into Lance storage, watch the StateVector transition from `NORMAL` to `DEGRADED`, and trigger the autonomic reconciler to converge back to the active baseline profile.
+
+3. **[Authoring Living Documentation with Diátaxis & Hugo](/tutorials/hugo-diataxis-guide/)**  
+   *Duration: ~10 minutes*  
+   Learn the four Diátaxis quadrants, author markdown content, verify live locally with Hugo, and validate through containerized Dagger builds for GitHub Pages.
+

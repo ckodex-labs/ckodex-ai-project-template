@@ -293,6 +293,10 @@ dagger-oci:
 docs-build:
     hugo --source docs --cleanDestinationDir
 
+# Build Hugo site for GitHub Pages via hermetic Dagger pipeline
+docs-pages-build base_url="https://ckodex-labs.github.io/ckodex-ai-project-template/":
+    dagger call -m ./ci build-docs --source . --base-url {{base_url}} export --path docs/public
+
 # Serve Hugo living documentation site locally
 docs-serve:
     hugo server --source docs -D

@@ -122,15 +122,18 @@ class CkodexCicd:
         )
 
     @function
-    def build_docs(self, source: dagger.Directory) -> dagger.Directory:
+    def build_docs(self, source: dagger.Directory, base_url: str = "") -> dagger.Directory:
         """Build living Hugo architecture & DevSecOps documentation site."""
+        cmd = ["hugo", "--destination", "/src/docs/public", "--cleanDestinationDir"]
+        if base_url:
+            cmd.extend(["--baseURL", base_url])
         return (
             dag.container()
             .from_("klakegg/hugo:ext-ubuntu")
             .with_entrypoint([])
             .with_mounted_directory("/src", source)
             .with_workdir("/src/docs")
-            .with_exec(["hugo", "--destination", "/src/docs/public", "--cleanDestinationDir"])
+            .with_exec(cmd)
             .directory("/src/docs/public")
         )
 
