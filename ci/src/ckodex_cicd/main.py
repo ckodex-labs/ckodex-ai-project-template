@@ -28,6 +28,7 @@ class CkodexCicd:
             dag.container()
             .from_("python:3.12-slim")
             .with_file("/usr/local/bin/uv", uv_bin)
+            .with_env_variable("RAY_ENABLE_UV_RUN_RUNTIME_ENV", "0")
             .with_mounted_directory("/workspace", source)
             .with_workdir("/workspace")
             .with_exec(["uv", "sync", "--frozen", "--no-install-project"])

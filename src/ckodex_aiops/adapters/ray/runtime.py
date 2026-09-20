@@ -50,6 +50,15 @@ class RayRuntimeManager:
             if address == "auto":
                 address = None
 
+        # Disable Ray's automatic uv run working_dir packager to prevent broken worker venvs in containerized CI
+        os.environ["RAY_ENABLE_UV_RUN_RUNTIME_ENV"] = "0"
+        try:
+            import ray._private.ray_constants as _ray_constants
+
+            _ray_constants.RAY_ENABLE_UV_RUN_RUNTIME_ENV = False
+        except Exception:
+            pass
+
         try:
             ray.init(
                 address=address if address != "auto" else None,

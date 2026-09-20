@@ -2,8 +2,19 @@
 Pytest configuration and shared fixtures for CKODEX AIOps Platform.
 """
 
+import os
 import shutil
 import tempfile
+
+# Prevent Ray from attempting to package working_dir into zip or recreate venvs on test workers
+os.environ["RAY_ENABLE_UV_RUN_RUNTIME_ENV"] = "0"
+os.environ["RAY_ADDRESS"] = ""
+try:
+    import ray._private.ray_constants as _ray_constants
+
+    _ray_constants.RAY_ENABLE_UV_RUN_RUNTIME_ENV = False
+except Exception:
+    pass
 from pathlib import Path
 
 import numpy as np
