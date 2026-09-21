@@ -65,11 +65,12 @@ Validation Summary:
 
 ## 3. Compare Configuration Diffs Between Profiles
 
-To inspect how a target candidate profile (e.g. `edge-jetson`, `workstation-dgx`, or `cluster-ray`) alters baseline parameters:
+To inspect how a target candidate profile (such as `macos_metal_safetensors`, `physical_ai_robotics`, `cuda_distributed_pretraining`, or `ci_headless_verification`) alters baseline parameters:
 
 ```bash
-uv run ckodex-aiops config diff edge-jetson
+uv run ckodex-aiops config diff -b macos_metal_safetensors
 ```
+
 
 This renders a formatted table showing:
 - Parameter path (`section.key`)
