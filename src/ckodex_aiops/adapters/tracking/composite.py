@@ -11,6 +11,7 @@ from typing import Any
 from ckodex_aiops.adapters.tracking.flight_recorder import FlightRecorderTracker
 from ckodex_aiops.adapters.tracking.mlflow_adapter import MLflowTracker
 from ckodex_aiops.adapters.tracking.protocol import ExperimentTracker
+from ckodex_aiops.adapters.tracking.research_evidence_adapter import ResearchEvidenceTracker
 from ckodex_aiops.kernel.receipt import LineageReceipt
 from ckodex_aiops.kernel.state_vector import StateVector
 
@@ -25,6 +26,7 @@ class CompositeTracker:
             self.trackers: list[ExperimentTracker] = [
                 FlightRecorderTracker(),
                 MLflowTracker(),
+                ResearchEvidenceTracker(),
             ]
         else:
             self.trackers = trackers

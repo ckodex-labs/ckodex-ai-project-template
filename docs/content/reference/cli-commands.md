@@ -51,7 +51,7 @@ just [RECIPE]
 | `run` | Execute Kedro pipeline DAG under capability lease | `--pipeline`, `--profile` |
 | `sbom` | Generate CycloneDX v1.5 and SPDX 2.3 JSON SBOMs | `--out-dir` |
 | `serve` | High-performance Model Serving HTTP Gateway | `--port`, `--model` |
-| `trace` | Correlate 4 truth channels or inspect flight recorder | `RUN_ID`, `flight-recorder` |
+| `trace` | Four Truth Channels, Flight Recorder & Research Evidence | `correlate`, `flight-recorder`, `research-evidence` |
 | `verify` | Audit cryptographic SHA-256 lineage receipts | None |
 
 ---

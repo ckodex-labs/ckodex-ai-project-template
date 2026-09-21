@@ -243,11 +243,20 @@ uv run ckodex-aiops integrity digest data/01_raw/events.lance
 # Inspect platform resilience posture, circuit breakers, and quarantine vaults
 uv run ckodex-aiops resilience status
 
+# Manage strongly-typed configuration, profile overlays, and schemas
+uv run ckodex-aiops config show
+uv run ckodex-aiops config validate
+uv run ckodex-aiops config diff -b macos_metal_safetensors
+
+# Inspect Research Evidence Protocol state (CKX-EXP-001 / CKX-RES-001)
+uv run ckodex-aiops trace research-evidence
+
 # Display recent execution events recorded by platform Flight Recorder (Rules #10, #38)
 uv run ckodex-aiops trace flight-recorder
 
 # Audit cryptographic SHA-256 lineage receipts
 uv run ckodex-aiops verify
+
 
 # Day-2 Deep Observability: explain incident, receipt, or artifact (Rule #37)
 uv run ckodex-aiops explain data/06_models/model.safetensors

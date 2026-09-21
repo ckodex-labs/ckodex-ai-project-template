@@ -189,12 +189,18 @@ def doctor() -> None:
 
     # 7. Experiment Tracking & Observability
     try:
+        from ckodex_aiops.adapters.tracking.research_evidence_adapter import (
+            ResearchEvidenceTracker,
+        )
+
+        res_tracker = ResearchEvidenceTracker()
+        res_info = " | CKX-RES Evidence Protocol active" if res_tracker.is_available else ""
         import mlflow
 
         table.add_row(
             "Experiment Tracking",
             "[green]PASS[/green]",
-            f"MLflow {mlflow.__version__} & Flight Recorder active",
+            f"MLflow {mlflow.__version__} & Flight Recorder{res_info}",
         )
     except Exception:
         table.add_row(
@@ -2444,6 +2450,51 @@ def show_flight_recorder(
         )
 
     console.print(table)
+
+
+@trace_app.command(name="research-evidence")
+def show_research_evidence(
+    db_path: str = typer.Option(
+        "data/08_reporting/research_evidence.db",
+        help="Path to ckodex-research-evidence SQLite database.",
+    ),
+) -> None:
+    """Inspect local research evidence protocol state (CKX-EXP-001 / CKX-RES-001)."""
+    from ckodex_aiops.adapters.tracking.research_evidence_adapter import (
+        ResearchEvidenceTracker,
+    )
+
+    tracker = ResearchEvidenceTracker(db_path=db_path)
+    if not tracker.is_available:
+        console.print(
+            Panel.fit(
+                "[bold yellow]CKODEX Research Evidence Protocol Status[/bold yellow]\n\n"
+                "[dim]Status:[/] [yellow]UNAVAILABLE / UNINITIALIZED[/yellow]\n"
+                f"[dim]DB Path:[/] {db_path}\n\n"
+                "[bold white]To activate full research evidence tracking:[/bold white]\n"
+                "1. Ensure [cyan]ckodex-research-evidence[/cyan] repository is available at:\n"
+                "   [dim]~/Documents/projects/operations/ckodex-research-evidence[/dim]\n"
+                "2. Or install the SDK via [dim]pip install -e ~/Documents/projects/operations/ckodex-research-evidence/python[/dim]\n"
+                "3. Set [dim]CKX_RESEARCH_EVIDENCE_DB[/dim] or execute [dim]uv run ckodex-aiops run[/dim]",
+                border_style="yellow",
+            )
+        )
+        return
+
+    console.print(
+        Panel.fit(
+            f"[bold cyan]CKODEX Research Evidence Protocol Active (CKX-EXP-001)[/bold cyan]\n\n"
+            f"[dim]Experiment Name:[/] [bold]{tracker.experiment_name}[/bold]\n"
+            f"[dim]Database Path:[/] [green]{db_path}[/green]\n"
+            f"[dim]Experiment ID:[/] [dim]{getattr(tracker._exp, 'exp_id', 'unknown')}[/dim]\n"
+            f"[dim]Frozen Revision ID:[/] [dim]{getattr(tracker._exp, 'revision_id', 'unknown')}[/dim]\n\n"
+            r"[bold white]Principles Applied:[/bold white]\n"
+            " • [green]Track the experiment, not the world[/green] (Law #1)\n"
+            " • [green]Opaque external correlations for models and datasets[/green] (Law #6 & #7)\n"
+            " • [green]Zero-server local-first trial journaling[/green]",
+            border_style="cyan",
+        )
+    )
 
 
 @click.group(name="ckodex")
