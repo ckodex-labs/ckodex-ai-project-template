@@ -295,10 +295,10 @@ just docs-pages-build
 
 ## 7. Verification Evidence & Quality Assurance
 
-The test suite enforces constitutional invariants across 93 tests:
+The test suite enforces constitutional invariants across 94 tests:
 
 ```text
-======================== 93 passed in 20.91s =========================
+======================== 94 passed in 25.27s =========================
 ✓ tests/test_airgap.py: PASS (Air-gap packaging, manifest hashing, tamper detection)
 ✓ tests/test_coactor.py: PASS (Actor & Co-Actor asynchronous telemetry buffering)
 ✓ tests/test_compliance.py: PASS (In-toto SLSA v1.0 provenance & NIST OSCAL)

@@ -1363,9 +1363,7 @@ def oci_pack(
 
 @oci_app.command(name="inspect")
 def oci_inspect(
-    layout: str = typer.Option(
-        "dist/oci-template", "--layout", "-l", help="OCI Image Layout directory."
-    ),
+    layout: str = typer.Argument("dist/oci-template", help="OCI Image Layout directory."),
 ) -> None:
     """
     Inspect an OCI Image Layout directory and its manifest, config, and layer descriptors.

@@ -202,10 +202,16 @@ class AutonomicReconciler:
             if anomaly.anomaly_type == "FRAGMENT_BLOAT" and execute_heal:
                 ds_path = anomaly.details["dataset"]
                 try:
+                    from datetime import timedelta
+
                     import lance
 
                     table = lance.dataset(ds_path)
-                    table.compact_files()
+                    table.optimize.compact_files()
+                    try:
+                        table.cleanup_old_versions(older_than=timedelta(seconds=0))
+                    except Exception:
+                        pass
                     actions_taken.append(f"HEALED_COMPACTED_FRAGMENTS:{ds_path}")
                 except Exception as e:
                     actions_taken.append(f"COMPACTION_FAILED:{ds_path}:{str(e)}")
