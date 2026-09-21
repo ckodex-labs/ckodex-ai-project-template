@@ -49,7 +49,9 @@ def test_airgap_bundle_tamper_detection(tmp_path):
 
     # Read manifest from bundle
     with tarfile.open(bundle_path, "r:gz") as tar:
-        manifest_bytes = tar.extractfile("bundle_manifest.json").read()
+        extracted = tar.extractfile("bundle_manifest.json")
+        assert extracted is not None
+        manifest_bytes = extracted.read()
 
     # Create tampered bundle keeping old manifest but changing payload
     tampered_bundle = tmp_path / "tampered.tar.gz"

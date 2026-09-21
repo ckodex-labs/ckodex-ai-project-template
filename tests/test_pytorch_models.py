@@ -33,6 +33,7 @@ def test_polars_torch_dataset():
     assert len(dataset) == 2
     feat, label = dataset[0]
     assert feat.shape == (3,)
+    assert label is not None
     assert label.item() == 0
 
 

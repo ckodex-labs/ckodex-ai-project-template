@@ -15,7 +15,7 @@ import pyarrow as pa
 from kedro.io.core import AbstractDataset, DatasetError
 
 
-class LanceDataSet(AbstractDataset[pl.DataFrame | pa.Table, pl.DataFrame]):
+class LanceDataset(AbstractDataset[pl.DataFrame | pa.Table, pl.DataFrame]):
     """
     Kedro Dataset wrapper for modern Lance columnar and vector dataset format.
 
@@ -58,6 +58,12 @@ class LanceDataSet(AbstractDataset[pl.DataFrame | pa.Table, pl.DataFrame]):
         self._num_partitions = num_partitions
         self._num_sub_vectors = num_sub_vectors
 
+    def load(self) -> pl.DataFrame:
+        return self._load()
+
+    def save(self, data: pl.DataFrame | pa.Table) -> None:
+        self._save(data)
+
     def _load(self) -> pl.DataFrame:
         if not self._filepath.exists():
             raise DatasetError(f"Lance dataset directory does not exist: {self._filepath}")
@@ -97,8 +103,8 @@ class LanceDataSet(AbstractDataset[pl.DataFrame | pa.Table, pl.DataFrame]):
             if self._vector_index_column in ds.schema.names and ds.count_rows() > 0:
                 try:
                     ds.create_index(
+                        column=self._vector_index_column,
                         metric=self._vector_metric,
-                        vector_column_name=self._vector_index_column,
                         index_type="IVF_PQ",
                         num_partitions=self._num_partitions,
                         num_sub_vectors=self._num_sub_vectors,
@@ -158,3 +164,7 @@ class LanceDataSet(AbstractDataset[pl.DataFrame | pa.Table, pl.DataFrame]):
         if not self._filepath.exists():
             raise DatasetError(f"Lance dataset directory does not exist: {self._filepath}")
         return lance.dataset(str(self._filepath), version=self._version)
+
+
+# Backward compatibility alias for kedro-datasets < 2.0 convention
+LanceDataSet = LanceDataset

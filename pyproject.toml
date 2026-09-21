@@ -62,7 +62,7 @@ dev = [
 
 [tool.kedro]
 package_name = "ckodex_aiops"
-project_name = "ckodex-aiops"
+project_name = "ckx-ai-project-template"
 kedro_init_version = "1.6.0"
 
 [tool.ruff]

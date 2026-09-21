@@ -48,20 +48,14 @@ class CkodexCicd:
 
     @function
     def typecheck(self, source: dagger.Directory) -> dagger.Container:
-        """Run Mypy static type verification across core kernel and adapters."""
+        """Run Mypy static type verification across entire codebase (src and tests)."""
         return self._base_python(source).with_exec(
             [
                 "uv",
                 "run",
                 "mypy",
-                "src/ckodex_aiops/kernel",
-                "src/ckodex_aiops/hooks",
-                "src/ckodex_aiops/validation",
-                "src/ckodex_aiops/models",
-                "src/ckodex_aiops/adapters/tracking",
-                "src/ckodex_aiops/adapters/serving",
-                "src/ckodex_aiops/adapters/distribution",
-                "src/ckodex_aiops/adapters/ray/runtime.py",
+                "src",
+                "tests",
             ]
         )
 

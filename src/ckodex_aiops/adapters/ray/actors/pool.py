@@ -25,9 +25,8 @@ class ActorPoolManager:
     def create_embedding_pool(cls, size: int = 2, embedding_dim: int = 32) -> ActorPoolManager:
         from ckodex_aiops.adapters.ray.actors.embedding_actor import EmbeddingActor
 
-        actors = [
-            EmbeddingActor.remote(embedding_dim=embedding_dim, seed=42 + i) for i in range(size)
-        ]
+        actor_cls: Any = EmbeddingActor
+        actors = [actor_cls.remote(embedding_dim=embedding_dim, seed=42 + i) for i in range(size)]
         return cls(actors)
 
     @classmethod
@@ -41,8 +40,9 @@ class ActorPoolManager:
     ) -> ActorPoolManager:
         from ckodex_aiops.adapters.ray.actors.inference_actor import InferenceActor
 
+        actor_cls: Any = InferenceActor
         actors = [
-            InferenceActor.remote(
+            actor_cls.remote(
                 model_state_dict=model_state_dict,
                 input_dim=input_dim,
                 hidden_dim=hidden_dim,
@@ -66,7 +66,7 @@ class ActorPoolManager:
 
         actors = []
         for i in range(size):
-            actor_cls = InferenceActor
+            actor_cls: Any = InferenceActor
             if placement_group is not None:
                 actor_cls = actor_cls.options(
                     placement_group=placement_group,

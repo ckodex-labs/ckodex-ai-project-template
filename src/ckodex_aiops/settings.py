@@ -11,7 +11,7 @@ from ckodex_aiops.hooks.traceability_evidence import TraceabilityEvidenceHook
 
 # Instantiated hooks registered with Kedro
 HOOKS = (
-    AuthorityAdmissionHook(strict_mode=False),
+    AuthorityAdmissionHook(strict_mode=True),
     RayLifecycleHook(auto_shutdown=False),
     DataIntegrityHook(fail_on_corruption=True),
     ResilienceCircuitBreakerHook(),

@@ -2,12 +2,12 @@
 # First-class integration with Lance, Polars, and PyTorch artifacts
 
 admitted_telemetry_lance:
-  type: ckodex_aiops.datasets.LanceDataSet
+  type: ckodex_aiops.datasets.LanceDataset
   filepath: data/01_raw/events.lance
   mode: overwrite
 
 features_lance:
-  type: ckodex_aiops.datasets.LanceDataSet
+  type: ckodex_aiops.datasets.LanceDataset
   filepath: data/04_feature/features.lance
   mode: overwrite
   vector_index_column: vector
@@ -16,6 +16,6 @@ features_lance:
   num_sub_vectors: 2
 
 predictions_lance:
-  type: ckodex_aiops.datasets.LanceDataSet
+  type: ckodex_aiops.datasets.LanceDataset
   filepath: data/07_model_output/predictions.lance
   mode: overwrite

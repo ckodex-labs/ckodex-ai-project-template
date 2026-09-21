@@ -20,7 +20,10 @@ def init_ray():
 
 def test_telemetry_coactor_lifecycle(init_ray):
     """TelemetryCoactor must record metrics, aggregate summaries, and flush asynchronously."""
-    coactor = TelemetryCoactor.remote(buffer_size=50)
+    from typing import Any
+
+    coactor_cls: Any = TelemetryCoactor
+    coactor = coactor_cls.remote(buffer_size=50)
 
     # Record multiple events
     ray.get(

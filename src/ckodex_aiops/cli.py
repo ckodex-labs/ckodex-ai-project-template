@@ -14,6 +14,7 @@ import time
 import warnings
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import cast
 from uuid import uuid4
 
 import click
@@ -175,6 +176,30 @@ def doctor() -> None:
     free_gb = free // (2**30)
     disk_status = "[green]PASS[/green]" if free_gb > 2 else "[yellow]WARN[/yellow]"
     table.add_row("Disk Capacity", disk_status, f"{free_gb} GB free workspace storage")
+
+    # 9. Quarantine Vault & Forensic Evidence (Rule #32)
+    try:
+        from ckodex_aiops.kernel.quarantine import QuarantineManager
+
+        qm = QuarantineManager()
+        q_count = len(qm.list_quarantined())
+        q_status = "[green]PASS[/green]" if q_count == 0 else "[yellow]ISOLATED[/yellow]"
+        table.add_row("Quarantine Vault", q_status, f"{q_count} incident records in vault")
+    except Exception as e:
+        table.add_row("Quarantine Vault", "[yellow]WARN[/yellow]", str(e))
+
+    # 10. Kedro Lifecycle & Governance Hooks (Rule #1, #2, #8)
+    try:
+        from ckodex_aiops.settings import HOOKS
+
+        hook_names = [type(h).__name__ for h in HOOKS]
+        table.add_row(
+            "Governance Hooks",
+            "[green]PASS[/green]",
+            f"{len(HOOKS)} active ({', '.join(hook_names[:3])}...)",
+        )
+    except Exception as e:
+        table.add_row("Governance Hooks", "[yellow]WARN[/yellow]", str(e))
 
     console.print(table)
 
@@ -419,7 +444,10 @@ def run(
     )
     bootstrap_project(Path.cwd())
     with KedroSession.create(project_path=Path.cwd(), runtime_params=extra_params) as session:
-        session.run(pipeline_name=target_pipeline)
+        if target_pipeline and target_pipeline != "__default__":
+            cast(KedroSession, session).run(pipeline_names=[target_pipeline])
+        else:
+            cast(KedroSession, session).run()
     console.print("[bold green]✔ Pipeline Run Succeeded![/bold green]")
 
 

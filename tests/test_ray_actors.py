@@ -19,7 +19,10 @@ def init_ray():
 
 
 def test_embedding_actor(init_ray):
-    actor = EmbeddingActor.remote(embedding_dim=16)
+    from typing import Any
+
+    actor_cls: Any = EmbeddingActor
+    actor = actor_cls.remote(embedding_dim=16)
     features = [[1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0]]
 
     future = actor.generate_embeddings.remote(features)
@@ -36,7 +39,10 @@ def test_embedding_actor(init_ray):
 
 
 def test_inference_actor(init_ray):
-    actor = InferenceActor.remote(input_dim=16, num_classes=3, device="cpu")
+    from typing import Any
+
+    actor_cls: Any = InferenceActor
+    actor = actor_cls.remote(input_dim=16, num_classes=3, device="cpu")
     features = [[0.1] * 16, [0.9] * 16]
 
     res = ray.get(actor.predict_batch.remote(features))

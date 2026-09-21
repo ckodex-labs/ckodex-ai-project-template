@@ -234,6 +234,18 @@ uv run ckodex-aiops oci inspect dist/oci-template
 # Generate ORAS and Cosign commands for enterprise registry distribution
 uv run ckodex-aiops oci guide --image ghcr.io/org/repo:1.0.0
 
+# Verify Merkle Lineage Chain across pipeline node receipts (Rules #8, #18)
+uv run ckodex-aiops integrity verify
+
+# Compute deterministic content-addressable SHA-256 digest of dataset or weights
+uv run ckodex-aiops integrity digest data/01_raw/events.lance
+
+# Inspect platform resilience posture, circuit breakers, and quarantine vaults
+uv run ckodex-aiops resilience status
+
+# Display recent execution events recorded by platform Flight Recorder (Rules #10, #38)
+uv run ckodex-aiops trace flight-recorder
+
 # Audit cryptographic SHA-256 lineage receipts
 uv run ckodex-aiops verify
 
@@ -283,10 +295,10 @@ just docs-pages-build
 
 ## 7. Verification Evidence & Quality Assurance
 
-The test suite enforces constitutional invariants across 81 tests:
+The test suite enforces constitutional invariants across 93 tests:
 
 ```text
-======================== 81 passed in 55.10s (0:00:55) =========================
+======================== 93 passed in 20.91s =========================
 ✓ tests/test_airgap.py: PASS (Air-gap packaging, manifest hashing, tamper detection)
 ✓ tests/test_coactor.py: PASS (Actor & Co-Actor asynchronous telemetry buffering)
 ✓ tests/test_compliance.py: PASS (In-toto SLSA v1.0 provenance & NIST OSCAL)
@@ -295,6 +307,8 @@ The test suite enforces constitutional invariants across 81 tests:
 ✓ tests/test_derogation.py: PASS (Explicit accepted risk derogations & compensating controls)
 ✓ tests/test_drift.py: PASS (Statistical Wasserstein distance & PSI drift detection)
 ✓ tests/test_explanation.py: PASS (Deep observability 11-question explanation engine)
+✓ tests/test_hooks.py: PASS (Authority admission, data integrity corruption detection, circuit breaker quarantine, Merkle receipt flight recording)
+✓ tests/test_integrity.py: PASS (Content-addressable digestion for Polars, PyArrow, PyTorch weights, Merkle lineage chains)
 ✓ tests/test_kernel.py: PASS (State vector algebra, anti-dominance, SHA-256 receipts)
 ✓ tests/test_lance_dataset.py: PASS (Zero-copy Lance scanning, pushdown filters)
 ✓ tests/test_lance_ray.py: PASS (Ray Data ↔ Lance zero-copy streaming & compaction)
@@ -311,6 +325,7 @@ The test suite enforces constitutional invariants across 81 tests:
 ✓ tests/test_ray_advanced.py: PASS (Placement groups, zero-copy Plasma dispatch, full optimize)
 ✓ tests/test_reconciler.py: PASS (Autonomic Day-2 Reconciler loop & self-healing)
 ✓ tests/test_recovery.py: PASS (Designed checkpoint recovery & governed execution replay)
+✓ tests/test_resilience.py: PASS (Circuit breaker state transitions, bounded retry with jitter, degraded mode registry)
 ✓ tests/test_sbom.py: PASS (CycloneDX v1.5 and SPDX 2.3 JSON SBOM generation)
 ✓ tests/test_secrets.py: PASS (Redacted SecretValue, SecretLease, Vault, KMS, Keyless)
 ✓ tests/test_serving.py: PASS (Model serving gateway, /healthz, /livez, /infer)
@@ -318,9 +333,10 @@ The test suite enforces constitutional invariants across 81 tests:
 ✓ tests/test_tracking.py: PASS (Flight Recorder & MLflow experiment tracking)
 ✓ tests/test_validation.py: PASS (Shared validation contracts & preflight bounds)
 
-Ruff Linter & Formatter: 100% clean across 161 files (0 errors, 0 warnings).
+Ruff Linter & Formatter: 100% clean across 170 files (0 errors, 0 warnings).
+Mypy Type Checker: 100% clean across 127 files (0 issues).
 Hugo Living Documentation: 53 pages built in 29 ms across 4 Diátaxis quadrants (0 errors, 0 warnings).
-Platform Doctor: PASS (All hardware, compute, storage, and secrets subsystems healthy).
+Platform Doctor: PASS (All hardware, compute, storage, quarantine, and hooks subsystems healthy).
 ```
 
 ---

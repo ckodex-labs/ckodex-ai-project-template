@@ -31,6 +31,7 @@ just [RECIPE]
 | `drift` | Statistical Wasserstein distance & PSI drift detector | `--baseline`, `--observed` |
 | `explain` | Answer 11 constitutional operator diagnostic questions | `TARGET` (argument) |
 | `inspect` | Inspect Lance schemas or Safetensors checkpoints | `TARGET` (argument) |
+| `integrity` | Content-addressable digestion & Merkle chain verification | `verify`, `digest` |
 | `lifecycle` | Inspect subject registry or generate runbooks | `--audit`, `--runbook`, `--export-docs` |
 | `mine` | Physical AI robotics SQL pushdown event mining | `--filter-expr`, `--limit` |
 | `oci` | OCI Image Layout packaging & distribution | `pack`, `inspect`, `unpack`, `guide` |
@@ -45,8 +46,9 @@ just [RECIPE]
 | `reconcile` | Day-2 autonomic reconciler self-healing loop | `--auto-heal`, `--profile` |
 | `recover` | Reconstruct checkpoint and verify disk digests | `--checkpoint`, `--verify-only` |
 | `replay` | Governed replay under lease with side-effect fencing | `--receipt`, `--dry-run` |
+| `resilience` | Inspect failure budgets, circuit breakers & quarantine vaults | `status` |
 | `run` | Execute Kedro pipeline DAG under capability lease | `--pipeline`, `--profile` |
 | `sbom` | Generate CycloneDX v1.5 and SPDX 2.3 JSON SBOMs | `--out-dir` |
 | `serve` | High-performance Model Serving HTTP Gateway | `--port`, `--model` |
-| `trace` | Correlate 4 truth channels & detect decoherence | `RUN_ID` (argument) |
+| `trace` | Correlate 4 truth channels or inspect flight recorder | `RUN_ID`, `flight-recorder` |
 | `verify` | Audit cryptographic SHA-256 lineage receipts | None |

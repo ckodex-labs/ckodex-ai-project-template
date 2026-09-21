@@ -122,9 +122,9 @@ class LanceRayEngine:
             except Exception:
                 # Fallback to local index creation if dataset size is below Ray partition threshold
                 ds.create_index(
-                    metric=metric,
-                    vector_column_name=column,
+                    column=column,
                     index_type="IVF_PQ",
+                    metric=metric,
                     num_partitions=num_partitions,
                     num_sub_vectors=num_sub_vectors,
                     replace=True,
@@ -143,7 +143,9 @@ class LanceRayEngine:
         try:
             lance_ray.compact_files(
                 str(uri),
-                target_rows_per_fragment=target_rows_per_fragment,
+                compaction_options=lance.optimize.CompactionOptions(
+                    target_rows_per_fragment=target_rows_per_fragment
+                ),
             )
         except Exception:
             ds = lance.dataset(str(uri))
@@ -169,7 +171,12 @@ class LanceRayEngine:
 
         # 1. Compact
         try:
-            lance_ray.compact_files(str(uri), target_rows_per_fragment=target_rows_per_fragment)
+            lance_ray.compact_files(
+                str(uri),
+                compaction_options=lance.optimize.CompactionOptions(
+                    target_rows_per_fragment=target_rows_per_fragment
+                ),
+            )
         except Exception:
             ds.optimize.compact_files(target_rows_per_fragment=target_rows_per_fragment)
 
