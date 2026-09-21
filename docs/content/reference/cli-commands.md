@@ -25,6 +25,7 @@ just [RECIPE]
 | `benchmark` | Run Polars vs Lance vs Ray micro-benchmark | `--num-samples` |
 | `cockpit` | Launch interactive terminal UI & export HTML | `--profile`, `--export-html` |
 | `compact` | Distributed fragment compaction on Lance dataset | `TARGET` (argument) |
+| `config` | Manage typed configuration, schemas & profile overlays | `show`, `validate`, `diff`, `schema`, `init` |
 | `conformance` | Evaluate transition conformance suite | None |
 | `derogation` | Manage explicit technical risk derogations | `create`, `list`, `revoke` |
 | `doctor` | Preflight diagnostic inspection of hardware & storage | None |
@@ -52,3 +53,17 @@ just [RECIPE]
 | `serve` | High-performance Model Serving HTTP Gateway | `--port`, `--model` |
 | `trace` | Correlate 4 truth channels or inspect flight recorder | `RUN_ID`, `flight-recorder` |
 | `verify` | Audit cryptographic SHA-256 lineage receipts | None |
+
+---
+
+## Rich CLI Help Panels
+
+When executing `uv run ckodex-aiops --help`, commands are categorized into 6 operational panels:
+
+1. **Configuration & Profiles**: `config`, `profile`
+2. **Execution & Pipelines**: `run`, `serve`, `quantize`, `mine`, `ray-pg`, `benchmark`
+3. **Day-2 Operations & Recovery**: `reconcile`, `recover`, `replay`, `quarantine`, `compact`, `optimize`
+4. **Integrity & Observability**: `integrity`, `verify`, `drift`, `trace`, `cockpit`, `inspect`
+5. **Governance & Compliance**: `doctor`, `conformance`, `explain`, `derogation`, `oscal`, `lifecycle`, `onboard`, `offboard`
+6. **Distribution & Packaging**: `airgap-pack`, `airgap-verify`, `oci`, `attest`, `sbom`
+

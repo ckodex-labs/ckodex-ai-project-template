@@ -14,7 +14,7 @@ import time
 import warnings
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 from uuid import uuid4
 
 import click
@@ -35,6 +35,7 @@ from ckodex_aiops.adapters.ray.lance_ray import LanceRayEngine
 from ckodex_aiops.adapters.ray.placement import RayPlacementGroupManager
 from ckodex_aiops.adapters.ray.runtime import RayRuntimeManager
 from ckodex_aiops.adapters.serving.gateway import ModelServingGateway
+from ckodex_aiops.kernel.config import PlatformConfig
 from ckodex_aiops.kernel.conformance import ConformanceEngine
 from ckodex_aiops.kernel.derogation import DerogationRegistry
 from ckodex_aiops.kernel.drift import StatisticalDriftDetector
@@ -70,14 +71,45 @@ warnings.filterwarnings("ignore", message=".*lance is not fork-safe.*")
 warnings.filterwarnings("ignore", message=".*lancedb fork support is experimental.*")
 
 app = typer.Typer(
-    name="ckodex-aiops",
-    help="World-Class AI Platform CLI: Kedro, UV, Ray Actors, Lance, Polars, PyTorch",
-    add_completion=False,
+    name="ckx",
+    help="High-Assurance AI Engineering Platform: Kedro, UV, Ray Actors, Lance, Polars, PyTorch",
+    rich_markup_mode="rich",
+    add_completion=True,
 )
 console = Console()
 
+BANNER = (
+    r"[bold cyan]  ____ _  ______  ____  _______  __   _    ___  ___  ____\n"
+    r" / ___| |/ /  _ \|  _ \| ____\ \/ /  / \  |_ _// _ \|  _ \\\n"
+    r"| |   | ' /| |_) | | | |  _|  \  /  / _ \  | || | | | |_)\\\n"
+    r"| |___| . \|  _ <| |_| | |___ /  \ / ___ \ | || |_| |  __/\n"
+    r" \____|_|\_\_| \_\____/|_____/_/\_/_/   \_|___|\___/|_|[/bold cyan]\n"
+    "[bold white]High-Assurance AI Engineering Platform[/bold white] • [dim]ckx-ai-project-template v0.2.0[/dim]\n"
+    "[dim]Constitutional GAL 1 • Kedro • UV • Ray Actors • Lance • Polars • PyTorch[/dim]"
+)
 
-@app.command()
+
+@app.callback(invoke_without_command=True)
+def main_callback(
+    ctx: typer.Context,
+    version: bool = typer.Option(
+        False,
+        "--version",
+        "-v",
+        help="Show platform version and exit.",
+    ),
+) -> None:
+    """World-class Day-2 Operations & AI Platform CLI."""
+    if version:
+        console.print(Panel(BANNER, border_style="cyan"))
+        raise typer.Exit()
+    if ctx.invoked_subcommand is None:
+        console.print(Panel(BANNER, border_style="cyan"))
+        console.print(ctx.get_help())
+        raise typer.Exit()
+
+
+@app.command(rich_help_panel="Day-2 Operations & Recovery")
 def doctor() -> None:
     """
     Run comprehensive Day-2 preflight diagnostics across compute, storage, and frameworks.
@@ -226,7 +258,7 @@ def doctor() -> None:
     )
 
 
-@app.command()
+@app.command(rich_help_panel="Integrity & Observability")
 def inspect(
     target: str = typer.Argument(
         "data/04_feature/features.lance", help="Path to Lance dataset or model checkpoint"
@@ -302,7 +334,7 @@ def inspect(
         console.print(f"[yellow]File exists ({path.stat().st_size} bytes).[/yellow]")
 
 
-@app.command()
+@app.command(rich_help_panel="Governance & Compliance")
 def verify(
     receipts_dir: str = typer.Option(
         "data/08_reporting/receipts", help="Directory containing lineage receipts"
@@ -345,7 +377,7 @@ def verify(
     )
 
 
-@app.command()
+@app.command(rich_help_panel="Execution & Pipelines")
 def benchmark(
     num_samples: int = typer.Option(5000, help="Number of benchmark samples"),
 ) -> None:
@@ -397,7 +429,7 @@ def benchmark(
     )
 
 
-@app.command()
+@app.command(rich_help_panel="Execution & Pipelines")
 def run(
     pipeline: str | None = typer.Option(
         None,
@@ -455,7 +487,7 @@ profile_app = typer.Typer(
     name="profile",
     help="Platform Profiles & Baselines management (CKODEX Rule #36)",
 )
-app.add_typer(profile_app, name="profile")
+app.add_typer(profile_app, name="profile", rich_help_panel="Configuration & Profiles")
 
 
 @profile_app.command(name="list")
@@ -538,7 +570,340 @@ def promote_profile(
         raise typer.Exit(1)
 
 
-@app.command()
+# ==============================================================================
+# Typed Configuration Commands (Rules #6, #8, #41)
+# ==============================================================================
+
+config_app = typer.Typer(
+    name="config",
+    help="Platform configuration: show, validate, diff, schema, init (Rules #6, #8, #41)",
+)
+app.add_typer(config_app, name="config", rich_help_panel="Configuration & Profiles")
+
+
+@config_app.command(name="show")
+def config_show(
+    profile: str | None = typer.Option(
+        None,
+        "--profile",
+        "-p",
+        help="Candidate platform profile or baseline to overlay (e.g. macos_metal_safetensors, physical_ai_robotics).",
+    ),
+    format: str = typer.Option(
+        "tree",
+        "--format",
+        "-f",
+        help="Display format: tree, table, yaml, json.",
+    ),
+    resolve_env: bool = typer.Option(
+        True,
+        "--resolve-env/--no-resolve-env",
+        help="Resolve CKX_* environment variable overrides.",
+    ),
+    path: str | None = typer.Option(
+        None,
+        "--path",
+        help="Path to custom parameters YAML file (defaults to conf/base/parameters.yml).",
+    ),
+) -> None:
+    """Display effective platform configuration with source provenance and cryptographic digest."""
+    try:
+        cfg = PlatformConfig.load(path=path, profile=profile, resolve_env=resolve_env)
+    except Exception as e:
+        console.print(f"[bold red]Configuration Load Error:[/] {e}")
+        raise typer.Exit(code=1)
+
+    if format == "json":
+        console.print(cfg.to_json(indent=2))
+        return
+    if format == "yaml":
+        console.print(cfg.to_yaml())
+        return
+
+    console.print(
+        Panel.fit(
+            f"[bold cyan]CKODEX Platform Effective Configuration[/bold cyan]\n"
+            f"[dim]Digest:[/] [green]{cfg.compute_digest()}[/green] | "
+            f"[dim]Profile:[/] [magenta]{cfg.active_profile or 'none'}[/magenta] | "
+            f"[dim]Environment:[/] [yellow]{cfg.project.environment}[/yellow]",
+            border_style="cyan",
+        )
+    )
+
+    if format == "table":
+        table = Table(title="Resolved Configuration Parameters", border_style="dim")
+        table.add_column("Section", style="bold cyan")
+        table.add_column("Parameter", style="bold")
+        table.add_column("Value", style="green")
+        table.add_column("Source / Origin", style="dim")
+
+        data = cfg.model_dump(exclude={"sources"})
+        for sec, params in data.items():
+            if isinstance(params, dict):
+                for p_key, p_val in params.items():
+                    src = cfg.sources.get(f"{sec}.{p_key}", cfg.sources.get(sec, "default"))
+                    table.add_row(sec, p_key, str(p_val), src)
+            else:
+                src = cfg.sources.get(sec, "default")
+                table.add_row("root", sec, str(params), src)
+        console.print(table)
+    else:
+        from rich.tree import Tree
+
+        tree = Tree(
+            f"[bold cyan]PlatformConfig[/bold cyan] [dim](SHA256: {cfg.compute_digest()[:12]}...)[/dim]"
+        )
+        data = cfg.model_dump(exclude={"sources"})
+        for sec, params in data.items():
+            sec_src = cfg.sources.get(sec, "default")
+            sec_node = tree.add(f"[bold yellow]{sec}[/bold yellow] [dim]({sec_src})[/dim]")
+            if isinstance(params, dict):
+                for p_key, p_val in params.items():
+                    item_src = cfg.sources.get(f"{sec}.{p_key}", sec_src)
+                    sec_node.add(
+                        f"[bold]{p_key}:[/bold] [green]{p_val}[/green] [dim]({item_src})[/dim]"
+                    )
+            else:
+                sec_node.add(f"[green]{params}[/green]")
+        console.print(tree)
+
+
+@config_app.command(name="validate")
+def config_validate(
+    profile: str | None = typer.Option(
+        None,
+        "--profile",
+        "-p",
+        help="Candidate profile to validate against.",
+    ),
+    catalog: bool = typer.Option(
+        True,
+        "--catalog/--no-catalog",
+        help="Validate Kedro catalog dataset definitions and paths.",
+    ),
+    strict: bool = typer.Option(
+        False,
+        "--strict/--no-strict",
+        help="Fail with non-zero code if any warnings or missing directories are detected.",
+    ),
+    path: str | None = typer.Option(
+        None,
+        "--path",
+        help="Path to parameters YAML file.",
+    ),
+) -> None:
+    """Validate platform configuration parameters and catalog integrity (Rule #8)."""
+    console.print(
+        Panel.fit(
+            "[bold cyan]CKODEX Configuration Preflight & Schema Validation[/bold cyan]",
+            border_style="cyan",
+        )
+    )
+
+    table = Table(title="Configuration Validation Results", border_style="dim")
+    table.add_column("Category", style="bold")
+    table.add_column("Item", style="cyan")
+    table.add_column("Status", justify="center")
+    table.add_column("Details", style="dim")
+
+    has_errors = False
+
+    # 1. Schema & Parameters Validation
+    try:
+        cfg = PlatformConfig.load(path=path, profile=profile)
+        table.add_row(
+            "Parameters",
+            f"parameters.yml ({profile or 'base'})",
+            "[green]PASS[/green]",
+            f"Valid Pydantic v2 schema (Digest: {cfg.compute_digest()[:12]}...)",
+        )
+    except Exception as e:
+        has_errors = True
+        table.add_row(
+            "Parameters",
+            f"parameters.yml ({profile or 'base'})",
+            "[red]FAIL[/red]",
+            str(e),
+        )
+        console.print(table)
+        raise typer.Exit(code=1)
+
+    # 2. Invariant checks
+    if cfg.feature_engineering.embedding_dim != cfg.model.input_dim:
+        has_errors = True
+        table.add_row(
+            "Invariant",
+            "feature_dim == input_dim",
+            "[red]FAIL[/red]",
+            f"Embedding dim {cfg.feature_engineering.embedding_dim} != Model input dim {cfg.model.input_dim}",
+        )
+    else:
+        table.add_row(
+            "Invariant",
+            "feature_dim == input_dim",
+            "[green]PASS[/green]",
+            f"Dimension alignment verified ({cfg.model.input_dim})",
+        )
+
+    # 3. Catalog checks
+    if catalog:
+        cat_results = cfg.validate_catalog()
+        for res in cat_results:
+            status_str = "[green]PASS[/green]" if res["status"] == "PASS" else "[red]FAIL[/red]"
+            if res["status"] != "PASS":
+                has_errors = True
+            table.add_row("Catalog", res["dataset"], status_str, res["message"])
+
+    console.print(table)
+    if has_errors:
+        console.print("[bold red]Configuration validation failed with errors.[/bold red]")
+        raise typer.Exit(code=1)
+    else:
+        console.print(
+            "[bold green]All configuration schemas and catalog invariants validated successfully.[/bold green]"
+        )
+
+
+@config_app.command(name="diff")
+def config_diff(
+    profile_a: str | None = typer.Option(
+        None,
+        "--profile-a",
+        "-a",
+        help="First platform profile (defaults to base configuration).",
+    ),
+    profile_b: str = typer.Option(
+        ...,
+        "--profile-b",
+        "-b",
+        help="Second platform profile to compare against.",
+    ),
+    path: str | None = typer.Option(
+        None,
+        "--path",
+        help="Path to parameters YAML file.",
+    ),
+) -> None:
+    """Compare two platform profiles or configurations side-by-side."""
+    try:
+        cfg_a = PlatformConfig.load(path=path, profile=profile_a)
+        cfg_b = PlatformConfig.load(path=path, profile=profile_b)
+    except Exception as e:
+        console.print(f"[bold red]Configuration Diff Error:[/] {e}")
+        raise typer.Exit(code=1)
+
+    diffs = cfg_a.diff(cfg_b)
+    modified = [d for d in diffs if d.status != "IDENTICAL"]
+
+    name_a = profile_a or "base"
+    name_b = profile_b
+
+    console.print(
+        Panel.fit(
+            f"[bold cyan]CKODEX Configuration Diff[/bold cyan]: [yellow]{name_a}[/yellow] vs [magenta]{name_b}[/magenta]",
+            border_style="cyan",
+        )
+    )
+
+    if not modified:
+        console.print(
+            f"[bold green]Configurations '{name_a}' and '{name_b}' are identical.[/bold green]"
+        )
+        return
+
+    table = Table(title=f"Configuration Discrepancies ({len(modified)} found)", border_style="dim")
+    table.add_column("Parameter Path", style="bold")
+    table.add_column(f"{name_a}", style="cyan")
+    table.add_column(f"{name_b}", style="magenta")
+    table.add_column("Change Status", justify="center")
+
+    for d in modified:
+        status_colored = {
+            "MODIFIED": "[yellow]MODIFIED[/yellow]",
+            "ADDED": "[green]ADDED[/green]",
+            "REMOVED": "[red]REMOVED[/red]",
+        }.get(d.status, d.status)
+        table.add_row(d.path, str(d.value_a), str(d.value_b), status_colored)
+
+    console.print(table)
+
+
+@config_app.command(name="schema")
+def config_schema(
+    output: str | None = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Output file path to write JSON Schema (e.g. conf/parameters.schema.json).",
+    ),
+) -> None:
+    """Export standard JSON Schema (Draft 2020-12) for IDE validation and autocompletion."""
+    schema = PlatformConfig.json_schema()
+    formatted = json.dumps(schema, indent=2)
+    if output:
+        out_path = Path(output)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(formatted)
+        console.print(f"[bold green]JSON Schema exported to:[/] [cyan]{out_path}[/cyan]")
+    else:
+        console.print(formatted)
+
+
+@config_app.command(name="init")
+def config_init(
+    profile: str = typer.Option(
+        "macos_metal_safetensors",
+        "--profile",
+        "-p",
+        help="Base platform profile to initialize.",
+    ),
+    output: str = typer.Option(
+        "conf/local/parameters.yml",
+        "--output",
+        "-o",
+        help="Output path for initialized parameters file.",
+    ),
+    force: bool = typer.Option(
+        False,
+        "--force",
+        "-f",
+        help="Overwrite target file if it already exists.",
+    ),
+) -> None:
+    """Scaffold a typed local parameters file with smart profile defaults and comments."""
+    out_p = Path(output)
+    if out_p.exists() and not force:
+        console.print(
+            f"[bold yellow]File '{output}' already exists.[/bold yellow] Use [cyan]--force[/cyan] to overwrite."
+        )
+        raise typer.Exit(code=1)
+
+    try:
+        cfg = PlatformConfig.load(profile=profile, resolve_env=False)
+    except Exception as e:
+        console.print(f"[bold red]Initialization Error:[/] {e}")
+        raise typer.Exit(code=1)
+
+    out_p.parent.mkdir(parents=True, exist_ok=True)
+    with open(out_p, "w", encoding="utf-8") as f:
+        f.write(f"# CKODEX Platform Configuration (Profile: {profile})\n")
+        f.write(f"# Initialized at: {datetime.now(UTC).isoformat()}\n")
+        f.write("# See docs/content/reference/configuration.md for field specifications\n\n")
+        f.write(cfg.to_yaml())
+
+    console.print(
+        Panel.fit(
+            f"[bold green]Configuration initialized successfully![/bold green]\n"
+            f"[dim]Destination:[/] [cyan]{out_p}[/cyan]\n"
+            f"[dim]Profile:[/] [magenta]{profile}[/magenta]\n"
+            f"[dim]Digest:[/] [green]{cfg.compute_digest()}[/green]",
+            border_style="green",
+        )
+    )
+
+
+@app.command(rich_help_panel="Execution & Pipelines")
 def compact(
     target: str = typer.Argument(
         "data/04_feature/features.lance", help="Path to Lance dataset to compact"
@@ -584,7 +949,7 @@ def compact(
     )
 
 
-@app.command()
+@app.command(rich_help_panel="Execution & Pipelines")
 def mine(
     dataset: str = typer.Option(
         "data/04_feature/physical_ai.lance", help="Path to Physical AI Lance dataset"
@@ -601,35 +966,31 @@ def mine(
 
     path = Path(dataset)
     if not path.exists():
-        console.print(f"[red]Error:[/red] Physical AI dataset not found at: {path}")
-        console.print(
-            "[yellow]Tip: Run 'uv run ckodex-aiops run --pipeline physical_ai' first.[/yellow]"
-        )
+        console.print(f"[red]Error:[/red] Dataset does not exist at: {path}")
         raise typer.Exit(1)
 
     console.print(
         Panel.fit(
-            f"[bold cyan]Physical AI Multimodal Mining Query[/bold cyan]\n"
-            f"Dataset: [dim]{path}[/dim] | Filter: [bold yellow]{filter_expr}[/bold yellow]",
+            f"[bold cyan]Mining Lance Dataset: {path}[/bold cyan]\nFilter: `{filter_expr}` | Limit: {limit}",
             border_style="cyan",
         )
     )
 
-    start = time.perf_counter()
     result = mine_physical_ai_events(str(path), filter_expr=filter_expr, limit=limit)
-    dur = (time.perf_counter() - start) * 1000
 
-    table = Table(
-        title=f"Matched Events ({result['total_matched_samples']} found in {dur:.1f} ms)",
-        border_style="dim",
+    console.print(
+        f"[bold green]✔ Mined {result['total_matched_samples']} candidate events.[/bold green]"
     )
-    table.add_column("Episode", justify="center", style="bold")
-    table.add_column("Step", justify="center")
-    table.add_column("Accel Mag (m/s²)", justify="right")
-    table.add_column("Jerk Mag (m/s³)", justify="right")
+    events: list[dict[str, Any]] = result["sample_events"]
+
+    table = Table(title="Multimodal Kinematics Anomaly Events", border_style="dim")
+    table.add_column("Episode ID", style="cyan")
+    table.add_column("Step ID", justify="right")
+    table.add_column("Acceleration (m/s²)", justify="right")
+    table.add_column("Jerk Magnitude", justify="right")
     table.add_column("Slip Detected", justify="center")
 
-    for ev in result["sample_events"]:
+    for ev in events:
         table.add_row(
             str(ev["episode_id"]),
             str(ev["step_id"]),
@@ -642,7 +1003,7 @@ def mine(
     console.print(f"[dim]Affected Episodes: {result['episodes_affected']}[/dim]")
 
 
-@app.command()
+@app.command(rich_help_panel="Day-2 Operations & Recovery")
 def reconcile(
     profile: str = typer.Option(
         "macos_metal_safetensors",
@@ -689,7 +1050,7 @@ def reconcile(
     console.print(table)
 
 
-@app.command()
+@app.command(rich_help_panel="Governance & Compliance")
 def attest(
     subject: str = typer.Option(
         "data/06_models/model.safetensors", "--subject", "-s", help="Path to artifact to attest."
@@ -719,7 +1080,7 @@ def attest(
     console.print(f"Artifact SHA-256: [dim]{stmt['subject'][0]['digest']['sha256']}[/dim]")
 
 
-@app.command()
+@app.command(rich_help_panel="Governance & Compliance")
 def oscal(
     out: str = typer.Option(
         "data/08_reporting/oscal/component_definition.json",
@@ -737,7 +1098,7 @@ def oscal(
     )
 
 
-@app.command()
+@app.command(rich_help_panel="Governance & Compliance")
 def sbom(
     lockfile: str = typer.Option("uv.lock", "--lockfile", "-l", help="Path to uv.lock manifest."),
     out_dir: str = typer.Option(
@@ -766,7 +1127,7 @@ def sbom(
     )
 
 
-@app.command()
+@app.command(rich_help_panel="Governance & Compliance")
 def onboard(
     subject_type: str = typer.Option(
         "operator", "--type", "-t", help="Subject type: operator, agent, tenant, compute-node"
@@ -829,7 +1190,7 @@ def onboard(
     )
 
 
-@app.command()
+@app.command(rich_help_panel="Governance & Compliance")
 def offboard(
     subject_id: str = typer.Option(..., "--id", "-i", help="Subject identifier to offboard."),
     reason: str = typer.Option(
@@ -868,7 +1229,7 @@ def offboard(
     )
 
 
-@app.command(name="lifecycle")
+@app.command(name="lifecycle", rich_help_panel="Governance & Compliance")
 def lifecycle_cmd(
     audit: bool = typer.Option(
         False, "--audit", "-a", help="Display full audit transition history."
@@ -951,7 +1312,7 @@ def lifecycle_cmd(
                 )
 
 
-@app.command()
+@app.command(rich_help_panel="Day-2 Operations & Recovery")
 def cockpit(
     export_html: str | None = typer.Option(
         None, "--export-html", help="Optional path to export static HTML dashboard."
@@ -968,7 +1329,7 @@ def cockpit(
         console.print(f"[green]Exported HTML Cockpit to:[/green] [bold]{dest}[/bold]")
 
 
-@app.command()
+@app.command(rich_help_panel="Day-2 Operations & Recovery")
 def conformance() -> None:
     """
     Run multi-dimensional transition conformance evaluation (Structural, Adversarial ANTI, Degradation).
@@ -1029,7 +1390,7 @@ def conformance() -> None:
     console.print(table)
 
 
-@app.command()
+@app.command(rich_help_panel="Day-2 Operations & Recovery")
 def drift(
     baseline_dataset: str = typer.Option(
         "data/01_raw/events.lance", "--baseline", "-b", help="Baseline Lance dataset path."
@@ -1091,7 +1452,7 @@ def drift(
     )
 
 
-@app.command(name="airgap-pack")
+@app.command(name="airgap-pack", rich_help_panel="Distribution & Packaging")
 def airgap_pack(
     bundle_name: str = typer.Option(
         "ckodex-aiops-production", "--name", "-n", help="Name of airgap package."
@@ -1128,7 +1489,7 @@ def airgap_pack(
     )
 
 
-@app.command(name="airgap-verify")
+@app.command(name="airgap-verify", rich_help_panel="Distribution & Packaging")
 def airgap_verify(
     bundle_path: str = typer.Option(
         "data/08_reporting/airgap/bundle.tar.gz", "--path", "-p", help="Path to airgap bundle."
@@ -1157,7 +1518,7 @@ def airgap_verify(
         raise typer.Exit(1)
 
 
-@app.command()
+@app.command(rich_help_panel="Execution & Pipelines")
 def quantize(
     source: str = typer.Option(
         "data/06_models/model.safetensors", "--source", "-s", help="Source model weights path."
@@ -1210,7 +1571,7 @@ def quantize(
     console.print(table)
 
 
-@app.command()
+@app.command(rich_help_panel="Execution & Pipelines")
 def serve(
     port: int = typer.Option(8080, "--port", "-p", help="HTTP Server port."),
     model_path: str = typer.Option(
@@ -1242,7 +1603,7 @@ def serve(
         server.server_close()
 
 
-@app.command()
+@app.command(rich_help_panel="Execution & Pipelines")
 def optimize(
     target: str = typer.Option(
         "data/04_feature/features.lance", "--target", "-t", help="Target Lance dataset path."
@@ -1282,7 +1643,7 @@ def optimize(
     console.print("[green]SUCCESS:[/green] Table optimization and version pruning complete.")
 
 
-@app.command(name="ray-pg")
+@app.command(name="ray-pg", rich_help_panel="Integrity & Observability")
 def ray_pg(
     name: str = typer.Option("infer_pg", "--name", "-n", help="Placement group name."),
     num_actors: int = typer.Option(2, "--num-actors", "-a", help="Number of actor slots."),
@@ -1326,7 +1687,7 @@ oci_app = typer.Typer(
     name="oci",
     help="OCI Artifact Packaging & Distribution Engine (OCI Spec v1.1.0, ORAS, Cosign)",
 )
-app.add_typer(oci_app, name="oci")
+app.add_typer(oci_app, name="oci", rich_help_panel="Distribution & Packaging")
 
 
 @oci_app.command(name="pack")
@@ -1433,7 +1794,7 @@ def oci_unpack(
 @oci_app.command(name="guide")
 def oci_guide(
     image_ref: str = typer.Option(
-        "ghcr.io/cfyd-ai/ckodex-aiops-template:v1.0.0",
+        "ghcr.io/ckodex-labs/ckx-ai-project-template:latest",
         "--image-ref",
         "-r",
         help="Target OCI registry reference.",
@@ -1443,7 +1804,7 @@ def oci_guide(
     ),
 ) -> None:
     """
-    Display production ORAS and Cosign commands to push, pull, sign, and attest the OCI artifact.
+    Print step-by-step commands to push/pull OCI artifacts with ORAS and sign with Cosign.
     """
     cmds = OciTemplatePackager.generate_oras_commands(image_ref=image_ref, layout_dir=layout)
     console.print(
@@ -1458,7 +1819,7 @@ def oci_guide(
 # ==============================================================================
 
 
-@app.command(name="explain")
+@app.command(name="explain", rich_help_panel="Integrity & Observability")
 def explain(
     target: str = typer.Argument(
         ..., help="Target receipt ID, artifact path, or incident identifier to explain."
@@ -1527,7 +1888,7 @@ def explain(
     console.print(table)
 
 
-@app.command(name="trace")
+@app.command(name="trace-correlate", rich_help_panel="Integrity & Observability")
 def trace(
     run_id: str = typer.Argument(
         ..., help="Run ID or prefix to correlate across the four truth channels."
@@ -1587,7 +1948,7 @@ def trace(
     console.print(table)
 
 
-@app.command(name="recover")
+@app.command(name="recover", rich_help_panel="Day-2 Operations & Recovery")
 def recover(
     checkpoint: str = typer.Option(
         ..., "--checkpoint", "-c", help="Checkpoint ID to verify and recover."
@@ -1623,7 +1984,7 @@ def recover(
         )
 
 
-@app.command(name="replay")
+@app.command(name="replay", rich_help_panel="Day-2 Operations & Recovery")
 def replay(
     receipt: str = typer.Option(
         ..., "--receipt", "-r", help="Source receipt ID to replay under bounded authority."
@@ -1672,7 +2033,7 @@ quarantine_app = typer.Typer(
     help="Quarantine & Evidence Preservation Engine (Rule #32)",
     add_completion=False,
 )
-app.add_typer(quarantine_app, name="quarantine")
+app.add_typer(quarantine_app, name="quarantine", rich_help_panel="Governance & Compliance")
 
 
 @quarantine_app.command(name="isolate")
@@ -1775,7 +2136,7 @@ derogation_app = typer.Typer(
     help="Explicit Derogation & Accepted Risk Engine (Rule #23)",
     add_completion=False,
 )
-app.add_typer(derogation_app, name="derogation")
+app.add_typer(derogation_app, name="derogation", rich_help_panel="Governance & Compliance")
 
 
 @derogation_app.command(name="create")
@@ -1872,7 +2233,7 @@ integrity_app = typer.Typer(
     name="integrity",
     help="Data Integrity, Content-Addressable Digestion & Merkle Lineage (Rules #8, #18)",
 )
-app.add_typer(integrity_app, name="integrity")
+app.add_typer(integrity_app, name="integrity", rich_help_panel="Integrity & Observability")
 
 
 @integrity_app.command(name="verify")
@@ -1983,7 +2344,7 @@ resilience_app = typer.Typer(
     name="resilience",
     help="Platform Resilience, Circuit Breakers & Degraded Modes (Rules #29, #30, #31, #32)",
 )
-app.add_typer(resilience_app, name="resilience")
+app.add_typer(resilience_app, name="resilience", rich_help_panel="Day-2 Operations & Recovery")
 
 
 @resilience_app.command(name="status")
@@ -2026,7 +2387,17 @@ trace_app = typer.Typer(
     name="trace",
     help="Four Truth Channels & Flight Recorder Traceability (Rules #10, #12, #38)",
 )
-app.add_typer(trace_app, name="trace")
+app.add_typer(trace_app, name="trace", rich_help_panel="Integrity & Observability")
+
+
+@trace_app.command(name="correlate")
+def trace_correlate(
+    run_id: str = typer.Argument(
+        ..., help="Run ID or prefix to correlate across the four truth channels."
+    ),
+) -> None:
+    """Correlate Telemetry, Execution, Decision, and Evidence traces across the four truth channels (Rule #12)."""
+    trace(run_id)
 
 
 @trace_app.command(name="flight-recorder")

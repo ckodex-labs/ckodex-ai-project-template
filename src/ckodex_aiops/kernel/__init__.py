@@ -3,6 +3,21 @@ Pure Semantic Kernel for CKODEX AI Platform.
 Constitutional GAL 1: Pure Semantic Kernel, Zero Framework Leakage.
 """
 
+from ckodex_aiops.kernel.config import (
+    ConfigDiffEntry,
+    DataIngestionConfig,
+    FeatureEngineeringConfig,
+    GovernanceConfig,
+    InferenceConfig,
+    ModelArchitectureConfig,
+    ModelEvaluationConfig,
+    ModelTrainingConfig,
+    PhysicalAIConfig,
+    PlatformConfig,
+    ProjectMetaConfig,
+    RayClusterConfig,
+    TelemetryConfig,
+)
 from ckodex_aiops.kernel.degradation import (
     ContainmentScope,
     DegradationManager,
@@ -107,4 +122,17 @@ __all__ = [
     "TruthChannelsCorrelator",
     "ExplanationReport",
     "ExplanationEngine",
+    "PlatformConfig",
+    "ConfigDiffEntry",
+    "ProjectMetaConfig",
+    "DataIngestionConfig",
+    "FeatureEngineeringConfig",
+    "ModelArchitectureConfig",
+    "ModelTrainingConfig",
+    "ModelEvaluationConfig",
+    "InferenceConfig",
+    "PhysicalAIConfig",
+    "RayClusterConfig",
+    "GovernanceConfig",
+    "TelemetryConfig",
 ]

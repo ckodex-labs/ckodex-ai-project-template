@@ -1,0 +1,427 @@
+{
+  "$defs": {
+    "DataIngestionConfig": {
+      "description": "Parameters for synthetic or external data ingestion pipeline.",
+      "properties": {
+        "num_records": {
+          "default": 500,
+          "description": "Number of synthetic/ingested telemetry records to generate",
+          "exclusiveMinimum": 0,
+          "title": "Num Records",
+          "type": "integer"
+        },
+        "min_rows": {
+          "default": 50,
+          "description": "Minimum acceptable rows for raw telemetry admission",
+          "exclusiveMinimum": 0,
+          "title": "Min Rows",
+          "type": "integer"
+        }
+      },
+      "title": "DataIngestionConfig",
+      "type": "object"
+    },
+    "FeatureEngineeringConfig": {
+      "description": "Parameters for vector feature engineering and distributed Ray execution.",
+      "properties": {
+        "embedding_dim": {
+          "default": 32,
+          "description": "Dimensionality of feature embedding vectors",
+          "exclusiveMinimum": 0,
+          "title": "Embedding Dim",
+          "type": "integer"
+        },
+        "num_ray_actors": {
+          "default": 2,
+          "description": "Ray actor pool concurrency for distributed feature processing",
+          "exclusiveMinimum": 0,
+          "title": "Num Ray Actors",
+          "type": "integer"
+        },
+        "batch_size": {
+          "default": 128,
+          "description": "Batch size for vector transformation streaming",
+          "exclusiveMinimum": 0,
+          "title": "Batch Size",
+          "type": "integer"
+        }
+      },
+      "title": "FeatureEngineeringConfig",
+      "type": "object"
+    },
+    "GovernanceConfig": {
+      "description": "CKODEX Standing Authority & Governance controls (Rules #2, #8, #25, #32).",
+      "properties": {
+        "authority_root": {
+          "default": "Root Fabric",
+          "description": "Standing authority root namespace",
+          "title": "Authority Root",
+          "type": "string"
+        },
+        "strict_leases": {
+          "default": true,
+          "description": "Enforce cryptographic capability lease admission before pipeline execution",
+          "title": "Strict Leases",
+          "type": "boolean"
+        },
+        "require_receipts": {
+          "default": true,
+          "description": "Enforce Merkle lineage and evidence receipt generation on dataset saves",
+          "title": "Require Receipts",
+          "type": "boolean"
+        },
+        "auto_quarantine_on_violation": {
+          "default": true,
+          "description": "Automatically isolate non-conformant or drifted datasets to quarantine",
+          "title": "Auto Quarantine On Violation",
+          "type": "boolean"
+        }
+      },
+      "title": "GovernanceConfig",
+      "type": "object"
+    },
+    "InferenceConfig": {
+      "description": "Batch and stream inference configuration.",
+      "properties": {
+        "num_ray_actors": {
+          "default": 2,
+          "description": "Ray actor concurrency for distributed batch inference",
+          "exclusiveMinimum": 0,
+          "title": "Num Ray Actors",
+          "type": "integer"
+        },
+        "batch_size": {
+          "default": 128,
+          "description": "Batch size for inference throughput",
+          "exclusiveMinimum": 0,
+          "title": "Batch Size",
+          "type": "integer"
+        }
+      },
+      "title": "InferenceConfig",
+      "type": "object"
+    },
+    "ModelArchitectureConfig": {
+      "description": "PyTorch model architecture hyperparameters and artifact formats.",
+      "properties": {
+        "input_dim": {
+          "default": 32,
+          "description": "Model input layer dimension",
+          "exclusiveMinimum": 0,
+          "title": "Input Dim",
+          "type": "integer"
+        },
+        "hidden_dim": {
+          "default": 64,
+          "description": "Hidden layer dimension",
+          "exclusiveMinimum": 0,
+          "title": "Hidden Dim",
+          "type": "integer"
+        },
+        "num_classes": {
+          "default": 4,
+          "description": "Number of classification target classes",
+          "exclusiveMinimum": 0,
+          "title": "Num Classes",
+          "type": "integer"
+        },
+        "checkpoint_dir": {
+          "default": "data/06_models",
+          "description": "Directory for model weights and safetensors checkpoints",
+          "title": "Checkpoint Dir",
+          "type": "string"
+        },
+        "device": {
+          "default": "auto",
+          "description": "Compute device target: auto, cpu, cuda, mps",
+          "title": "Device",
+          "type": "string"
+        },
+        "checkpoint_format": {
+          "default": "safetensors",
+          "description": "Serialization format: safetensors, pt",
+          "title": "Checkpoint Format",
+          "type": "string"
+        }
+      },
+      "title": "ModelArchitectureConfig",
+      "type": "object"
+    },
+    "ModelEvaluationConfig": {
+      "description": "Evaluation criteria and quality gates.",
+      "properties": {
+        "min_accuracy_threshold": {
+          "default": 0.25,
+          "description": "Minimum accuracy threshold required for model admission",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Min Accuracy Threshold",
+          "type": "number"
+        }
+      },
+      "title": "ModelEvaluationConfig",
+      "type": "object"
+    },
+    "ModelTrainingConfig": {
+      "description": "Supervised training hyperparameters.",
+      "properties": {
+        "epochs": {
+          "default": 3,
+          "description": "Number of training epochs",
+          "exclusiveMinimum": 0,
+          "title": "Epochs",
+          "type": "integer"
+        },
+        "batch_size": {
+          "default": 32,
+          "description": "Training mini-batch size",
+          "exclusiveMinimum": 0,
+          "title": "Batch Size",
+          "type": "integer"
+        },
+        "learning_rate": {
+          "default": 0.001,
+          "description": "Optimizer learning rate",
+          "exclusiveMinimum": 0.0,
+          "title": "Learning Rate",
+          "type": "number"
+        }
+      },
+      "title": "ModelTrainingConfig",
+      "type": "object"
+    },
+    "PhysicalAIConfig": {
+      "description": "Physical AI robotics simulation and Lance vector mining parameters.",
+      "properties": {
+        "num_episodes": {
+          "default": 20,
+          "description": "Number of robotics simulation episodes",
+          "exclusiveMinimum": 0,
+          "title": "Num Episodes",
+          "type": "integer"
+        },
+        "steps_per_episode": {
+          "default": 100,
+          "description": "Timesteps per robotics episode (100 Hz rate)",
+          "exclusiveMinimum": 0,
+          "title": "Steps Per Episode",
+          "type": "integer"
+        },
+        "embedding_dim": {
+          "default": 32,
+          "description": "Multimodal robotics feature embedding dimension",
+          "exclusiveMinimum": 0,
+          "title": "Embedding Dim",
+          "type": "integer"
+        },
+        "rolling_window_size": {
+          "default": 5,
+          "description": "Rolling window size for kinematics features",
+          "exclusiveMinimum": 0,
+          "title": "Rolling Window Size",
+          "type": "integer"
+        },
+        "target_path": {
+          "default": "data/04_feature/physical_ai.lance",
+          "description": "Target Lance dataset destination for physical AI episodes",
+          "title": "Target Path",
+          "type": "string"
+        },
+        "mining_filter": {
+          "default": "slip_detected = true",
+          "description": "Pushdown SQL filter for Lance zero-copy mining",
+          "title": "Mining Filter",
+          "type": "string"
+        },
+        "mining_limit": {
+          "default": 10,
+          "description": "Maximum mined candidate sequences to return",
+          "exclusiveMinimum": 0,
+          "title": "Mining Limit",
+          "type": "integer"
+        }
+      },
+      "title": "PhysicalAIConfig",
+      "type": "object"
+    },
+    "ProjectMetaConfig": {
+      "description": "Metadata describing project identity, tenant authority, and environment.",
+      "properties": {
+        "name": {
+          "default": "ckx-ai-project-template",
+          "description": "Canonical project template name",
+          "title": "Name",
+          "type": "string"
+        },
+        "version": {
+          "default": "0.2.0",
+          "description": "Semantic version of project",
+          "title": "Version",
+          "type": "string"
+        },
+        "environment": {
+          "default": "development",
+          "description": "Execution environment: development, staging, production, airgap",
+          "title": "Environment",
+          "type": "string"
+        },
+        "tenant": {
+          "default": "root-fabric",
+          "description": "CKODEX standing-authority root tenant",
+          "title": "Tenant",
+          "type": "string"
+        },
+        "workspace": {
+          "default": "default",
+          "description": "Workspace scope identifier",
+          "title": "Workspace",
+          "type": "string"
+        }
+      },
+      "title": "ProjectMetaConfig",
+      "type": "object"
+    },
+    "RayClusterConfig": {
+      "description": "Distributed Ray cluster execution parameters.",
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ray cluster head address (None for auto/local cluster)",
+          "title": "Address"
+        },
+        "num_cpus": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of CPUs allocated to local Ray cluster",
+          "title": "Num Cpus"
+        },
+        "num_gpus": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of GPUs allocated to local Ray cluster",
+          "title": "Num Gpus"
+        },
+        "include_dashboard": {
+          "default": false,
+          "description": "Whether to launch Ray Web UI dashboard",
+          "title": "Include Dashboard",
+          "type": "boolean"
+        }
+      },
+      "title": "RayClusterConfig",
+      "type": "object"
+    },
+    "TelemetryConfig": {
+      "description": "Observability, OpenTelemetry, and Four Truth Channels (Rules #12, #38).",
+      "properties": {
+        "service_name": {
+          "default": "ckx-ai-project-template",
+          "description": "OpenTelemetry service name identifier",
+          "title": "Service Name",
+          "type": "string"
+        },
+        "export_otlp": {
+          "default": false,
+          "description": "Export traces and metrics via gRPC OTLP collector",
+          "title": "Export Otlp",
+          "type": "boolean"
+        },
+        "log_level": {
+          "default": "INFO",
+          "description": "Logging level: DEBUG, INFO, WARNING, ERROR",
+          "title": "Log Level",
+          "type": "string"
+        },
+        "truth_channels_enabled": {
+          "default": true,
+          "description": "Enable Four Truth Channels correlation (Telemetry, Execution, Decision, Evidence)",
+          "title": "Truth Channels Enabled",
+          "type": "boolean"
+        }
+      },
+      "title": "TelemetryConfig",
+      "type": "object"
+    }
+  },
+  "description": "Unified Platform Configuration for CKODEX AI Platform.\nIntegrates Kedro parameters, active candidate profiles, environment overrides,\nand governance invariants.",
+  "properties": {
+    "project": {
+      "$ref": "#/$defs/ProjectMetaConfig"
+    },
+    "data_ingestion": {
+      "$ref": "#/$defs/DataIngestionConfig"
+    },
+    "feature_engineering": {
+      "$ref": "#/$defs/FeatureEngineeringConfig"
+    },
+    "model": {
+      "$ref": "#/$defs/ModelArchitectureConfig"
+    },
+    "model_training": {
+      "$ref": "#/$defs/ModelTrainingConfig"
+    },
+    "model_evaluation": {
+      "$ref": "#/$defs/ModelEvaluationConfig"
+    },
+    "inference": {
+      "$ref": "#/$defs/InferenceConfig"
+    },
+    "physical_ai": {
+      "$ref": "#/$defs/PhysicalAIConfig"
+    },
+    "ray": {
+      "$ref": "#/$defs/RayClusterConfig"
+    },
+    "governance": {
+      "$ref": "#/$defs/GovernanceConfig"
+    },
+    "telemetry": {
+      "$ref": "#/$defs/TelemetryConfig"
+    },
+    "active_profile": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Name of currently active platform profile or baseline",
+      "title": "Active Profile"
+    },
+    "sources": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Provenance map recording the origin of each configuration section",
+      "title": "Sources",
+      "type": "object"
+    }
+  },
+  "title": "PlatformConfig",
+  "type": "object"
+}
