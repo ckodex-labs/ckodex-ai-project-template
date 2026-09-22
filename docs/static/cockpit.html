@@ -416,8 +416,8 @@
       <div class="ck-bento">
         <div class="ck-card">
           <div class="ck-label">Operational State Vector</div>
-          <div class="ck-metric-val" style="color: var(--ck-green);">DEGRADED</div>
-          <div class="ck-metric-sub">Valence: NEUTRAL • Anti: NONE</div>
+          <div class="ck-metric-val" style="color: var(--ck-green);">NORMAL</div>
+          <div class="ck-metric-sub">Valence: POSITIVE • Anti: NONE</div>
         </div>
         <div class="ck-card">
           <div class="ck-label">Ray Actor Mesh (Bounded)</div>
@@ -426,7 +426,7 @@
         </div>
         <div class="ck-card">
           <div class="ck-label">Merkle Lineage Root</div>
-          <div class="ck-metric-val ck-mono" style="font-size: 1.1rem; padding-top: 6px;">sha256:8280b6e713…</div>
+          <div class="ck-metric-val ck-mono" style="font-size: 1.1rem; padding-top: 6px;">sha256:16e216485e…</div>
           <div class="ck-metric-sub">8 Continuous Receipts Minted</div>
         </div>
         <div class="ck-card">
@@ -553,7 +553,7 @@
             <circle cx="-80" cy="-45" r="4" fill="var(--ck-rust)"/>
           </svg>
           <div class="ck-mono" style="font-size: 11px; margin-top: 0.5rem; text-align: center;">
-            Valence: <strong style="color: var(--ck-green);">NEUTRAL</strong> • Anti: <strong>NONE</strong>
+            Valence: <strong style="color: var(--ck-green);">POSITIVE</strong> • Anti: <strong>NONE</strong>
           </div>
         </div>
 
@@ -565,19 +565,19 @@
           </h3>
           <div class="ck-log-feed">
             <div class="ck-log-entry attested">
-              <span class="ck-label">[2026-09-22 02:52:01Z]</span> <strong>MERKLE_ROOT_MINT</strong>: Built root sha256:8280b6e713b376f2… across 8 node receipts.
+              <span class="ck-label">[2026-09-22 13:52:20Z]</span> <strong>MERKLE_ROOT_MINT</strong>: Built root sha256:16e216485ecc632f… across 8 node receipts.
             </div>
             <div class="ck-log-entry attested">
-              <span class="ck-label">[2026-09-22 02:52:01Z]</span> <strong>CAPABILITY_LEASE_VERIFY</strong>: Active lease granted under AuthorityPath: root.tenant.production.
+              <span class="ck-label">[2026-09-22 13:52:20Z]</span> <strong>CAPABILITY_LEASE_VERIFY</strong>: Active lease granted under AuthorityPath: root.tenant.production.
             </div>
             <div class="ck-log-entry">
-              <span class="ck-label">[2026-09-22 02:52:01Z]</span> <strong>STORAGE_INSPECT</strong>: Lance datasets feature tables verified. Fragment count optimal.
+              <span class="ck-label">[2026-09-22 13:52:20Z]</span> <strong>STORAGE_INSPECT</strong>: Lance datasets feature tables verified. Fragment count optimal.
             </div>
             <div class="ck-log-entry">
-              <span class="ck-label">[2026-09-22 02:52:01Z]</span> <strong>RAY_HEURISTIC_BOUND</strong>: Actor heap allocated bounded to 4.0GB. Host memory protected (Rule #31).
+              <span class="ck-label">[2026-09-22 13:52:20Z]</span> <strong>RAY_HEURISTIC_BOUND</strong>: Actor heap allocated bounded to 4.0GB. Host memory protected (Rule #31).
             </div>
             <div class="ck-log-entry">
-              <span class="ck-label">[2026-09-22 02:52:01Z]</span> <strong>SAFE_TENSORS_VERIFY</strong>: Zero-pickle model weights loaded via zero-copy mmap. CVE-resistant.
+              <span class="ck-label">[2026-09-22 13:52:20Z]</span> <strong>SAFE_TENSORS_VERIFY</strong>: Zero-pickle model weights loaded via zero-copy mmap. CVE-resistant.
             </div>
           </div>
         </div>
@@ -604,7 +604,7 @@
         </div>
         <div class="ck-receipt-row">
           <span class="ck-label">Content Digest</span>
-          <span class="ck-hash-val" id="marginDigest" onclick="copyDigest(this.innerText)">sha256:b555a7b1e94d…</span>
+          <span class="ck-hash-val" id="marginDigest" onclick="copyDigest(this.innerText)">sha256:eae4d7080f6d…</span>
         </div>
         <div class="ck-receipt-row">
           <span class="ck-label">Artifact Size</span>
@@ -616,7 +616,7 @@
         </div>
         <div class="ck-receipt-row">
           <span class="ck-label">Parent Merkle</span>
-          <span class="ck-mono" id="marginParent" style="font-size: 10px;">sha256:8280b6e713…</span>
+          <span class="ck-mono" id="marginParent" style="font-size: 10px;">sha256:16e216485e…</span>
         </div>
         <div class="ck-receipt-row">
           <span class="ck-label">SLSA Builder</span>
@@ -657,18 +657,18 @@
 
 <script>
   const telemetry = {
-  "timestamp": "2026-09-22 02:52:01Z",
+  "timestamp": "2026-09-22 13:52:20Z",
   "profile": "macos_metal_safetensors",
   "accelerator": "mps",
   "weights_format": "safetensors",
-  "merkle_root": "8280b6e713b376f259f460a9c1100133897d951d849e8f8b1203bdba979b19ff",
+  "merkle_root": "16e216485ecc632ff331432a23c3b3c0cb239b69d76731c03a30265592e0bb41",
   "state_vector": {
     "presence": "PRESENT",
-    "valence": "NEUTRAL",
+    "valence": "POSITIVE",
     "anti": "NONE",
-    "coherence": "PARTIALLY_COHERENT",
+    "coherence": "COHERENT",
     "evidence": "VERIFIED",
-    "lifecycle": "DEGRADED"
+    "lifecycle": "NORMAL"
   },
   "ray": {
     "status": "ONLINE",
@@ -686,13 +686,13 @@
   "model": {
     "exists": true,
     "size_kb": 78.6,
-    "digest": "b555a7b1e94d3c4394828f5de55d18c50dca32cd5ddef1bfad6d632f86100e7d",
+    "digest": "eae4d7080f6d6f2100e6ffe96ca42a5469125af17b8c42f011b37c086f4fb4ee",
     "type": "safetensors (zero-pickle, native mmap)"
   },
   "quant": {
     "exists": true,
     "size_kb": 34.1,
-    "digest": "d9cad201a4a5b778d1074b8c012512fc0850e09f99ba9b2adde59aa6305c8cdc"
+    "digest": "350c4e0ac86c5b2b38e668f82aac412aa34ac39ea6ecd46eb09c29ebcbe953ae"
   },
   "slsa": {
     "exists": true,
@@ -704,70 +704,70 @@
   },
   "receipts": [
     {
-      "name": "rcpt_fd8d784ff83f_train_representation_model_node.json",
-      "receipt_id": "rcpt_fd8d784ff83f",
-      "digest": "14ca504cec66c00e7aa4bf19e4714e7cc007934d28abd537e233a7bf0be8c8ae",
-      "timestamp": "2026-09-22T02:51:57.509773+00:00",
+      "name": "rcpt_3dce689f2ad3_run_distributed_inference_node.json",
+      "receipt_id": "rcpt_3dce689f2ad3",
+      "digest": "a1769c53fb77228575c192293e85d4ecb0b3de252aefedff493fad24dc744385",
+      "timestamp": "2026-09-22T13:50:59.367653+00:00",
+      "node": "run_distributed_inference_node"
+    },
+    {
+      "name": "rcpt_e64f67c858a8_evaluate_model_conformance_node.json",
+      "receipt_id": "rcpt_e64f67c858a8",
+      "digest": "6fc4da1f289a6d31dd2dc805a28dfa0d1d673f4fbc37ef0469267dfc52ef5fe2",
+      "timestamp": "2026-09-22T13:50:56.669226+00:00",
+      "node": "evaluate_model_conformance_node"
+    },
+    {
+      "name": "rcpt_cf63f0d02aac_train_representation_model_node.json",
+      "receipt_id": "rcpt_cf63f0d02aac",
+      "digest": "c523f7e39883d2f0c3699a96fef44c7399bca58748a0671bbeb9928f5cfda20e",
+      "timestamp": "2026-09-22T13:50:56.024996+00:00",
       "node": "train_representation_model_node"
     },
     {
-      "name": "rcpt_d31b56ef034c_generate_distributed_embeddings_node.json",
-      "receipt_id": "rcpt_d31b56ef034c",
-      "digest": "88f494c3d484ed0963925cea4c6637f333f1b39d2620e784ecb842c4d240f60a",
-      "timestamp": "2026-09-22T02:51:55.625133+00:00",
+      "name": "rcpt_0a06e100dcd8_generate_distributed_embeddings_node.json",
+      "receipt_id": "rcpt_0a06e100dcd8",
+      "digest": "8ede96221a8d716fbcc79ca5b981bbf7b3a376fe248bb7b36d1aa35e2b5e563b",
+      "timestamp": "2026-09-22T13:50:53.789916+00:00",
       "node": "generate_distributed_embeddings_node"
     },
     {
-      "name": "rcpt_6707eead764a_compute_polars_features_node.json",
-      "receipt_id": "rcpt_6707eead764a",
-      "digest": "6984ee13c8b3ca0cfc2b5b14e21d628f4a06b7e4992ffe719fb943af7ddcd69c",
-      "timestamp": "2026-09-22T02:51:54.878661+00:00",
+      "name": "rcpt_ff51f61d1546_compute_polars_features_node.json",
+      "receipt_id": "rcpt_ff51f61d1546",
+      "digest": "711c84e835e242ade7cab4aa69b53bf85d1c4f3f1e8fcd4e72b39477334817a0",
+      "timestamp": "2026-09-22T13:50:52.953762+00:00",
       "node": "compute_polars_features_node"
     },
     {
-      "name": "rcpt_c59797658d82_validate_and_filter_raw_node.json",
-      "receipt_id": "rcpt_c59797658d82",
-      "digest": "f193350d41eb41d0d6a8d7f741ba5a1e2f927a224f583d9d0b151dd30c5863bf",
-      "timestamp": "2026-09-22T02:51:54.864112+00:00",
+      "name": "rcpt_c17efd045b8d_validate_and_filter_raw_node.json",
+      "receipt_id": "rcpt_c17efd045b8d",
+      "digest": "9c6aba16270257e7ef93d8a3d94fcaadd77a78cb71eceac3827cd553cac9ce5d",
+      "timestamp": "2026-09-22T13:50:52.919242+00:00",
       "node": "validate_and_filter_raw_node"
     },
     {
-      "name": "rcpt_0918a9670a98_generate_synthetic_telemetry_node.json",
-      "receipt_id": "rcpt_0918a9670a98",
-      "digest": "e22e975a4a432cc0ed6bc380e7abef7e55d19a3409a0fdd7272541736397df42",
-      "timestamp": "2026-09-22T02:51:54.854610+00:00",
+      "name": "rcpt_b2c5840ac708_generate_synthetic_telemetry_node.json",
+      "receipt_id": "rcpt_b2c5840ac708",
+      "digest": "8208cb82fb0bb2ff7da5180de07476582c46a7bd9cb30496672d6a8f4be847ad",
+      "timestamp": "2026-09-22T13:50:52.893405+00:00",
       "node": "generate_synthetic_telemetry_node"
     },
     {
-      "name": "rcpt_f99a7e9376df_train_representation_model_node.json",
-      "receipt_id": "rcpt_f99a7e9376df",
-      "digest": "a46f4161940478d842f8829466544ae759aa2effaf8e0c6655feef3f03b43be5",
-      "timestamp": "2026-09-22T02:51:16.090317+00:00",
-      "node": "train_representation_model_node"
-    },
-    {
-      "name": "rcpt_7b763328e835_generate_distributed_embeddings_node.json",
-      "receipt_id": "rcpt_7b763328e835",
-      "digest": "16088ceee2f1a16fc65ef7200cf8cc0a2f969c2fe9ab68d1b6aa1245b80491fe",
-      "timestamp": "2026-09-22T02:51:14.357469+00:00",
-      "node": "generate_distributed_embeddings_node"
-    },
-    {
-      "name": "rcpt_2747aba1b6ce_compute_polars_features_node.json",
-      "receipt_id": "rcpt_2747aba1b6ce",
-      "digest": "2f1fdbce998d7e35f384aa91f2de2e6147807ad31bbfeb5816ffdcf91b9a5302",
-      "timestamp": "2026-09-22T02:51:13.624177+00:00",
-      "node": "compute_polars_features_node"
+      "name": "rcpt_release_f5759d175586.json",
+      "receipt_id": "rcpt_release_f5759d175586",
+      "digest": "f7358c1fa1ed1d94a3afbb205065cbd63006755c58f6397a5313dd639673809e",
+      "timestamp": "2026-09-22T02:52:10.463246+00:00",
+      "node": "quarantine_release"
     }
   ],
   "datasets": {
     "events.lance": {
       "exists": true,
-      "fragment_files": 7
+      "fragment_files": 2
     },
     "features.lance": {
       "exists": true,
-      "fragment_files": 7
+      "fragment_files": 2
     },
     "physical_ai.lance": {
       "exists": true,
