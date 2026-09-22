@@ -1672,7 +1672,17 @@ def optimize(
     console.print("[green]SUCCESS:[/green] Table optimization and version pruning complete.")
 
 
-@app.command(name="ray-pg", rich_help_panel="Integrity & Observability")
+# -----------------------------------------------------------------------------
+# Ray Distributed Cluster & Placement Group Management Commands
+# -----------------------------------------------------------------------------
+ray_app = typer.Typer(
+    name="ray",
+    help="Ray Distributed Computing, Placement Groups & Cluster Management",
+)
+app.add_typer(ray_app, name="ray", rich_help_panel="Execution & Pipelines")
+
+
+@ray_app.command(name="pg")
 def ray_pg(
     name: str = typer.Option("infer_pg", "--name", "-n", help="Placement group name."),
     num_actors: int = typer.Option(2, "--num-actors", "-a", help="Number of actor slots."),
@@ -1712,14 +1722,15 @@ def ray_pg(
     )
 
 
-# -----------------------------------------------------------------------------
-# Ray Distributed Cluster Management Commands
-# -----------------------------------------------------------------------------
-ray_app = typer.Typer(
-    name="ray",
-    help="Ray Distributed Computing & Cluster Management (Local and Remote)",
-)
-app.add_typer(ray_app, name="ray", rich_help_panel="Execution & Pipelines")
+# Backwards compatibility alias for top-level ckx ray-pg
+@app.command(name="ray-pg", rich_help_panel="Integrity & Observability", hidden=True)
+def ray_pg_top_level_alias(
+    name: str = typer.Option("infer_pg", "--name", "-n", help="Placement group name."),
+    num_actors: int = typer.Option(2, "--num-actors", "-a", help="Number of actor slots."),
+    cpus_per_actor: int = typer.Option(1, "--cpus", "-c", help="CPUs per actor bundle."),
+) -> None:
+    """Allocate and inspect Ray Placement Groups (Alias for ckx ray pg)."""
+    ray_pg(name=name, num_actors=num_actors, cpus_per_actor=cpus_per_actor)
 
 
 @ray_app.command(name="status")
@@ -1805,16 +1816,6 @@ def ray_stop_local() -> None:
         console.print("[bold green]✔ Local Ray processes stopped.[/bold green]")
     except Exception as e:
         console.print(f"[yellow]Ray stop result:[/] {e}")
-
-
-@ray_app.command(name="pg")
-def ray_pg_alias(
-    name: str = typer.Option("infer_pg", "--name", "-n", help="Placement group name."),
-    num_actors: int = typer.Option(2, "--num-actors", "-a", help="Number of actor slots."),
-    cpus_per_actor: int = typer.Option(1, "--cpus", "-c", help="CPUs per actor bundle."),
-) -> None:
-    """Allocate and inspect Ray Placement Groups (Alias for ckx ray-pg)."""
-    ray_pg(name=name, num_actors=num_actors, cpus_per_actor=cpus_per_actor)
 
 
 oci_app = typer.Typer(
@@ -2023,7 +2024,7 @@ def explain(
     console.print(table)
 
 
-@app.command(name="trace-correlate", rich_help_panel="Integrity & Observability")
+@app.command(name="trace-correlate", rich_help_panel="Integrity & Observability", hidden=True)
 def trace(
     run_id: str = typer.Argument(
         ..., help="Run ID or prefix to correlate across the four truth channels."

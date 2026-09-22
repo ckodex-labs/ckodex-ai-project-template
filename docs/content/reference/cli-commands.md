@@ -44,7 +44,6 @@ just [RECIPE]
 | `quantize` | Dynamically quantize model weights to Int8 | `--source`, `--out` |
 | `quarantine` | Isolate suspect artifacts and preserve evidence | `isolate`, `release`, `list` |
 | `ray` | Ray Distributed Computing & Cluster Management | `status`, `start`, `stop`, `pg` |
-| `ray-pg` | Allocate Ray Placement Groups for gang scheduling | `--name`, `--num-actors` |
 | `reconcile` | Day-2 autonomic reconciler self-healing loop | `--auto-heal`, `--profile` |
 | `recover` | Reconstruct checkpoint and verify disk digests | `--checkpoint`, `--verify-only` |
 | `replay` | Governed replay under lease with side-effect fencing | `--receipt`, `--dry-run` |
@@ -62,7 +61,8 @@ just [RECIPE]
 When executing `uv run ckodex-aiops --help`, commands are categorized into 6 operational panels:
 
 1. **Configuration & Profiles**: `config`, `profile`
-2. **Execution & Pipelines**: `run`, `ray`, `serve`, `quantize`, `mine`, `ray-pg`, `benchmark`
+2. **Execution & Pipelines**: `run`, `ray`, `serve`, `quantize`, `mine`, `benchmark`
+
 3. **Day-2 Operations & Recovery**: `reconcile`, `recover`, `replay`, `quarantine`, `compact`, `optimize`
 4. **Integrity & Observability**: `integrity`, `verify`, `drift`, `trace`, `cockpit`, `inspect`
 5. **Governance & Compliance**: `doctor`, `conformance`, `explain`, `derogation`, `oscal`, `lifecycle`, `onboard`, `offboard`
