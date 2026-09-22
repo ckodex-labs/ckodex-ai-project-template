@@ -426,7 +426,7 @@
         </div>
         <div class="ck-card">
           <div class="ck-label">Merkle Lineage Root</div>
-          <div class="ck-metric-val ck-mono" style="font-size: 1.1rem; padding-top: 6px;">sha256:9cbe0dda57…</div>
+          <div class="ck-metric-val ck-mono" style="font-size: 1.1rem; padding-top: 6px;">sha256:0f9d26043b…</div>
           <div class="ck-metric-sub">8 Continuous Receipts Minted</div>
         </div>
         <div class="ck-card">
@@ -565,19 +565,19 @@
           </h3>
           <div class="ck-log-feed">
             <div class="ck-log-entry attested">
-              <span class="ck-label">[2026-09-22 14:21:02Z]</span> <strong>MERKLE_ROOT_MINT</strong>: Built root sha256:9cbe0dda57654059… across 8 node receipts.
+              <span class="ck-label">[2026-09-22 14:27:05Z]</span> <strong>MERKLE_ROOT_MINT</strong>: Built root sha256:0f9d26043be5bb47… across 8 node receipts.
             </div>
             <div class="ck-log-entry attested">
-              <span class="ck-label">[2026-09-22 14:21:02Z]</span> <strong>CAPABILITY_LEASE_VERIFY</strong>: Active lease granted under AuthorityPath: root.tenant.production.
+              <span class="ck-label">[2026-09-22 14:27:05Z]</span> <strong>CAPABILITY_LEASE_VERIFY</strong>: Active lease granted under AuthorityPath: root.tenant.production.
             </div>
             <div class="ck-log-entry">
-              <span class="ck-label">[2026-09-22 14:21:02Z]</span> <strong>STORAGE_INSPECT</strong>: Lance datasets feature tables verified. Fragment count optimal.
+              <span class="ck-label">[2026-09-22 14:27:05Z]</span> <strong>STORAGE_INSPECT</strong>: Lance datasets feature tables verified. Fragment count optimal.
             </div>
             <div class="ck-log-entry">
-              <span class="ck-label">[2026-09-22 14:21:02Z]</span> <strong>RAY_HEURISTIC_BOUND</strong>: Actor heap allocated bounded to 4.0GB. Host memory protected (Rule #31).
+              <span class="ck-label">[2026-09-22 14:27:05Z]</span> <strong>RAY_HEURISTIC_BOUND</strong>: Actor heap allocated bounded to 4.0GB. Host memory protected (Rule #31).
             </div>
             <div class="ck-log-entry">
-              <span class="ck-label">[2026-09-22 14:21:02Z]</span> <strong>SAFE_TENSORS_VERIFY</strong>: Zero-pickle model weights loaded via zero-copy mmap. CVE-resistant.
+              <span class="ck-label">[2026-09-22 14:27:05Z]</span> <strong>SAFE_TENSORS_VERIFY</strong>: Zero-pickle model weights loaded via zero-copy mmap. CVE-resistant.
             </div>
           </div>
         </div>
@@ -604,7 +604,7 @@
         </div>
         <div class="ck-receipt-row">
           <span class="ck-label">Content Digest</span>
-          <span class="ck-hash-val" id="marginDigest" onclick="copyDigest(this.innerText)">sha256:330524325876…</span>
+          <span class="ck-hash-val" id="marginDigest" onclick="copyDigest(this.innerText)">sha256:c7bf9c3d0a39…</span>
         </div>
         <div class="ck-receipt-row">
           <span class="ck-label">Artifact Size</span>
@@ -616,7 +616,7 @@
         </div>
         <div class="ck-receipt-row">
           <span class="ck-label">Parent Merkle</span>
-          <span class="ck-mono" id="marginParent" style="font-size: 10px;">sha256:9cbe0dda57…</span>
+          <span class="ck-mono" id="marginParent" style="font-size: 10px;">sha256:0f9d26043b…</span>
         </div>
         <div class="ck-receipt-row">
           <span class="ck-label">SLSA Builder</span>
@@ -657,11 +657,11 @@
 
 <script>
   const telemetry = {
-  "timestamp": "2026-09-22 14:21:02Z",
+  "timestamp": "2026-09-22 14:27:05Z",
   "profile": "macos_metal_safetensors",
   "accelerator": "mps",
   "weights_format": "safetensors",
-  "merkle_root": "9cbe0dda57654059e2a79a96912daa1e927a78680ef7bb6c31df1ba07f447e6f",
+  "merkle_root": "0f9d26043be5bb47925e8e40768ae40bc9c26f04670de702875f4de424357f66",
   "state_vector": {
     "presence": "PRESENT",
     "valence": "POSITIVE",
@@ -686,23 +686,65 @@
   "model": {
     "exists": true,
     "size_kb": 78.6,
-    "digest": "330524325876eefa4f9edee1eb50305797bab3770638a0593711dd6a276a468f",
+    "digest": "c7bf9c3d0a394c694eebbf11223596752fd7ff3cb7e687d670cfe5af73a6f1a0",
     "type": "safetensors (zero-pickle, native mmap)"
   },
   "quant": {
     "exists": true,
     "size_kb": 34.1,
-    "digest": "fa7febdc5ecf661825370c9bb5e909e24c90a3ceb41c580f556f98009522e69b"
+    "digest": "b76f24aa00e106069426feca2a727a28a06be089d0e5b8c306f0cb47389fc38c"
   },
   "slsa": {
     "exists": true,
-    "digest": "00fb766820642c8197cc3a5d1de78aafb3e8f5e83c983bcffdbc67c275b20bd2"
+    "digest": "d02f92f36bccfa0df75091cb52d3c9005428a329e56b94deec321f65563bcb28"
   },
   "oscal": {
     "exists": true,
-    "digest": "96c4869406fddaea3e8342c77a8ea8a5a413231f03393ac9ffe4f298951ea9ab"
+    "digest": "de0e5104abd12d467e1518d7d6456e5ad328b3396df9154afdbf5db45024ed79"
   },
   "receipts": [
+    {
+      "name": "rcpt_821764f95335_train_representation_model_node.json",
+      "receipt_id": "rcpt_821764f95335",
+      "digest": "24dfd6dc9d379d5a2b65ad3c382c94c05831a09fbfcb52d38442ecb550a57a90",
+      "timestamp": "2026-09-22T14:27:04.551603+00:00",
+      "node": "train_representation_model_node"
+    },
+    {
+      "name": "rcpt_1058084d0155_generate_distributed_embeddings_node.json",
+      "receipt_id": "rcpt_1058084d0155",
+      "digest": "bf76bfce0d574742bf5c43c2c47231652f8bb207e78221d7bd4df71d993f1495",
+      "timestamp": "2026-09-22T14:27:02.515466+00:00",
+      "node": "generate_distributed_embeddings_node"
+    },
+    {
+      "name": "rcpt_55305caf04e9_compute_polars_features_node.json",
+      "receipt_id": "rcpt_55305caf04e9",
+      "digest": "e09cab5fb50bccce7c332b6bf5fac4d7ba78cd21f291460557bb13d65aa0f635",
+      "timestamp": "2026-09-22T14:27:01.668700+00:00",
+      "node": "compute_polars_features_node"
+    },
+    {
+      "name": "rcpt_f3048ba240d6_validate_and_filter_raw_node.json",
+      "receipt_id": "rcpt_f3048ba240d6",
+      "digest": "191b9b04130fdd7e9116a7ee142d40eb1f8ab462d1c58c99d2d1c4696b88db04",
+      "timestamp": "2026-09-22T14:27:01.535353+00:00",
+      "node": "validate_and_filter_raw_node"
+    },
+    {
+      "name": "rcpt_6ecf3ce78b76_generate_synthetic_telemetry_node.json",
+      "receipt_id": "rcpt_6ecf3ce78b76",
+      "digest": "1c8e6019c3ebd154233c7d9e78bb3526c51599fc136d80988a136cb740552738",
+      "timestamp": "2026-09-22T14:27:01.506958+00:00",
+      "node": "generate_synthetic_telemetry_node"
+    },
+    {
+      "name": "rcpt_release_ae7843c33946.json",
+      "receipt_id": "rcpt_release_ae7843c33946",
+      "digest": "f37d4f0830aff99474a3c136ccc7d63f0ffae452f0ff71f15844e8802ee05b39",
+      "timestamp": "2026-09-22T14:21:11.766120+00:00",
+      "node": "quarantine_release"
+    },
     {
       "name": "rcpt_e2fa75863901_train_representation_model_node.json",
       "receipt_id": "rcpt_e2fa75863901",
@@ -716,58 +758,16 @@
       "digest": "b62fbaea7d11fae5f8acd06cc00799c78434020af6adfccdd30a4c1b9def8b3d",
       "timestamp": "2026-09-22T14:20:59.247951+00:00",
       "node": "generate_distributed_embeddings_node"
-    },
-    {
-      "name": "rcpt_da0dbd101b7a_compute_polars_features_node.json",
-      "receipt_id": "rcpt_da0dbd101b7a",
-      "digest": "e86a9a70e904ae508a8ef60dfdf694a013f3e449c458baeddb5c3e4d47af5dcc",
-      "timestamp": "2026-09-22T14:20:58.463026+00:00",
-      "node": "compute_polars_features_node"
-    },
-    {
-      "name": "rcpt_35c1210401b3_validate_and_filter_raw_node.json",
-      "receipt_id": "rcpt_35c1210401b3",
-      "digest": "f37231b3187f8fcf9ac146952057d3f19e76755539bfac6264b38d03ab9262ff",
-      "timestamp": "2026-09-22T14:20:58.449920+00:00",
-      "node": "validate_and_filter_raw_node"
-    },
-    {
-      "name": "rcpt_8aeff1617ec6_generate_synthetic_telemetry_node.json",
-      "receipt_id": "rcpt_8aeff1617ec6",
-      "digest": "176db8a500a9da7aa03e8d2c22f549c5354af13377d69416867958b70e197b38",
-      "timestamp": "2026-09-22T14:20:58.440929+00:00",
-      "node": "generate_synthetic_telemetry_node"
-    },
-    {
-      "name": "rcpt_release_a8614b43f0e7.json",
-      "receipt_id": "rcpt_release_a8614b43f0e7",
-      "digest": "8104701a49d197d3943bd4bdfade43aa4143628960314f6643802ca166f8b569",
-      "timestamp": "2026-09-22T14:20:19.597679+00:00",
-      "node": "quarantine_release"
-    },
-    {
-      "name": "rcpt_84a282e77df3_train_representation_model_node.json",
-      "receipt_id": "rcpt_84a282e77df3",
-      "digest": "c252df6baf35ad4df4bb8226b8db491e25083d946e90b36a1758c00309ab0919",
-      "timestamp": "2026-09-22T14:20:08.856169+00:00",
-      "node": "train_representation_model_node"
-    },
-    {
-      "name": "rcpt_676359405245_generate_distributed_embeddings_node.json",
-      "receipt_id": "rcpt_676359405245",
-      "digest": "056e44082b2abdfe9dad591dfe1111e64f03dd0eedb3ed619fbd9165a3c1f19c",
-      "timestamp": "2026-09-22T14:20:07.002351+00:00",
-      "node": "generate_distributed_embeddings_node"
     }
   ],
   "datasets": {
     "events.lance": {
       "exists": true,
-      "fragment_files": 2
+      "fragment_files": 3
     },
     "features.lance": {
       "exists": true,
-      "fragment_files": 2
+      "fragment_files": 3
     },
     "physical_ai.lance": {
       "exists": true,
