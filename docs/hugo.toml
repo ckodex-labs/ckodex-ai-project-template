@@ -1,4 +1,4 @@
-baseURL = 'https://ckodex-labs.github.io/ckx-ai-project-template/'
+baseURL = '/'
 locale = 'en-us'
 title = 'ckx-ai-project-template Documentation'
 
@@ -13,25 +13,25 @@ title = 'ckx-ai-project-template Documentation'
   [[menu.main]]
     identifier = "tutorials"
     name = "Tutorials"
-    url = "/tutorials/"
+    url = "tutorials/"
     weight = 10
   [[menu.main]]
     identifier = "how-to"
     name = "How-To Guides"
-    url = "/how-to/"
+    url = "how-to/"
     weight = 20
   [[menu.main]]
     identifier = "reference"
     name = "Reference"
-    url = "/reference/"
+    url = "reference/"
     weight = 30
   [[menu.main]]
     identifier = "explanation"
     name = "Explanation"
-    url = "/explanation/"
+    url = "explanation/"
     weight = 40
   [[menu.main]]
     identifier = "cockpit"
     name = "Mission Cockpit"
-    url = "/cockpit.html"
+    url = "cockpit.html"
     weight = 50

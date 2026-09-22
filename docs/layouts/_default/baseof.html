@@ -459,7 +459,7 @@
   <div class="ck-doc-shell">
     <!-- Header Landmark -->
     <header class="ck-doc-header">
-      <a href="{{ "/" | relURL }}" class="ck-brand-group">
+      <a href="{{ "" | relURL }}" class="ck-brand-group">
         <div class="ck-logo-mark">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" stroke="var(--ck-fg-1)" fill="none"/>
@@ -470,7 +470,7 @@
         <span class="ck-chip ck-chip--attested">◆ GAL 1 CONSTITUTIONAL</span>
       </a>
       <div class="ck-header-actions">
-        <a href="{{ "/cockpit.html" | relURL }}" class="ck-cockpit-link">Mission Cockpit ↗</a>
+        <a href="{{ "cockpit.html" | relURL }}" class="ck-cockpit-link">Mission Cockpit ↗</a>
         <button id="themeToggle" class="ck-theme-btn" title="Toggle Theme (Ledger / Vault)">
           <span id="themeLabel">VAULT</span>
         </button>
@@ -483,27 +483,31 @@
       <nav class="ck-doc-nav" aria-label="Documentation Navigation">
         <div class="ck-nav-group-title">Diátaxis System</div>
         <ul class="ck-nav-list">
-          <li><a href="{{ "/" | relURL }}">Overview</a></li>
-          <li><a href="{{ "/tutorials/" | relURL }}">⊢ Tutorials</a></li>
-          <li><a href="{{ "/how-to/" | relURL }}">○ How-To Guides</a></li>
-          <li><a href="{{ "/reference/" | relURL }}">◆ Reference</a></li>
-          <li><a href="{{ "/explanation/" | relURL }}">◆ Explanation</a></li>
+          <li><a href="{{ "" | relURL }}">Overview</a></li>
+          <li><a href="{{ "tutorials/" | relURL }}">⊢ Tutorials</a></li>
+          <li><a href="{{ "how-to/" | relURL }}">○ How-To Guides</a></li>
+          <li><a href="{{ "reference/" | relURL }}">◆ Reference</a></li>
+          <li><a href="{{ "explanation/" | relURL }}">◆ Explanation</a></li>
         </ul>
 
         <div class="ck-nav-group-title">Architecture</div>
         <ul class="ck-nav-list">
-          <li><a href="{{ "/explanation/pure-semantic-kernel/" | relURL }}">Pure Semantic Kernel</a></li>
-          <li><a href="{{ "/explanation/four-truth-channels/" | relURL }}">Four Truth Channels</a></li>
-          <li><a href="{{ "/explanation/vector-state/" | relURL }}">Vector State S(e,t)</a></li>
-          <li><a href="{{ "/explanation/day-2-control-loop/" | relURL }}">Day-2 Control Loop</a></li>
+          <li><a href="{{ "explanation/pure-semantic-kernel/" | relURL }}">Pure Semantic Kernel</a></li>
+          <li><a href="{{ "explanation/four-truth-channels/" | relURL }}">Four Truth Channels</a></li>
+          <li><a href="{{ "explanation/vector-state-algebra/" | relURL }}">Vector State S(e,t)</a></li>
+          <li><a href="{{ "explanation/day2-control-loop/" | relURL }}">Day-2 Control Loop</a></li>
+          <li><a href="{{ "explanation/zero-trust-authority/" | relURL }}">Zero Trust Authority</a></li>
         </ul>
 
         <div class="ck-nav-group-title">Operations</div>
         <ul class="ck-nav-list">
-          <li><a href="{{ "/reference/cli-reference/" | relURL }}">CLI Command Suite</a></li>
-          <li><a href="{{ "/how-to/tune-ray-cluster/" | relURL }}">Bounded Ray Topology</a></li>
-          <li><a href="{{ "/how-to/quarantine-artifacts/" | relURL }}">Quarantine & Evidence</a></li>
-          <li><a href="{{ "/how-to/airgap-package/" | relURL }}">Air-Gap Verification</a></li>
+          <li><a href="{{ "reference/cli-commands/" | relURL }}">CLI Command Suite</a></li>
+          <li><a href="{{ "how-to/manage-configuration/" | relURL }}">Configuration Tuning</a></li>
+          <li><a href="{{ "how-to/quarantine-and-investigation/" | relURL }}">Quarantine & Evidence</a></li>
+          <li><a href="{{ "how-to/airgap-distribution/" | relURL }}">Air-Gap Distribution</a></li>
+          <li><a href="{{ "how-to/reconciliation-and-healing/" | relURL }}">Reconciliation & Healing</a></li>
+          <li><a href="{{ "how-to/governed-replay/" | relURL }}">Governed Replay</a></li>
+          <li><a href="{{ "reference/compliance-matrix/" | relURL }}">NIST SP 800-53 OSCAL</a></li>
         </ul>
       </nav>
 

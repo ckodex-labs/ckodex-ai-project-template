@@ -18,7 +18,7 @@
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--ck-sp-4); margin-bottom: var(--ck-sp-8);">
     
     <!-- Quadrant 1: Tutorials -->
-    <a href="{{ "/tutorials/" | relURL }}" style="text-decoration: none; color: inherit;">
+    <a href="{{ "tutorials/" | relURL }}" style="text-decoration: none; color: inherit;">
       <div class="ck-margin-card" style="height: 100%; transition: border-color var(--ck-t-micro) ease;" onmouseover="this.style.borderColor='var(--ck-fg-1)'" onmouseout="this.style.borderColor='var(--ck-hairline)'">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--ck-sp-2);">
           <h3 style="margin: 0; font-family: var(--ck-ff-ui); font-size: 1.1rem; color: var(--ck-fg-1);">⊢ Tutorials</h3>
@@ -28,14 +28,14 @@
           Hands-on lessons taking you step-by-step from zero to a fully attested, running pipeline.
         </p>
         <ul style="font-family: var(--ck-ff-mono); font-size: 12px; color: var(--ck-fg-2); padding-left: 1.2rem; margin-bottom: 0;">
-          <li>Your First Pipeline & SLSA Attestation</li>
-          <li>Simulating and Healing Drift with Reconciler</li>
+          <li><span style="color: var(--ck-fg-1);">Getting Started Walkthrough</span></li>
+          <li><span style="color: var(--ck-fg-1);">First Continuous Reconciliation</span></li>
         </ul>
       </div>
     </a>
 
     <!-- Quadrant 2: How-To Guides -->
-    <a href="{{ "/how-to/" | relURL }}" style="text-decoration: none; color: inherit;">
+    <a href="{{ "how-to/" | relURL }}" style="text-decoration: none; color: inherit;">
       <div class="ck-margin-card" style="height: 100%; transition: border-color var(--ck-t-micro) ease;" onmouseover="this.style.borderColor='var(--ck-fg-1)'" onmouseout="this.style.borderColor='var(--ck-hairline)'">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--ck-sp-2);">
           <h3 style="margin: 0; font-family: var(--ck-ff-ui); font-size: 1.1rem; color: var(--ck-fg-1);">○ How-To Guides</h3>
@@ -45,15 +45,15 @@
           Practical recipes to solve concrete operational, security, and lifecycle tasks.
         </p>
         <ul style="font-family: var(--ck-ff-mono); font-size: 12px; color: var(--ck-fg-2); padding-left: 1.2rem; margin-bottom: 0;">
-          <li>Quarantining Suspect Artifacts & Evidence</li>
-          <li>Executing Governed Replay Under Leases</li>
-          <li>Registering Risk Derogations & Air-Gap</li>
+          <li><span style="color: var(--ck-fg-1);">Quarantine & Forensic Investigation</span></li>
+          <li><span style="color: var(--ck-fg-1);">Governed Replay Under Leases</span></li>
+          <li><span style="color: var(--ck-fg-1);">Air-Gap Packaging & Distribution</span></li>
         </ul>
       </div>
     </a>
 
     <!-- Quadrant 3: Reference -->
-    <a href="{{ "/reference/" | relURL }}" style="text-decoration: none; color: inherit;">
+    <a href="{{ "reference/" | relURL }}" style="text-decoration: none; color: inherit;">
       <div class="ck-margin-card" style="height: 100%; transition: border-color var(--ck-t-micro) ease;" onmouseover="this.style.borderColor='var(--ck-fg-1)'" onmouseout="this.style.borderColor='var(--ck-hairline)'">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--ck-sp-2);">
           <h3 style="margin: 0; font-family: var(--ck-ff-ui); font-size: 1.1rem; color: var(--ck-fg-1);">◆ Reference</h3>
@@ -63,15 +63,15 @@
           Authoritative specifications, schemas, contracts, and complete CLI command references.
         </p>
         <ul style="font-family: var(--ck-ff-mono); font-size: 12px; color: var(--ck-fg-2); padding-left: 1.2rem; margin-bottom: 0;">
-          <li>CLI Command Suite (32 Sub-Commands)</li>
-          <li>Semantic Kernel Primitives & StateVector S(e,t)</li>
-          <li>NIST SP 800-53 OSCAL & SLSA Spec</li>
+          <li><span style="color: var(--ck-fg-1);">CLI Command Suite (32 Commands)</span></li>
+          <li><span style="color: var(--ck-fg-1);">Configuration Specification</span></li>
+          <li><span style="color: var(--ck-fg-1);">NIST SP 800-53 OSCAL Matrix</span></li>
         </ul>
       </div>
     </a>
 
     <!-- Quadrant 4: Explanation -->
-    <a href="{{ "/explanation/" | relURL }}" style="text-decoration: none; color: inherit;">
+    <a href="{{ "explanation/" | relURL }}" style="text-decoration: none; color: inherit;">
       <div class="ck-margin-card" style="height: 100%; transition: border-color var(--ck-t-micro) ease;" onmouseover="this.style.borderColor='var(--ck-fg-1)'" onmouseout="this.style.borderColor='var(--ck-hairline)'">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--ck-sp-2);">
           <h3 style="margin: 0; font-family: var(--ck-ff-ui); font-size: 1.1rem; color: var(--ck-fg-1);">◆ Explanation</h3>
@@ -81,9 +81,9 @@
           Architectural rationale, theoretical context, and constitutional design invariants.
         </p>
         <ul style="font-family: var(--ck-ff-mono); font-size: 12px; color: var(--ck-fg-2); padding-left: 1.2rem; margin-bottom: 0;">
-          <li>Why Semantic Kernel Has Zero SDK Leakage</li>
-          <li>Four Truth Channels & State Coherence</li>
-          <li>Canonical Day-2 Autonomous Control Loop</li>
+          <li><span style="color: var(--ck-fg-1);">Pure Semantic Kernel Architecture</span></li>
+          <li><span style="color: var(--ck-fg-1);">Four Distinct Truth Channels</span></li>
+          <li><span style="color: var(--ck-fg-1);">Vector State Algebra S(e,t)</span></li>
         </ul>
       </div>
     </a>
