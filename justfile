@@ -108,19 +108,19 @@ quantize source="data/06_models/model.safetensors" out="data/06_models/model_int
 
 # Execute full lifecycle optimization on Lance dataset (compaction + prune)
 optimize target="data/04_feature/features.lance":
-    uv run ckodex-aiops optimize --target {{target}}
+    uv run ckodex-aiops lance optimize --target {{target}}
 
 # Allocate and inspect Ray Placement Groups for atomic gang scheduling
 ray-pg name="infer_pg" actors="2":
-    uv run ckodex-aiops ray-pg --name {{name}} --num-actors {{actors}}
+    uv run ckodex-aiops ray pg --name {{name}} --num-actors {{actors}}
 
 # Mine Physical AI multimodal robotics sensor telemetry with pushdown SQL
 mine filter="slip_detected = true" limit="10":
-    uv run ckodex-aiops mine --filter-expr "{{filter}}" --limit {{limit}}
+    uv run ckodex-aiops lance mine --filter-expr "{{filter}}" --limit {{limit}}
 
 # Compact distributed Lance dataset fragments
 compact target="data/04_feature/physical_ai.lance":
-    uv run ckodex-aiops compact {{target}}
+    uv run ckodex-aiops lance compact {{target}}
 
 # Audit cryptographic SHA-256 lineage receipts
 verify:
@@ -172,11 +172,11 @@ attest subject="data/06_models/model.safetensors":
 
 # Package hermetic, content-addressed air-gap distribution archive
 airgap-pack name="ckodex-aiops-production" out="data/08_reporting/airgap/bundle.tar.gz":
-    uv run ckodex-aiops airgap-pack --name {{name}} --out {{out}}
+    uv run ckodex-aiops airgap pack --name {{name}} --out {{out}}
 
 # Verify air-gap distribution bundle integrity and SHA-256 manifests offline
 airgap-verify bundle="data/08_reporting/airgap/bundle.tar.gz":
-    uv run ckodex-aiops airgap-verify --path {{bundle}}
+    uv run ckodex-aiops airgap verify --path {{bundle}}
 
 # Package template as an OCI Image Layout artifact (OCI Spec v1.1.0)
 oci-pack version="1.0.0" tag="latest":

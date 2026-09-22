@@ -35,9 +35,11 @@ class RayLifecycleHook:
         success = RayRuntimeManager.initialize()
         if success:
             info = RayRuntimeManager.get_cluster_info()
+            mode = info.get("mode", "LOCAL_EMBEDDED")
+            mem = info.get("allocated_memory_gb", info.get("memory_gb", 0.0))
             console.print(
-                f"[bold green]✔ Ray Cluster Active:[/bold green] {info.get('nodes')} nodes | "
-                f"{info.get('cpus')} CPUs | {info.get('gpus')} GPUs | {info.get('memory_gb')} GB RAM"
+                f"[bold green]✔ Ray Cluster Active ({mode}):[/bold green] {info.get('nodes')} nodes | "
+                f"{info.get('cpus')} CPUs | {info.get('gpus')} GPUs | {mem} GB Heap"
             )
         else:
             console.print(

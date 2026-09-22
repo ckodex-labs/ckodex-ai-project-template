@@ -201,8 +201,8 @@ uv run ckodex-aiops quantize --source data/06_models/model.safetensors
 uv run ckodex-aiops serve --port 8080
 
 # Air-Gap Package Creation and Offline Verification
-uv run ckodex-aiops airgap-pack
-uv run ckodex-aiops airgap-verify
+uv run ckodex-aiops airgap pack
+uv run ckodex-aiops airgap verify
 
 # Interactive AIOps Mission Cockpit (Terminal UI + HTML export)
 uv run ckodex-aiops cockpit --export-html docs/static/cockpit.html
@@ -220,10 +220,10 @@ uv run ckodex-aiops inspect data/06_models/model.safetensors
 uv run ckodex-aiops profile list
 
 # Mine Physical AI multimodal robotics telemetry with pushdown SQL
-uv run ckodex-aiops mine --filter-expr "slip_detected = true" --limit 10
+uv run ckodex-aiops lance mine --filter-expr "slip_detected = true" --limit 10
 
 # Execute distributed fragment compaction on Lance datasets
-uv run ckodex-aiops compact data/04_feature/physical_ai.lance
+uv run ckodex-aiops lance compact data/04_feature/physical_ai.lance
 
 # Package template as an OCI Image Layout v1.1.0 artifact
 uv run ckodex-aiops oci pack --version 1.0.0 --tag latest

@@ -164,7 +164,11 @@ def doctor() -> None:
         ray_ok = RayRuntimeManager.initialize()
         if ray_ok:
             ray_info = RayRuntimeManager.get_cluster_info()
-            detail = f"Ray active: {ray_info['cpus']} CPUs, {ray_info['memory_gb']} GB RAM"
+            mode = ray_info.get("mode", "LOCAL_EMBEDDED")
+            cpus = ray_info.get("cpus", 0.0)
+            mem = ray_info.get("allocated_memory_gb", ray_info.get("memory_gb", 0.0))
+            plasma = ray_info.get("object_store_gb", 0.0)
+            detail = f"Ray active ({mode}): {cpus} CPUs | {mem} GB Heap | {plasma} GB Plasma"
             table.add_row("Ray Runtime", "[green]PASS[/green]", detail)
         else:
             all_healthy = False
@@ -932,8 +936,20 @@ def config_init(
     )
 
 
-@app.command(rich_help_panel="Execution & Pipelines")
-def compact(
+# ==============================================================================
+# Lance Columnar & Vector Operations (LanceRayEngine)
+# ==============================================================================
+
+lance_app = typer.Typer(
+    name="lance",
+    help="Lance Columnar & Vector Dataset Lifecycle Operations",
+    rich_markup_mode="rich",
+)
+app.add_typer(lance_app, name="lance", rich_help_panel="Execution & Pipelines")
+
+
+@lance_app.command(name="compact")
+def lance_compact(
     target: str = typer.Argument(
         "data/04_feature/features.lance", help="Path to Lance dataset to compact"
     ),
@@ -978,8 +994,21 @@ def compact(
     )
 
 
-@app.command(rich_help_panel="Execution & Pipelines")
-def mine(
+@app.command(name="compact", rich_help_panel="Execution & Pipelines", hidden=True)
+def compact_alias(
+    target: str = typer.Argument(
+        "data/04_feature/features.lance", help="Path to Lance dataset to compact"
+    ),
+    target_rows_per_fragment: int = typer.Option(
+        100_000, help="Target rows per compacted fragment"
+    ),
+) -> None:
+    """Execute distributed fragment compaction on Lance dataset (alias for `ckx lance compact`)."""
+    lance_compact(target=target, target_rows_per_fragment=target_rows_per_fragment)
+
+
+@lance_app.command(name="mine")
+def lance_mine(
     dataset: str = typer.Option(
         "data/04_feature/physical_ai.lance", help="Path to Physical AI Lance dataset"
     ),
@@ -1030,6 +1059,49 @@ def mine(
 
     console.print(table)
     console.print(f"[dim]Affected Episodes: {result['episodes_affected']}[/dim]")
+
+
+@app.command(name="mine", rich_help_panel="Execution & Pipelines", hidden=True)
+def mine_alias(
+    dataset: str = typer.Option(
+        "data/04_feature/physical_ai.lance", help="Path to Physical AI Lance dataset"
+    ),
+    filter_expr: str = typer.Option(
+        "slip_detected = true", help="Pushdown SQL filter for kinematic conditions"
+    ),
+    limit: int = typer.Option(10, help="Maximum matching event samples to retrieve"),
+) -> None:
+    """Execute Physical AI multimodal data mining (alias for `ckx lance mine`)."""
+    lance_mine(dataset=dataset, filter_expr=filter_expr, limit=limit)
+
+
+@lance_app.command(name="inspect")
+def lance_inspect(
+    target: str = typer.Argument(
+        "data/04_feature/features.lance", help="Path to Lance dataset to inspect"
+    ),
+) -> None:
+    """Inspect Lance dataset fragments, version history, schema, and index metadata."""
+    path = Path(target)
+    if not path.exists():
+        console.print(f"[red]Error:[/red] Path does not exist: {path}")
+        raise typer.Exit(1)
+
+    import lance
+
+    ds = lance.dataset(str(path))
+    console.print(Panel.fit(f"[bold cyan]Lance Dataset Inspection: {path}[/bold cyan]"))
+    table = Table(border_style="dim")
+    table.add_column("Property", style="bold")
+    table.add_column("Value")
+
+    table.add_row("Total Rows", str(ds.count_rows()))
+    table.add_row("Latest Version", str(ds.version))
+    table.add_row("Fragments Count", str(len(ds.get_fragments())))
+    table.add_row("Schema Fields", ", ".join(ds.schema.names))
+    indices = ds.list_indices()
+    table.add_row("Indices", str(indices) if indices else "None")
+    console.print(table)
 
 
 @app.command(rich_help_panel="Day-2 Operations & Recovery")
@@ -1481,7 +1553,19 @@ def drift(
     )
 
 
-@app.command(name="airgap-pack", rich_help_panel="Distribution & Packaging")
+# ==============================================================================
+# Air-Gap Bundle Packaging & Offline Verification (Rule #40)
+# ==============================================================================
+
+airgap_app = typer.Typer(
+    name="airgap",
+    help="Air-Gap Bundle Packaging & Offline Verification (Rule #40)",
+    rich_markup_mode="rich",
+)
+app.add_typer(airgap_app, name="airgap", rich_help_panel="Distribution & Packaging")
+
+
+@airgap_app.command(name="pack")
 def airgap_pack(
     bundle_name: str = typer.Option(
         "ckodex-aiops-production", "--name", "-n", help="Name of airgap package."
@@ -1518,7 +1602,7 @@ def airgap_pack(
     )
 
 
-@app.command(name="airgap-verify", rich_help_panel="Distribution & Packaging")
+@airgap_app.command(name="verify")
 def airgap_verify(
     bundle_path: str = typer.Option(
         "data/08_reporting/airgap/bundle.tar.gz", "--path", "-p", help="Path to airgap bundle."
@@ -1545,6 +1629,29 @@ def airgap_verify(
             f"[bold red]FAILED:[/bold red] Found {res['mismatch_count']} mismatched or corrupted files: {res['mismatch_files']}"
         )
         raise typer.Exit(1)
+
+
+@app.command(name="airgap-pack", rich_help_panel="Distribution & Packaging", hidden=True)
+def airgap_pack_alias(
+    bundle_name: str = typer.Option(
+        "ckodex-aiops-production", "--name", "-n", help="Name of airgap package."
+    ),
+    out: str = typer.Option(
+        "data/08_reporting/airgap/bundle.tar.gz", "--out", "-o", help="Output tarball path."
+    ),
+) -> None:
+    """Package air-gap bundle (alias for `ckx airgap pack`)."""
+    airgap_pack(bundle_name=bundle_name, out=out)
+
+
+@app.command(name="airgap-verify", rich_help_panel="Distribution & Packaging", hidden=True)
+def airgap_verify_alias(
+    bundle_path: str = typer.Option(
+        "data/08_reporting/airgap/bundle.tar.gz", "--path", "-p", help="Path to airgap bundle."
+    ),
+) -> None:
+    """Verify air-gap bundle (alias for `ckx airgap verify`)."""
+    airgap_verify(bundle_path=bundle_path)
 
 
 @app.command(rich_help_panel="Execution & Pipelines")
@@ -1632,8 +1739,8 @@ def serve(
         server.server_close()
 
 
-@app.command(rich_help_panel="Execution & Pipelines")
-def optimize(
+@lance_app.command(name="optimize")
+def lance_optimize(
     target: str = typer.Option(
         "data/04_feature/features.lance", "--target", "-t", help="Target Lance dataset path."
     ),
@@ -1670,6 +1777,22 @@ def optimize(
 
     console.print(table)
     console.print("[green]SUCCESS:[/green] Table optimization and version pruning complete.")
+
+
+@app.command(name="optimize", rich_help_panel="Execution & Pipelines", hidden=True)
+def optimize_alias(
+    target: str = typer.Option(
+        "data/04_feature/features.lance", "--target", "-t", help="Target Lance dataset path."
+    ),
+    target_rows: int = typer.Option(
+        100_000, "--target-rows", help="Target rows per compacted fragment."
+    ),
+    retention_days: int = typer.Option(
+        7, "--retention-days", help="Retention window in days for old version cleanup."
+    ),
+) -> None:
+    """Execute full lifecycle optimization on a Lance dataset (alias for `ckx lance optimize`)."""
+    lance_optimize(target=target, target_rows=target_rows, retention_days=retention_days)
 
 
 # -----------------------------------------------------------------------------
@@ -2643,4 +2766,4 @@ def kedro_doctor():
 @click.argument("target", default="data/04_feature/features.lance")
 def kedro_compact(target: str):
     """Run distributed fragment compaction."""
-    compact(target=target)
+    lance_compact(target=target)

@@ -19,26 +19,23 @@ just [RECIPE]
 
 | Command | Synopsis | Key Options |
 | :--- | :--- | :--- |
-| `airgap-pack` | Package air-gap archive with wheels, docs, models | `--name`, `--out` |
-| `airgap-verify` | Verify air-gap bundle offline without network | `--path` |
+| `airgap` | Air-Gap hermetic bundle packaging & offline verification | `pack`, `verify` |
 | `attest` | Mint In-toto SLSA v1.0 Provenance statement | `--subject`, `--builder` |
 | `benchmark` | Run Polars vs Lance vs Ray micro-benchmark | `--num-samples` |
 | `cockpit` | Launch interactive terminal UI & export HTML | `--profile`, `--export-html` |
-| `compact` | Distributed fragment compaction on Lance dataset | `TARGET` (argument) |
 | `config` | Manage typed configuration, schemas & profile overlays | `show`, `validate`, `diff`, `schema`, `init` |
 | `conformance` | Evaluate transition conformance suite | None |
-| `derogation` | Manage explicit technical risk derogations | `create`, `list`, `revoke` |
+| `derogation` | Manage explicit technical risk derogations | `request`, `list`, `revoke`, `evaluate` |
 | `doctor` | Preflight diagnostic inspection of hardware & storage | None |
 | `drift` | Statistical Wasserstein distance & PSI drift detector | `--baseline`, `--observed` |
 | `explain` | Answer 11 constitutional operator diagnostic questions | `TARGET` (argument) |
 | `inspect` | Inspect Lance schemas or Safetensors checkpoints | `TARGET` (argument) |
-| `integrity` | Content-addressable digestion & Merkle chain verification | `verify`, `digest` |
+| `integrity` | Content-addressable digestion & Merkle chain verification | `verify`, `digest`, `chain` |
+| `lance` | Lance columnar & vector dataset lifecycle operations | `compact`, `optimize`, `mine`, `inspect` |
 | `lifecycle` | Inspect subject registry or generate runbooks | `--audit`, `--runbook`, `--export-docs` |
-| `mine` | Physical AI robotics SQL pushdown event mining | `--filter-expr`, `--limit` |
-| `oci` | OCI Image Layout packaging & distribution | `pack`, `inspect`, `unpack`, `guide` |
+| `oci` | OCI Image Layout packaging & distribution | `pack`, `inspect`, `unpack`, `guide`, `push`, `pull`, `verify` |
 | `offboard` | Offboard subject and immediately revoke leases | `--id`, `--reason` |
 | `onboard` | Onboard operator, agent, or compute node | `--type`, `--id`, `--role`, `--ttl` |
-| `optimize` | Full lifecycle optimization (compact + cleanup) | `--target` |
 | `oscal` | Export NIST SP 800-53 Rev 5 OSCAL JSON definition | `--out` |
 | `profile` | List, show, or promote platform profiles | `list`, `show`, `promote` |
 | `quantize` | Dynamically quantize model weights to Int8 | `--source`, `--out` |
@@ -47,11 +44,11 @@ just [RECIPE]
 | `reconcile` | Day-2 autonomic reconciler self-healing loop | `--auto-heal`, `--profile` |
 | `recover` | Reconstruct checkpoint and verify disk digests | `--checkpoint`, `--verify-only` |
 | `replay` | Governed replay under lease with side-effect fencing | `--receipt`, `--dry-run` |
-| `resilience` | Inspect failure budgets, circuit breakers & quarantine vaults | `status` |
+| `resilience` | Inspect failure budgets, circuit breakers & quarantine vaults | `status`, `trip`, `reset`, `degrade` |
 | `run` | Execute Kedro pipeline DAG under capability lease | `--pipeline`, `--profile`, `--ray-address`, `--ray-actors` |
 | `sbom` | Generate CycloneDX v1.5 and SPDX 2.3 JSON SBOMs | `--out-dir` |
 | `serve` | High-performance Model Serving HTTP Gateway | `--port`, `--model` |
-| `trace` | Four Truth Channels, Flight Recorder & Research Evidence | `correlate`, `flight-recorder`, `research-evidence` |
+| `trace` | Four Truth Channels, Flight Recorder & Research Evidence | `correlate`, `record`, `summary` |
 | `verify` | Audit cryptographic SHA-256 lineage receipts | None |
 
 ---
@@ -60,12 +57,11 @@ just [RECIPE]
 
 When executing `uv run ckodex-aiops --help`, commands are categorized into 6 operational panels:
 
-1. **Configuration & Profiles**: `config`, `profile`
-2. **Execution & Pipelines**: `run`, `ray`, `serve`, `quantize`, `mine`, `benchmark`
-
-3. **Day-2 Operations & Recovery**: `reconcile`, `recover`, `replay`, `quarantine`, `compact`, `optimize`
-4. **Integrity & Observability**: `integrity`, `verify`, `drift`, `trace`, `cockpit`, `inspect`
-5. **Governance & Compliance**: `doctor`, `conformance`, `explain`, `derogation`, `oscal`, `lifecycle`, `onboard`, `offboard`
-6. **Distribution & Packaging**: `airgap-pack`, `airgap-verify`, `oci`, `attest`, `sbom`
+1. **Day-2 Operations & Recovery**: `doctor`, `reconcile`, `cockpit`, `conformance`, `drift`, `recover`, `replay`, `resilience`
+2. **Integrity & Observability**: `inspect`, `explain`, `integrity`, `trace`
+3. **Governance & Compliance**: `verify`, `attest`, `oscal`, `sbom`, `onboard`, `offboard`, `lifecycle`, `quarantine`, `derogation`
+4. **Execution & Pipelines**: `benchmark`, `run`, `quantize`, `serve`, `lance`, `ray`
+5. **Configuration & Profiles**: `profile`, `config`
+6. **Distribution & Packaging**: `airgap`, `oci`
 
 

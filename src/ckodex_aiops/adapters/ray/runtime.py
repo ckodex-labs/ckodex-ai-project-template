@@ -152,6 +152,7 @@ class RayRuntimeManager:
             "cpus": resources.get("CPU", 0.0),
             "gpus": resources.get("GPU", 0.0),
             "allocated_memory_gb": round(resources.get("memory", 0.0) / (1024**3), 2),
+            "memory_gb": round(resources.get("memory", 0.0) / (1024**3), 2),
             "object_store_gb": round(resources.get("object_store_memory", 0.0) / (1024**3), 2),
             "active_nodes": [n.get("NodeManagerAddress") for n in nodes if n.get("Alive")],
         }
