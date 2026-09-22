@@ -398,38 +398,43 @@ def benchmark(
     """
     console.print(Panel.fit("[bold cyan]Micro-Benchmark: Polars vs Lance vs Ray[/bold cyan]"))
 
-    # 1. Polars Benchmark
-    start = time.perf_counter()
-    df = pl.DataFrame(
-        {
-            "a": list(range(num_samples)),
-            "b": [float(i) * 1.5 for i in range(num_samples)],
-        }
-    ).with_columns((pl.col("a") * pl.col("b")).alias("c"))
-    polars_rps = num_samples / (time.perf_counter() - start)
-    console.print(f"• Polars Transformation: [bold green]{polars_rps:,.0f}[/bold green] rows/sec")
+    # 1. Polars Pipeline Feature Engineering Benchmark
+    from ckodex_aiops.pipelines.data_ingestion.nodes import generate_synthetic_telemetry
+    from ckodex_aiops.pipelines.feature_engineering.nodes import compute_polars_features
 
-    # 2. Lance Write & Read Benchmark
+    raw_df = generate_synthetic_telemetry(num_records=num_samples)
+    start = time.perf_counter()
+    features_df = compute_polars_features(raw_df)
+    polars_rps = num_samples / (time.perf_counter() - start)
+    console.print(
+        f"• Polars Pipeline Feature Engineering: [bold green]{polars_rps:,.0f}[/bold green] records/sec"
+    )
+
+    # 2. Lance Columnar Dataset Write & Columnar Scan
     import lance
 
     tmp_path = Path("data/02_intermediate/_bench.lance")
     tmp_path.parent.mkdir(parents=True, exist_ok=True)
 
     start = time.perf_counter()
-    lance.write_dataset(df.to_arrow(), str(tmp_path), mode="overwrite")
+    lance.write_dataset(features_df.to_arrow(), str(tmp_path), mode="overwrite")
     lance_ds = lance.dataset(str(tmp_path))
-    _ = lance_ds.scanner().to_table()
+    _ = lance_ds.to_table(columns=["id", "norm_a", "norm_b", "norm_c", "norm_d", "target_class"])
     lance_rps = num_samples / (time.perf_counter() - start)
-    console.print(f"• Lance Storage Roundtrip: [bold green]{lance_rps:,.0f}[/bold green] rows/sec")
+    console.print(
+        f"• Lance Storage Roundtrip (Projected Scan): [bold green]{lance_rps:,.0f}[/bold green] records/sec"
+    )
     shutil.rmtree(tmp_path, ignore_errors=True)
 
-    # 3. Ray Actor Dispatch Benchmark
+    # 3. Ray Stateful Actor Pool Embedding Batch Dispatch
     RayRuntimeManager.initialize()
     from ckodex_aiops.adapters.ray.actors.pool import ActorPoolManager
 
-    pool = ActorPoolManager.create_embedding_pool(size=2, embedding_dim=16)
-    data = [[float(j) for j in range(4)] for _ in range(num_samples)]
-    chunks = [data[i : i + 500] for i in range(0, num_samples, 500)]
+    pool = ActorPoolManager.create_embedding_pool(size=2, embedding_dim=32)
+    feature_matrix = (
+        features_df.select(["norm_a", "norm_b", "norm_c", "norm_d"]).to_numpy().tolist()
+    )
+    chunks = [feature_matrix[i : i + 250] for i in range(0, num_samples, 250)]
 
     start = time.perf_counter()
     pool.dispatch_batch("generate_embeddings", chunks)
@@ -437,7 +442,7 @@ def benchmark(
     pool.terminate()
 
     console.print(
-        f"• Ray Actor Pool Embeddings: [bold green]{ray_rps:,.0f}[/bold green] samples/sec"
+        f"• Ray Actor Pool Embeddings (dim=32): [bold green]{ray_rps:,.0f}[/bold green] samples/sec"
     )
 
 
@@ -1849,14 +1854,21 @@ def drift(
     observed_dataset: str = typer.Option(
         "data/04_feature/features.lance", "--observed", "-o", help="Observed Lance dataset path."
     ),
+    shift_sigma: float = typer.Option(
+        0.0,
+        "--shift-sigma",
+        "-s",
+        help="Simulate distribution shift on observed features (in standard deviations) to test drift detection.",
+    ),
 ) -> None:
     """
     Run statistical feature & sensor drift detection (Wasserstein distance & PSI).
     """
+    shift_info = f" | Injected Shift: [yellow]+{shift_sigma}σ[/yellow]" if shift_sigma > 0 else ""
     console.print(
         Panel.fit(
             f"[bold cyan]CKODEX Statistical Drift Engine[/bold cyan]\n"
-            f"Baseline: [dim]{baseline_dataset}[/dim] | Observed: [dim]{observed_dataset}[/dim]",
+            f"Baseline: [dim]{baseline_dataset}[/dim] | Observed: [dim]{observed_dataset}[/dim]{shift_info}",
             border_style="cyan",
         )
     )
@@ -1874,6 +1886,11 @@ def drift(
         for c, dtype in b_df.schema.items()
         if dtype in (pl.Float32, pl.Float64, pl.Int32, pl.Int64)
     ][:6]
+
+    if shift_sigma > 0:
+        # Invert or shift numeric columns in observed dataset to test drift detection under real perturbation
+        shift_exprs = [(pl.col(c) + pl.col(c).std() * shift_sigma).alias(c) for c in numeric_cols]
+        o_df = o_df.with_columns(shift_exprs)
 
     detector = StatisticalDriftDetector()
     report = detector.evaluate_drift(
@@ -1899,8 +1916,12 @@ def drift(
 
     console.print(table)
     console.print(
-        f"Resulting State Vector: [bold green]{report.state_vector.lifecycle}[/bold green] (Valence: {report.state_vector.valence})"
+        f"Resulting State Vector: [bold green]{report.state_vector.lifecycle.value}[/bold green] (Valence: {report.state_vector.valence.value})"
     )
+    if shift_sigma == 0 and report.drift_score == 0.0:
+        console.print(
+            "[dim]Note: Observed features were derived from baseline without injected drift. Run with '--shift-sigma 2.5' to test sensor drift detection.[/dim]"
+        )
 
 
 # ==============================================================================
