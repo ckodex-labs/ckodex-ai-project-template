@@ -17,14 +17,14 @@ except Exception:
     pass
 from pathlib import Path
 
-# Ensure Kedro local configuration directory exists in all test environments
-Path("conf/local").mkdir(parents=True, exist_ok=True)
-
 import numpy as np
 import polars as pl
 import pytest
 
 from ckodex_aiops.kernel.intent import AuthorityPath, CapabilityLease, IntentEnvelope
+
+# Ensure Kedro local configuration directory exists in all test environments
+Path("conf/local").mkdir(parents=True, exist_ok=True)
 
 
 @pytest.fixture
