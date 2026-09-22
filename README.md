@@ -2,17 +2,19 @@
 
 [![Python 3.12](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
 [![UV](https://img.shields.io/badge/package%20manager-uv-green.svg)](https://astral.sh/uv)
+[![Tests: 116 Passing](https://img.shields.io/badge/tests-116%20passed-22c55e.svg)]()
 [![Kedro 0.19+](https://img.shields.io/badge/orchestration-kedro-ff9900.svg)](https://kedro.org/)
-[![Ray Actors & Co-actors](https://img.shields.io/badge/distributed-ray%20actors-028CF0.svg)](https://www.ray.io/)
+[![Ray Actors & Mesh](https://img.shields.io/badge/distributed-bounded%20ray-028CF0.svg)](https://www.ray.io/)
 [![Lance & LanceDB](https://img.shields.io/badge/vector%20store-lance%20%7C%20lancedb-blueviolet.svg)](https://lancedb.com/)
 [![Polars](https://img.shields.io/badge/dataframe-polars-blue.svg)](https://pola.rs/)
-[![PyTorch + Safetensors](https://img.shields.io/badge/deep%20learning-pytorch%20%2B%20safetensors-EE4C2C.svg)](https://pytorch.org/)
+[![PyTorch + Safetensors](https://img.shields.io/badge/deep%20learning-safetensors%20zero--pickle-EE4C2C.svg)](https://pytorch.org/)
 [![Dagger Engine](https://img.shields.io/badge/ssdlc-dagger%20engine-22c55e.svg)](https://dagger.io/)
-[![Hugo Extended](https://img.shields.io/badge/docs-hugo%20living%20site-FF4088.svg)](https://gohugo.io/)
+[![OCI Spec v1.1.0](https://img.shields.io/badge/packaging-OCI%20v1.1.0-darkblue.svg)]()
 [![Constitutional](https://img.shields.io/badge/conformance-CKODEX%20GAL%201-black.svg)]()
 
 > **The CKODEX Signature:**  
 > *Pure Kernel. Shared Validation. Explicit Transport. Evidence Everywhere. Vector State, Not Booleans. Proof Before Authority-Bearing Side Effects. Receipts After Execution. Day-2 by Default.*
+
 
 ---
 
@@ -147,7 +149,7 @@ ckx-ai-project-template/
 │   │   └── lance/               # Columnar vector store adapter
 │   ├── models/                  # PyTorch Safetensors network & streaming datasets
 │   └── pipelines/               # Kedro pipeline modules (ingestion, features, train, eval, inference, physical_ai)
-└── tests/                       # 63 Comprehensive Unit & Conformance Test Suites
+└── tests/                       # 116 Comprehensive Unit & Conformance Test Suites
 ```
 
 ---
@@ -157,57 +159,75 @@ ckx-ai-project-template/
 ### Prerequisites
 - Python 3.12+
 - `uv` package manager (`curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`)
+- `just` command runner (`brew install just`)
 - `hugo` extended (`brew install hugo`)
 - `dagger` CLI (`curl -fsSL https://dl.dagger.io/dagger/install.sh | sh` or `brew install dagger/tap/dagger`)
 
-### Quickstart
+### Quickstart (The 30-Second Architectural Tour)
 ```bash
 # 1. Sync locked virtual environment
-make install
+just install
 
-# 2. Run platform preflight diagnostics
-make doctor
+# 2. Run the 7-Act Architectural Guided Tour (Acts I - VII in ~8 seconds)
+just tour
 
-# 3. Execute full Kedro end-to-end pipeline
-make run-pipeline
+# 3. Launch the Living Evidence Editorial Mission Cockpit (Dual Theme: Vault / Ledger)
+just cockpit-serve
+# Opens http://127.0.0.1:8888 with SVG Merkle DAG, Hexagonal Radar, and Evidence Margin
 
-# 4. Run full test suite (46 tests)
-make test
+# 4. Run the full test suite (116 tests in ~26 seconds)
+just test
 ```
 
 ---
 
 ## 5. Day-2 Operations & CLI Reference
 
-The platform includes a built-in Typer + Rich CLI:
+The platform includes a built-in Typer + Rich CLI (`ckx` or `uv run ckodex-aiops`):
 
 ```bash
-# Preflight health check across Apple Silicon Metal (MPS), Ray, Lance, and Secrets
+# 1. 7-Act High-Assurance Architectural Tour
+uv run ckodex-aiops tour
+
+# 2. Living Mission Cockpit Server (Dual Themes, Hex Radar, Merkle DAG, Drawer)
+uv run ckodex-aiops cockpit --serve --port 8888
+
+# 3. Preflight health check across Apple Silicon Metal (MPS), Ray, Lance, and Secrets
 uv run ckodex-aiops doctor
 
-# Autonomic Day-2 Reconciler: Detects drift and auto-heals storage/models
+# 4. Execute Kedro pipelines (default end-to-end or isolated modules)
+uv run ckodex-aiops run                                 # Full DAG (7 nodes)
+uv run ckodex-aiops run --pipeline data_processing      # Lance ETL + Embeddings
+uv run ckodex-aiops run --pipeline training             # Safetensors Checkpointing
+uv run ckodex-aiops run --pipeline evaluation           # Conformance Vector
+uv run ckodex-aiops run --pipeline inference            # Distributed Ray Scoring
+uv run ckodex-aiops run --pipeline physical_ai          # Robotics Kinematic Mining
+
+# 5. Distributed Ray Cluster Management (Local Bounded Mesh or Remote KubeRay)
+uv run ckodex-aiops ray status                          # Inspect cluster topology & memory bounds
+uv run ckodex-aiops ray switch-remote                   # Route to remote Ray / KubeRay cluster
+uv run ckodex-aiops ray benchmark                       # Micro-benchmark Plasma memory dispatch
+
+# 6. Autonomic Day-2 Reconciler: Detects drift and auto-heals storage/models
 uv run ckodex-aiops reconcile --auto-heal
 
-# Statistical Feature & Sensor Drift Detection (Wasserstein distance)
+# 7. Statistical Feature & Sensor Drift Detection (Wasserstein distance)
 uv run ckodex-aiops drift
 
-# Multi-Dimensional Conformance Suite: Structural, Anti-Dominance, Degradation
+# 8. Multi-Dimensional Conformance Suite: Structural, Anti-Dominance, Degradation
 uv run ckodex-aiops conformance
 
-# Dynamic Model Quantization (Int8 post-training quantization with fidelity check)
+# 9. Dynamic Model Quantization (Int8 post-training quantization with fidelity check)
 uv run ckodex-aiops quantize --source data/06_models/model.safetensors
 
-# Zero-Copy Model Serving HTTP Gateway with adaptive dynamic batching
+# 10. Zero-Copy Model Serving HTTP Gateway with adaptive dynamic batching
 uv run ckodex-aiops serve --port 8080
 
-# Air-Gap Package Creation and Offline Verification
+# 11. Air-Gap Package Creation and Offline Verification (Rule #40)
 uv run ckodex-aiops airgap pack
 uv run ckodex-aiops airgap verify
 
-# Interactive AIOps Mission Cockpit (Terminal UI + HTML export)
-uv run ckodex-aiops cockpit --export-html docs/static/cockpit.html
-
-# Mint cryptographic In-toto SLSA v1.0 Provenance statement
+# 12. Mint cryptographic In-toto SLSA v1.0 Provenance statement
 uv run ckodex-aiops attest --subject data/06_models/model.safetensors
 
 # Export NIST SP 800-53 Rev 5 OSCAL Component Definition
@@ -304,24 +324,27 @@ just docs-pages-build
 
 ## 7. Verification Evidence & Quality Assurance
 
-The test suite enforces constitutional invariants across 94 tests:
+The test suite enforces constitutional invariants across 116 tests:
 
 ```text
-======================== 94 passed in 25.27s =========================
-✓ tests/test_airgap.py: PASS (Air-gap packaging, manifest hashing, tamper detection)
-✓ tests/test_coactor.py: PASS (Actor & Co-Actor asynchronous telemetry buffering)
+======================= 116 passed in 26.23s ========================
+✓ tests/test_airgap.py: PASS (Air-gap packaging, manifest hashing, offline verification)
+✓ tests/test_coactor.py: PASS (Actor & Co-Actor asynchronous telemetry ring buffering)
+✓ tests/test_cockpit.py: PASS (CKODEX-DS-3 Evidence Cockpit, themes, radar, 7-Act tour)
 ✓ tests/test_compliance.py: PASS (In-toto SLSA v1.0 provenance & NIST OSCAL)
+✓ tests/test_config.py: PASS (Typed configuration, validation, and profile overlays)
 ✓ tests/test_conformance.py: PASS (Structural, Anti-Dominance, Degradation contracts)
 ✓ tests/test_degradation.py: PASS (Degraded mode contracts, safe hold, capability fencing)
 ✓ tests/test_derogation.py: PASS (Explicit accepted risk derogations & compensating controls)
 ✓ tests/test_drift.py: PASS (Statistical Wasserstein distance & PSI drift detection)
 ✓ tests/test_explanation.py: PASS (Deep observability 11-question explanation engine)
-✓ tests/test_hooks.py: PASS (Authority admission, data integrity corruption detection, circuit breaker quarantine, Merkle receipt flight recording)
-✓ tests/test_integrity.py: PASS (Content-addressable digestion for Polars, PyArrow, PyTorch weights, Merkle lineage chains)
+✓ tests/test_hooks.py: PASS (Authority admission, data integrity corruption detection, Merkle receipts)
+✓ tests/test_integrity.py: PASS (Content-addressable digestion for Polars, PyArrow, Safetensors weights)
 ✓ tests/test_kernel.py: PASS (State vector algebra, anti-dominance, SHA-256 receipts)
 ✓ tests/test_lance_dataset.py: PASS (Zero-copy Lance scanning, pushdown filters)
 ✓ tests/test_lance_ray.py: PASS (Ray Data ↔ Lance zero-copy streaming & compaction)
 ✓ tests/test_lifecycle.py: PASS (Self-documenting on/offboarding, lease revocation, receipts)
+✓ tests/test_model_dataset.py: PASS (Safetensors zero-pickle cross-pipeline persistence)
 ✓ tests/test_oci.py: PASS (OCI Image Layout v1.1.0 packaging, ORAS/Cosign distribution)
 ✓ tests/test_otel.py: PASS (OTEL tracer lifecycle & W3C TraceContext propagation)
 ✓ tests/test_physical_ai.py: PASS (100 Hz sensor streams, window slicing, IVF-PQ)
@@ -334,7 +357,8 @@ The test suite enforces constitutional invariants across 94 tests:
 ✓ tests/test_ray_advanced.py: PASS (Placement groups, zero-copy Plasma dispatch, full optimize)
 ✓ tests/test_reconciler.py: PASS (Autonomic Day-2 Reconciler loop & self-healing)
 ✓ tests/test_recovery.py: PASS (Designed checkpoint recovery & governed execution replay)
-✓ tests/test_resilience.py: PASS (Circuit breaker state transitions, bounded retry with jitter, degraded mode registry)
+✓ tests/test_research_evidence.py: PASS (Research evidence protocol & experiment tracking)
+✓ tests/test_resilience.py: PASS (Circuit breaker state transitions, bounded retry with jitter)
 ✓ tests/test_sbom.py: PASS (CycloneDX v1.5 and SPDX 2.3 JSON SBOM generation)
 ✓ tests/test_secrets.py: PASS (Redacted SecretValue, SecretLease, Vault, KMS, Keyless)
 ✓ tests/test_serving.py: PASS (Model serving gateway, /healthz, /livez, /infer)
@@ -342,9 +366,8 @@ The test suite enforces constitutional invariants across 94 tests:
 ✓ tests/test_tracking.py: PASS (Flight Recorder & MLflow experiment tracking)
 ✓ tests/test_validation.py: PASS (Shared validation contracts & preflight bounds)
 
-Ruff Linter & Formatter: 100% clean across 170 files (0 errors, 0 warnings).
-Mypy Type Checker: 100% clean across 127 files (0 issues).
-Hugo Living Documentation: 53 pages built in 29 ms across 4 Diátaxis quadrants (0 errors, 0 warnings).
+Ruff Linter & Formatter: 100% clean across 180 files (0 errors, 0 warnings).
+Mypy Type Checker: 100% clean across 134 files (0 issues).
 Platform Doctor: PASS (All hardware, compute, storage, quarantine, and hooks subsystems healthy).
 ```
 

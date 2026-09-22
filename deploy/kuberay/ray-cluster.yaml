@@ -1,0 +1,122 @@
+apiVersion: ray.io/v1
+kind: RayCluster
+metadata:
+  name: ckodex-ray-cluster
+  namespace: ckodex-aiops
+  labels:
+    app.kubernetes.io/name: ckodex-aiops
+    app.kubernetes.io/part-of: ckodex-platform
+    ckodex.io/assurance-level: GAL-1
+    ckodex.io/governance: zero-trust
+spec:
+  rayVersion: "2.44.0"
+  headGroupSpec:
+    rayStartParams:
+      dashboard-host: "0.0.0.0"
+      num-cpus: "2"
+      object-store-memory: "2147483648" # 2.0 GB Plasma store (Rule #31: Bounded Resources)
+      block: "true"
+    template:
+      metadata:
+        labels:
+          ray.io/node-type: head
+          ckodex.io/role: ray-head
+      spec:
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10001
+          fsGroup: 10001
+          seccompProfile:
+            type: RuntimeDefault
+        containers:
+          - name: ray-head
+            image: rayproject/ray:2.44.0-py312
+            imagePullPolicy: IfNotPresent
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              limits:
+                cpu: "4"
+                memory: "6Gi" # Strictly bounded: prevents host OOM (Rule #31)
+              requests:
+                cpu: "2"
+                memory: "4Gi"
+            volumeMounts:
+              - name: model-storage
+                mountPath: /workspace/data/06_models
+              - name: feature-storage
+                mountPath: /workspace/data/04_feature
+              - name: dshm
+                mountPath: /dev/shm
+        volumes:
+          - name: dshm
+            emptyDir:
+              medium: Memory
+              sizeLimit: "2Gi"
+          - name: model-storage
+            persistentVolumeClaim:
+              claimName: ckodex-models-pvc
+          - name: feature-storage
+            persistentVolumeClaim:
+              claimName: ckodex-features-pvc
+
+  workerGroupSpecs:
+    - groupName: distributed-actors
+      replicas: 2
+      minReplicas: 1
+      maxReplicas: 4
+      rayStartParams:
+        num-cpus: "2"
+        object-store-memory: "1073741824" # 1.0 GB Plasma per worker (Rule #31)
+        block: "true"
+      template:
+        metadata:
+          labels:
+            ray.io/node-type: worker
+            ckodex.io/role: ray-worker
+        spec:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            fsGroup: 10001
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: ray-worker
+              image: rayproject/ray:2.44.0-py312
+              imagePullPolicy: IfNotPresent
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: false
+                capabilities:
+                  drop:
+                    - ALL
+              resources:
+                limits:
+                  cpu: "2"
+                  memory: "4Gi" # Strict 4GB ceiling per worker node (Rule #31)
+                requests:
+                  cpu: "1"
+                  memory: "2Gi"
+              volumeMounts:
+                - name: model-storage
+                  mountPath: /workspace/data/06_models
+                - name: feature-storage
+                  mountPath: /workspace/data/04_feature
+                - name: dshm
+                  mountPath: /dev/shm
+          volumes:
+            - name: dshm
+              emptyDir:
+                medium: Memory
+                sizeLimit: "1Gi"
+            - name: model-storage
+              persistentVolumeClaim:
+                claimName: ckodex-models-pvc
+            - name: feature-storage
+              persistentVolumeClaim:
+                claimName: ckodex-features-pvc

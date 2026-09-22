@@ -1,0 +1,40 @@
+apiVersion: ray.io/v1
+kind: RayJob
+metadata:
+  name: ckodex-pipeline-job
+  namespace: ckodex-aiops
+  labels:
+    app.kubernetes.io/name: ckodex-aiops
+    ckodex.io/assurance-level: GAL-1
+spec:
+  entrypoint: "uv run ckodex-aiops run --pipeline __default__"
+  rayClusterSpec:
+    rayVersion: "2.44.0"
+    headGroupSpec:
+      rayStartParams:
+        dashboard-host: "0.0.0.0"
+        num-cpus: "2"
+        object-store-memory: "2147483648"
+      template:
+        spec:
+          containers:
+            - name: ray-head
+              image: rayproject/ray:2.44.0-py312
+              resources:
+                limits:
+                  cpu: "4"
+                  memory: "6Gi"
+                requests:
+                  cpu: "2"
+                  memory: "4Gi"
+  runtimeEnvYAML: |
+    pip:
+      - polars==1.44.2
+      - lance>=0.12.0
+      - safetensors>=0.4.5
+      - torch>=2.2.0
+      - kedro>=0.19.0
+      - rich>=13.7.0
+      - typer>=0.12.0
+  ttlSecondsAfterFinished: 3600
+  suspend: false
