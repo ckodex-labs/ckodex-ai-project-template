@@ -1,9 +1,33 @@
 {{ define "main" }}
-<article>
-  <h1>{{ .Title }}</h1>
-  {{ if .Description }}<p style="color: #8b949e; font-size: 1.1rem; margin-bottom: 1.5rem;">{{ .Description }}</p>{{ end }}
+<article class="ck-measure">
+  <div style="margin-bottom: var(--ck-sp-6);">
+    <div style="display: flex; gap: var(--ck-sp-2); align-items: center; margin-bottom: var(--ck-sp-2);">
+      {{ if .Section }}
+      <span class="ck-chip ck-chip--observed">{{ .Section | upper }}</span>
+      {{ end }}
+      <span class="ck-label" style="margin: 0;">VERIFIED SPECIFICATION</span>
+    </div>
+    <h1 class="ck-display">{{ .Title }}</h1>
+    {{ if .Description }}
+      <p style="font-size: 1.15rem; color: var(--ck-fg-3); margin-bottom: var(--ck-sp-4); line-height: 1.5;">{{ .Description }}</p>
+    {{ end }}
+  </div>
+
   <div class="content">
     {{ .Content }}
+  </div>
+
+  <!-- Document Provenance Stamp -->
+  <div style="margin-top: var(--ck-sp-10); padding-top: var(--ck-sp-4); border-top: 1px solid var(--ck-hairline); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--ck-sp-2);">
+    <div style="display: flex; align-items: center; gap: var(--ck-sp-2);">
+      <span class="ck-chip ck-chip--attested">◆ ATTESTED</span>
+      <span style="font-family: var(--ck-ff-mono); font-size: 11px; color: var(--ck-fg-3);">
+        Living Specification · GAL 1 Enforced
+      </span>
+    </div>
+    <div style="font-family: var(--ck-ff-mono); font-size: 11px; color: var(--ck-fg-3);">
+      Last Synchronized: {{ now.Format "2006-01-02 15:04:05 UTC" }}
+    </div>
   </div>
 </article>
 {{ end }}

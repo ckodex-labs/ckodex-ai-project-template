@@ -1,19 +1,37 @@
 {{ define "main" }}
-<section>
-  <h1>{{ .Title }}</h1>
-  {{ if .Description }}<p style="color: #8b949e; font-size: 1.1rem; margin-bottom: 1.5rem;">{{ .Description }}</p>{{ end }}
-  
-  <div class="content">
+<section class="ck-measure">
+  <div style="margin-bottom: var(--ck-sp-6);">
+    <div style="display: flex; gap: var(--ck-sp-2); align-items: center; margin-bottom: var(--ck-sp-2);">
+      <span class="ck-chip ck-chip--observed">SECTION</span>
+      <span class="ck-label" style="margin: 0;">DIÁTAXIS</span>
+    </div>
+    <h1 class="ck-display">{{ .Title }}</h1>
+    {{ if .Description }}
+      <p style="font-size: 1.15rem; color: var(--ck-fg-3); margin-bottom: var(--ck-sp-4);">{{ .Description }}</p>
+    {{ end }}
+  </div>
+
+  <div class="content" style="margin-bottom: var(--ck-sp-8);">
     {{ .Content }}
   </div>
 
   {{ if .Pages }}
-  <h2 style="margin-top: 2rem;">Articles in this section</h2>
-  <ul>
+  <h2 style="font-size: 1.25rem; margin-bottom: var(--ck-sp-4); text-transform: uppercase; letter-spacing: 0.05em;">Section Index</h2>
+  <div style="display: flex; flex-direction: column; gap: var(--ck-sp-3);">
     {{ range .Pages }}
-    <li><a href="{{ .RelPermalink }}" style="color: var(--accent-blue); font-size: 1.1rem; font-weight: 600;">{{ .Title }}</a> - {{ .Description }}</li>
+    <a href="{{ .RelPermalink }}" style="text-decoration: none; color: inherit;">
+      <div class="ck-margin-card" style="transition: border-color var(--ck-t-micro) ease;" onmouseover="this.style.borderColor='var(--ck-fg-1)'" onmouseout="this.style.borderColor='var(--ck-hairline)'">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+          <h3 style="margin: 0; font-family: var(--ck-ff-ui); font-size: 1.05rem; font-weight: 600; color: var(--ck-fg-1);">{{ .Title }}</h3>
+          <span style="font-family: var(--ck-ff-mono); font-size: 11px; color: var(--ck-fg-3);">ARTICLE ↗</span>
+        </div>
+        {{ if .Description }}
+        <p style="margin: 0; font-size: 0.9rem; color: var(--ck-fg-3);">{{ .Description }}</p>
+        {{ end }}
+      </div>
+    </a>
     {{ end }}
-  </ul>
+  </div>
   {{ end }}
 </section>
 {{ end }}

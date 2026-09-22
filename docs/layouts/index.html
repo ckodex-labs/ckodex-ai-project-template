@@ -1,20 +1,33 @@
 {{ define "main" }}
-<section>
-  <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem;">ckx-ai-project-template Documentation</h1>
-  <p style="color: #8b949e; font-size: 1.15rem; margin-bottom: 2rem;">
-    Structured according to the <strong>Diátaxis Documentation Framework</strong>: Tutorials, How-To Guides, Reference, and Explanation.
-  </p>
+<section class="ck-measure">
+  <div style="margin-bottom: var(--ck-sp-6);">
+    <div style="display: flex; gap: var(--ck-sp-2); align-items: center; margin-bottom: var(--ck-sp-2);">
+      <span class="ck-chip ck-chip--attested">◆ GAL 1 CONSTITUTIONAL</span>
+      <span class="ck-chip ck-chip--observed">⊢ DIÁTAXIS FRAMEWORK</span>
+    </div>
+    <h1 class="ck-display" style="font-size: clamp(2.4rem, 4vw, 3.2rem); margin-bottom: var(--ck-sp-2);">
+      ckx-ai-project-template
+    </h1>
+    <p style="font-size: 1.15rem; color: var(--ck-fg-2); line-height: 1.6; margin-bottom: var(--ck-sp-6);">
+      High-Assurance AI Architecture, Governed Pipelines & Day-2 Operational Platform.
+      Grounding execution from mathematical intent to machine-verifiable cryptographic receipts.
+    </p>
+  </div>
 
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem;">
+  <!-- Diátaxis Bento Grid -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--ck-sp-4); margin-bottom: var(--ck-sp-8);">
+    
     <!-- Quadrant 1: Tutorials -->
     <a href="{{ "/tutorials/" | relURL }}" style="text-decoration: none; color: inherit;">
-      <div style="background: #21262d; padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color); height: 100%; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-blue)'" onmouseout="this.style.borderColor='var(--border-color)'">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-          <h3 style="margin: 0; color: var(--accent-blue);">🎓 Tutorials</h3>
-          <span style="font-size: 0.75rem; background: rgba(88, 166, 255, 0.15); color: var(--accent-blue); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">Learning-Oriented</span>
+      <div class="ck-margin-card" style="height: 100%; transition: border-color var(--ck-t-micro) ease;" onmouseover="this.style.borderColor='var(--ck-fg-1)'" onmouseout="this.style.borderColor='var(--ck-hairline)'">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--ck-sp-2);">
+          <h3 style="margin: 0; font-family: var(--ck-ff-ui); font-size: 1.1rem; color: var(--ck-fg-1);">⊢ Tutorials</h3>
+          <span class="ck-chip ck-chip--observed">LEARNING</span>
         </div>
-        <p style="font-size: 0.92rem; color: #8b949e; margin-bottom: 0.75rem;">Hands-on lessons taking you step-by-step from zero to a fully attested, running pipeline.</p>
-        <ul style="font-size: 0.85rem; color: #c9d1d9; padding-left: 1.2rem; margin-bottom: 0;">
+        <p style="font-size: 0.9rem; color: var(--ck-fg-3); margin-bottom: var(--ck-sp-3);">
+          Hands-on lessons taking you step-by-step from zero to a fully attested, running pipeline.
+        </p>
+        <ul style="font-family: var(--ck-ff-mono); font-size: 12px; color: var(--ck-fg-2); padding-left: 1.2rem; margin-bottom: 0;">
           <li>Your First Pipeline & SLSA Attestation</li>
           <li>Simulating and Healing Drift with Reconciler</li>
         </ul>
@@ -23,55 +36,81 @@
 
     <!-- Quadrant 2: How-To Guides -->
     <a href="{{ "/how-to/" | relURL }}" style="text-decoration: none; color: inherit;">
-      <div style="background: #21262d; padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color); height: 100%; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-green)'" onmouseout="this.style.borderColor='var(--border-color)'">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-          <h3 style="margin: 0; color: var(--accent-green);">🛠 How-To Guides</h3>
-          <span style="font-size: 0.75rem; background: rgba(63, 185, 80, 0.15); color: var(--accent-green); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">Problem-Oriented</span>
+      <div class="ck-margin-card" style="height: 100%; transition: border-color var(--ck-t-micro) ease;" onmouseover="this.style.borderColor='var(--ck-fg-1)'" onmouseout="this.style.borderColor='var(--ck-hairline)'">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--ck-sp-2);">
+          <h3 style="margin: 0; font-family: var(--ck-ff-ui); font-size: 1.1rem; color: var(--ck-fg-1);">○ How-To Guides</h3>
+          <span class="ck-chip ck-chip--claimed">PROBLEM</span>
         </div>
-        <p style="font-size: 0.92rem; color: #8b949e; margin-bottom: 0.75rem;">Practical recipes to solve concrete operational, security, and lifecycle tasks.</p>
-        <ul style="font-size: 0.85rem; color: #c9d1d9; padding-left: 1.2rem; margin-bottom: 0;">
-          <li>Quarantining Suspect Artifacts & Preserving Evidence</li>
+        <p style="font-size: 0.9rem; color: var(--ck-fg-3); margin-bottom: var(--ck-sp-3);">
+          Practical recipes to solve concrete operational, security, and lifecycle tasks.
+        </p>
+        <ul style="font-family: var(--ck-ff-mono); font-size: 12px; color: var(--ck-fg-2); padding-left: 1.2rem; margin-bottom: 0;">
+          <li>Quarantining Suspect Artifacts & Evidence</li>
           <li>Executing Governed Replay Under Leases</li>
-          <li>Registering Risk Derogations & Air-Gap Packaging</li>
+          <li>Registering Risk Derogations & Air-Gap</li>
         </ul>
       </div>
     </a>
 
     <!-- Quadrant 3: Reference -->
     <a href="{{ "/reference/" | relURL }}" style="text-decoration: none; color: inherit;">
-      <div style="background: #21262d; padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color); height: 100%; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-orange)'" onmouseout="this.style.borderColor='var(--border-color)'">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-          <h3 style="margin: 0; color: var(--accent-orange);">📖 Reference</h3>
-          <span style="font-size: 0.75rem; background: rgba(210, 153, 34, 0.15); color: var(--accent-orange); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">Information-Oriented</span>
+      <div class="ck-margin-card" style="height: 100%; transition: border-color var(--ck-t-micro) ease;" onmouseover="this.style.borderColor='var(--ck-fg-1)'" onmouseout="this.style.borderColor='var(--ck-hairline)'">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--ck-sp-2);">
+          <h3 style="margin: 0; font-family: var(--ck-ff-ui); font-size: 1.1rem; color: var(--ck-fg-1);">◆ Reference</h3>
+          <span class="ck-chip ck-chip--attested">INFORMATION</span>
         </div>
-        <p style="font-size: 0.92rem; color: #8b949e; margin-bottom: 0.75rem;">Authoritative specifications, schemas, contracts, and complete CLI command references.</p>
-        <ul style="font-size: 0.85rem; color: #c9d1d9; padding-left: 1.2rem; margin-bottom: 0;">
-          <li>CLI Commands Reference (32 Commands)</li>
+        <p style="font-size: 0.9rem; color: var(--ck-fg-3); margin-bottom: var(--ck-sp-3);">
+          Authoritative specifications, schemas, contracts, and complete CLI command references.
+        </p>
+        <ul style="font-family: var(--ck-ff-mono); font-size: 12px; color: var(--ck-fg-2); padding-left: 1.2rem; margin-bottom: 0;">
+          <li>CLI Command Suite (32 Sub-Commands)</li>
           <li>Semantic Kernel Primitives & StateVector S(e,t)</li>
-          <li>NIST SP 800-53 OSCAL & SLSA Provenance</li>
+          <li>NIST SP 800-53 OSCAL & SLSA Spec</li>
         </ul>
       </div>
     </a>
 
     <!-- Quadrant 4: Explanation -->
     <a href="{{ "/explanation/" | relURL }}" style="text-decoration: none; color: inherit;">
-      <div style="background: #21262d; padding: 1.5rem; border-radius: 6px; border: 1px solid var(--border-color); height: 100%; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#bc8cff'" onmouseout="this.style.borderColor='var(--border-color)'">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-          <h3 style="margin: 0; color: #bc8cff;">💡 Explanation</h3>
-          <span style="font-size: 0.75rem; background: rgba(188, 140, 255, 0.15); color: #bc8cff; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">Understanding-Oriented</span>
+      <div class="ck-margin-card" style="height: 100%; transition: border-color var(--ck-t-micro) ease;" onmouseover="this.style.borderColor='var(--ck-fg-1)'" onmouseout="this.style.borderColor='var(--ck-hairline)'">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--ck-sp-2);">
+          <h3 style="margin: 0; font-family: var(--ck-ff-ui); font-size: 1.1rem; color: var(--ck-fg-1);">◆ Explanation</h3>
+          <span class="ck-chip ck-chip--attested">THEORY</span>
         </div>
-        <p style="font-size: 0.92rem; color: #8b949e; margin-bottom: 0.75rem;">Architectural rationale, theoretical context, and constitutional design invariants.</p>
-        <ul style="font-size: 0.85rem; color: #c9d1d9; padding-left: 1.2rem; margin-bottom: 0;">
-          <li>Why the Semantic Kernel Has Zero SDK Leakage</li>
-          <li>Four Truth Channels & State Coherence (Rule #12)</li>
-          <li>The Canonical Day-2 Control Loop</li>
+        <p style="font-size: 0.9rem; color: var(--ck-fg-3); margin-bottom: var(--ck-sp-3);">
+          Architectural rationale, theoretical context, and constitutional design invariants.
+        </p>
+        <ul style="font-family: var(--ck-ff-mono); font-size: 12px; color: var(--ck-fg-2); padding-left: 1.2rem; margin-bottom: 0;">
+          <li>Why Semantic Kernel Has Zero SDK Leakage</li>
+          <li>Four Truth Channels & State Coherence</li>
+          <li>Canonical Day-2 Autonomous Control Loop</li>
         </ul>
       </div>
     </a>
   </div>
 
-  <h2>Constitutional Signature (GAL 1)</h2>
-  <pre><code>AUTHORITY-BORN • INTENT-NATIVE • PURE-SEMANTIC-KERNEL • SHARED-VALIDATION •
-VECTOR-STATE • PROOF-BEFORE • RECEIPTS-AFTER • AIR-GAP-CAPABLE • DAY-2-NATIVE</code></pre>
+  <!-- Sealed Chamfered Constitutional Card -->
+  <div class="ck-margin-card" style="margin-bottom: var(--ck-sp-8); border: 2px solid var(--ck-fg-1); background: var(--ck-bg-2);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--ck-sp-2);">
+      <h3 style="margin: 0; font-family: var(--ck-ff-mono); font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ck-fg-1);">
+        Constitutional Architectural Signature
+      </h3>
+      <span class="ck-chip ck-chip--attested">GAL 1 ENFORCED</span>
+    </div>
+    <pre style="margin: var(--ck-sp-2) 0 0 0; background: var(--ck-bg-1); border: 1px solid var(--ck-hairline); padding: var(--ck-sp-3); font-size: 11px; line-height: 1.6;"><code>AUTHORITY-BORN • INTENT-NATIVE • DOMAIN-DRIVEN • PURE-SEMANTIC-KERNEL • SHARED-VALIDATION
+EXPLICIT-TRANSPORT • EVIDENCE-BEARING • VECTOR-STATE • CONFORMANCE-BY-TRANSITION • ZERO-TRUST
+PROOF-BEFORE • RECEIPTS-AFTER • DAY-2-NATIVE • DEEP-OBSERVABILITY • AIR-GAP-CAPABLE</code></pre>
+  </div>
+
+  <!-- Quickstart Terminal Section -->
+  <div>
+    <h2 style="font-size: 1.3rem; margin-top: 0; margin-bottom: var(--ck-sp-3);">Interactive Quickstart</h2>
+    <p style="color: var(--ck-fg-3); font-size: 0.95rem;">Bootstrap your environment and execute the complete pipeline tour in one command:</p>
+    <pre><code># Launch guided onboarding walkthrough
+uv run ckx quickstart --auto
+
+# Or inspect live mission cockpit
+uv run ckx cockpit --port 8888</code></pre>
+  </div>
 </section>
 {{ end }}

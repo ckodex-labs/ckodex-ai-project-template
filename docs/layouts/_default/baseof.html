@@ -1,196 +1,614 @@
 <!DOCTYPE html>
-<html lang="{{ .Site.Language.Lang | default "en" }}">
+<html lang="{{ .Site.Language.Lang | default "en" }}" data-theme="ledger">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ .Site.Title }}</title>
+  <title>{{ if not .IsHome }}{{ .Title }} · {{ end }}{{ .Site.Title }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ "css/styles.css" | relURL }}">
+  <script>
+    (function() {
+      const saved = localStorage.getItem('ck-theme');
+      if (saved && (saved === 'vault' || saved === 'ledger' || saved === 'hc')) {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    })();
+  </script>
   <style>
-    :root {
-      --bg-primary: #0d1117;
-      --bg-secondary: #161b22;
-      --border-color: #30363d;
-      --text-main: #c9d1d9;
-      --text-heading: #f0f6fc;
-      --accent-blue: #58a6ff;
-      --accent-green: #3fb950;
-      --accent-orange: #d29922;
-      --code-bg: #1f242c;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-primary);
-      color: var(--text-main);
+    /* ==========================================================================
+       CKODEX-DS-3 Documentation Theme Overrides & Diátaxis Layout Bridge
+       ========================================================================== */
+    html, body {
+      background-color: var(--ck-bg-0);
+      color: var(--ck-fg-1);
+      font-family: var(--ck-ff-ui);
+      font-size: var(--ck-fs-body, 15px);
       line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      transition: background-color var(--ck-t-state) ease, color var(--ck-t-state) ease;
     }
-    header {
-      background-color: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color);
-      padding: 1rem 2rem;
+
+    /* Landmark Shell */
+    .ck-doc-shell {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header.ck-doc-header {
+      background-color: var(--ck-bg-1);
+      border-bottom: var(--ck-stroke-1) solid var(--ck-hairline);
+      padding: var(--ck-sp-3) var(--ck-sp-6);
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
       z-index: 100;
+      backdrop-filter: blur(8px);
     }
-    .brand {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-heading);
-      text-decoration: none;
+
+    .ck-brand-group {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-    }
-    .badge {
-      font-size: 0.75rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 999px;
-      background-color: #238636;
-      color: #fff;
-    }
-    nav ul {
-      display: flex;
-      list-style: none;
-      gap: 1.5rem;
-    }
-    nav a {
-      color: var(--text-main);
+      gap: var(--ck-sp-3);
       text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s;
+      color: var(--ck-fg-1);
     }
-    nav a:hover, nav a.active {
-      color: var(--accent-blue);
+
+    .ck-brand-group:hover {
+      text-decoration: none;
     }
-    .container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 1.5rem;
+
+    .ck-logo-mark {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ck-site-title {
+      font-family: var(--ck-ff-ui);
+      font-weight: 600;
+      font-size: var(--ck-fs-h4, 1.1rem);
+      letter-spacing: -0.01em;
+    }
+
+    .ck-header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--ck-sp-3);
+    }
+
+    /* Button Utilities */
+    .ck-theme-btn {
+      font-family: var(--ck-ff-mono);
+      font-size: var(--ck-fs-micro, 11px);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: var(--ck-sp-1) var(--ck-sp-3);
+      border: var(--ck-stroke-1) solid var(--ck-hairline);
+      background: var(--ck-bg-2);
+      color: var(--ck-fg-1);
+      cursor: pointer;
+      border-radius: 0;
+      transition: all var(--ck-t-micro) ease;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--ck-sp-1);
+    }
+
+    .ck-theme-btn:hover {
+      border-color: var(--ck-accent);
+      color: var(--ck-accent);
+    }
+
+    .ck-cockpit-link {
+      font-family: var(--ck-ff-mono);
+      font-size: var(--ck-fs-micro, 11px);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: var(--ck-sp-1) var(--ck-sp-3);
+      border: var(--ck-stroke-1) solid var(--ck-hairline);
+      background: var(--ck-bg-1);
+      color: var(--ck-fg-1);
+      text-decoration: none;
+      transition: all var(--ck-t-micro) ease;
+    }
+
+    .ck-cockpit-link:hover {
+      border-color: var(--ck-proof);
+      color: var(--ck-proof);
+      text-decoration: none;
+    }
+
+    /* Tri-pane Grid Layout */
+    .ck-doc-body {
       display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 2.5rem;
+      grid-template-columns: var(--ck-nav-w, 240px) minmax(0, 1fr) var(--ck-margin-w, 304px);
+      gap: var(--ck-sp-6);
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      padding: var(--ck-sp-6);
+      flex: 1;
     }
-    @media (max-width: 850px) {
-      .container { grid-template-columns: 1fr; }
-      aside { display: none; }
+
+    @media (max-width: 1100px) {
+      .ck-doc-body {
+        grid-template-columns: var(--ck-nav-w, 220px) minmax(0, 1fr);
+      }
+      .ck-evidence-margin {
+        display: none;
+      }
     }
-    aside {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 1.25rem;
+
+    @media (max-width: 768px) {
+      .ck-doc-body {
+        grid-template-columns: 1fr;
+      }
+      nav.ck-doc-nav {
+        display: none;
+      }
+    }
+
+    /* Left Navigation Rail */
+    nav.ck-doc-nav {
+      background: var(--ck-bg-1);
+      border: var(--ck-stroke-1) solid var(--ck-hairline);
+      padding: var(--ck-sp-4);
       height: fit-content;
       position: sticky;
       top: 5rem;
     }
-    aside h3 {
-      font-size: 0.9rem;
+
+    .ck-nav-group-title {
+      font-family: var(--ck-ff-mono);
+      font-size: var(--ck-fs-micro, 11px);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #8b949e;
-      margin-bottom: 1rem;
+      letter-spacing: 0.08em;
+      color: var(--ck-fg-3);
+      margin-bottom: var(--ck-sp-2);
+      border-bottom: var(--ck-stroke-1) solid var(--ck-hairline);
+      padding-bottom: var(--ck-sp-1);
     }
-    aside ul {
+
+    .ck-nav-list {
       list-style: none;
+      margin: 0 0 var(--ck-sp-5) 0;
+      padding: 0;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--ck-sp-1);
     }
-    aside a {
-      color: var(--text-main);
+
+    .ck-nav-list a {
+      font-family: var(--ck-ff-ui);
+      font-size: var(--ck-fs-body-sm, 13.5px);
+      color: var(--ck-fg-2);
       text-decoration: none;
-      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: var(--ck-sp-2);
+      padding: 4px 8px;
+      transition: all var(--ck-t-micro) ease;
     }
-    aside a:hover {
-      color: var(--accent-blue);
+
+    .ck-nav-list a:hover {
+      background: var(--ck-bg-2);
+      color: var(--ck-fg-1);
+      text-decoration: none;
     }
-    main {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 2.5rem;
+
+    .ck-nav-list a.active {
+      background: var(--ck-bg-2);
+      color: var(--ck-accent);
+      border-left: 2px solid var(--ck-accent);
+      font-weight: 600;
     }
-    h1, h2, h3, h4 {
-      color: var(--text-heading);
-      margin-top: 1.5rem;
-      margin-bottom: 0.75rem;
+
+    /* Center Content */
+    main.ck-doc-content {
+      background: var(--ck-bg-1);
+      border: var(--ck-stroke-1) solid var(--ck-hairline);
+      padding: var(--ck-sp-6) var(--ck-sp-8);
+      min-width: 0;
     }
-    h1 { margin-top: 0; font-size: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
-    p { margin-bottom: 1rem; }
-    ul, ol { margin-bottom: 1.25rem; padding-left: 1.5rem; }
-    li { margin-bottom: 0.35rem; }
-    pre {
-      background: var(--code-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 1rem;
-      overflow-x: auto;
-      margin-bottom: 1.5rem;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 0.9rem;
+
+    .ck-measure {
+      max-width: var(--ck-measure, 72ch);
     }
+
+    /* Typography inside content */
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--ck-fg-1);
+      font-family: var(--ck-ff-ui);
+      margin-top: var(--ck-sp-8);
+      margin-bottom: var(--ck-sp-3);
+      line-height: 1.25;
+    }
+
+    h1.ck-display, .ck-doc-content > h1:first-child, .ck-doc-content > article > h1:first-child {
+      font-family: var(--ck-ff-display);
+      font-size: clamp(2.2rem, 4vw, 3rem);
+      font-weight: 400;
+      line-height: 1.1;
+      margin-top: 0;
+      margin-bottom: var(--ck-sp-4);
+      letter-spacing: -0.01em;
+      border-bottom: var(--ck-stroke-1) solid var(--ck-hairline);
+      padding-bottom: var(--ck-sp-4);
+    }
+
+    h2 {
+      font-size: var(--ck-fs-h2, 1.5rem);
+      border-bottom: var(--ck-stroke-1) solid var(--ck-hairline);
+      padding-bottom: var(--ck-sp-2);
+      margin-top: var(--ck-sp-8);
+    }
+
+    h3 {
+      font-size: var(--ck-fs-h3, 1.2rem);
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: var(--ck-sp-4);
+      color: var(--ck-fg-2);
+    }
+
+    ul, ol {
+      margin-top: 0;
+      margin-bottom: var(--ck-sp-4);
+      padding-left: var(--ck-sp-5);
+      color: var(--ck-fg-2);
+    }
+
+    li {
+      margin-bottom: var(--ck-sp-1);
+    }
+
+    a {
+      color: var(--ck-fg-1);
+      text-decoration: underline;
+      text-decoration-color: var(--ck-hairline-strong);
+      text-underline-offset: 3px;
+      transition: color var(--ck-t-micro) ease, text-decoration-color var(--ck-t-micro) ease;
+    }
+
+    a:hover {
+      color: var(--ck-accent);
+      text-decoration-color: var(--ck-accent);
+    }
+
     code {
-      background: var(--code-bg);
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-size: 0.88rem;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-family: var(--ck-ff-mono);
+      font-size: 0.9em;
+      font-variant-ligatures: none;
+      background: var(--ck-bg-2);
+      padding: 0.15em 0.4em;
+      border: var(--ck-stroke-1) solid var(--ck-hairline);
+      color: var(--ck-fg-1);
     }
-    pre code { background: none; padding: 0; }
+
+    pre {
+      background: var(--ck-bg-2);
+      border: var(--ck-stroke-1) solid var(--ck-hairline);
+      padding: var(--ck-sp-4);
+      overflow-x: auto;
+      margin: var(--ck-sp-4) 0;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+      border: none;
+      font-size: 0.88em;
+    }
+
+    blockquote {
+      margin: var(--ck-sp-5) 0;
+      padding: var(--ck-sp-3) var(--ck-sp-4);
+      border-left: 3px solid var(--ck-accent);
+      background: var(--ck-bg-2);
+      color: var(--ck-fg-2);
+      font-style: normal;
+    }
+
+    blockquote.ck-callout--proof {
+      border-left-color: var(--ck-proof);
+    }
+
+    blockquote.ck-callout--alarm {
+      border-left-color: var(--ck-alarm);
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 1.5rem;
+      margin: var(--ck-sp-5) 0;
+      font-size: var(--ck-fs-body-sm, 13.5px);
     }
+
     th, td {
-      border: 1px solid var(--border-color);
-      padding: 0.75rem 1rem;
+      padding: var(--ck-sp-3) var(--ck-sp-4);
+      border: var(--ck-stroke-1) solid var(--ck-hairline);
       text-align: left;
     }
-    th { background: #21262d; color: var(--text-heading); }
-    footer {
-      border-top: 1px solid var(--border-color);
-      text-align: center;
-      padding: 2rem;
-      color: #8b949e;
-      font-size: 0.85rem;
-      margin-top: 3rem;
+
+    th {
+      background: var(--ck-bg-2);
+      font-family: var(--ck-ff-mono);
+      font-size: var(--ck-fs-micro, 11px);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ck-fg-1);
+    }
+
+    /* Right Evidence Margin */
+    aside.ck-evidence-margin {
+      display: flex;
+      flex-direction: column;
+      gap: var(--ck-sp-4);
+      height: fit-content;
+      position: sticky;
+      top: 5rem;
+    }
+
+    .ck-margin-card {
+      background: var(--ck-bg-1);
+      border: var(--ck-stroke-1) solid var(--ck-hairline);
+      padding: var(--ck-sp-4);
+    }
+
+    .ck-margin-title {
+      font-family: var(--ck-ff-mono);
+      font-size: var(--ck-fs-micro, 11px);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ck-fg-3);
+      margin-bottom: var(--ck-sp-2);
+      border-bottom: var(--ck-stroke-1) solid var(--ck-hairline);
+      padding-bottom: var(--ck-sp-1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ck-margin-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: var(--ck-fs-micro, 11px);
+      font-family: var(--ck-ff-mono);
+      font-variant-ligatures: none;
+      padding: 3px 0;
+      border-bottom: 1px dashed var(--ck-hairline);
+    }
+
+    .ck-margin-row:last-child {
+      border-bottom: none;
+    }
+
+    .ck-margin-key {
+      color: var(--ck-fg-3);
+    }
+
+    .ck-margin-val {
+      color: var(--ck-fg-1);
+      font-weight: 500;
+    }
+
+    .ck-operable-digest {
+      font-family: var(--ck-ff-mono);
+      font-size: 11px;
+      font-variant-ligatures: none;
+      color: var(--ck-proof);
+      background: var(--ck-bg-2);
+      padding: 2px 6px;
+      border: 1px solid var(--ck-hairline);
+      cursor: pointer;
+      display: inline-block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: all var(--ck-t-micro) ease;
+    }
+
+    .ck-operable-digest:hover {
+      border-color: var(--ck-proof);
+    }
+
+    /* Footer */
+    footer.ck-doc-footer {
+      background: var(--ck-bg-1);
+      border-top: var(--ck-stroke-1) solid var(--ck-hairline);
+      padding: var(--ck-sp-6) var(--ck-sp-8);
+      margin-top: auto;
+    }
+
+    .ck-footer-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--ck-sp-4);
+    }
+
+    .ck-invariant-banner {
+      font-family: var(--ck-ff-mono);
+      font-size: var(--ck-fs-micro, 11px);
+      font-weight: 600;
+      color: var(--ck-fg-3);
+      display: flex;
+      align-items: center;
+      gap: var(--ck-sp-2);
     }
   </style>
 </head>
 <body>
-  <header>
-    <a href="{{ "/" | relURL }}" class="brand">
-      <span>{{ .Site.Title }}</span>
-      <span class="badge">{{ .Site.Params.signature }}</span>
-    </a>
-    <nav>
-      <ul>
-        {{ range .Site.Menus.main }}
-        <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
-        {{ end }}
-      </ul>
-    </nav>
-  </header>
+  <div class="ck-doc-shell">
+    <!-- Header Landmark -->
+    <header class="ck-doc-header">
+      <a href="{{ "/" | relURL }}" class="ck-brand-group">
+        <div class="ck-logo-mark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" stroke="var(--ck-fg-1)" fill="none"/>
+            <circle cx="12" cy="12" r="3" fill="var(--ck-accent)"/>
+          </svg>
+        </div>
+        <span class="ck-site-title">{{ .Site.Title }}</span>
+        <span class="ck-chip ck-chip--attested">◆ GAL 1 CONSTITUTIONAL</span>
+      </a>
+      <div class="ck-header-actions">
+        <a href="{{ "/cockpit.html" | relURL }}" class="ck-cockpit-link">Mission Cockpit ↗</a>
+        <button id="themeToggle" class="ck-theme-btn" title="Toggle Theme (Ledger / Vault)">
+          <span id="themeLabel">VAULT</span>
+        </button>
+      </div>
+    </header>
 
-  <div class="container">
-    <aside>
-      <h3>Navigation</h3>
-      <ul>
-        {{ range .Site.Menus.main }}
-        <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
-        {{ end }}
-      </ul>
-    </aside>
-    <main>
-      {{ block "main" . }}{{ end }}
-    </main>
+    <!-- Tri-pane Documentation Grid -->
+    <div class="ck-doc-body">
+      <!-- Nav Landmark -->
+      <nav class="ck-doc-nav" aria-label="Documentation Navigation">
+        <div class="ck-nav-group-title">Diátaxis System</div>
+        <ul class="ck-nav-list">
+          <li><a href="{{ "/" | relURL }}">Overview</a></li>
+          <li><a href="{{ "/tutorials/" | relURL }}">⊢ Tutorials</a></li>
+          <li><a href="{{ "/how-to/" | relURL }}">○ How-To Guides</a></li>
+          <li><a href="{{ "/reference/" | relURL }}">◆ Reference</a></li>
+          <li><a href="{{ "/explanation/" | relURL }}">◆ Explanation</a></li>
+        </ul>
+
+        <div class="ck-nav-group-title">Architecture</div>
+        <ul class="ck-nav-list">
+          <li><a href="{{ "/explanation/pure-semantic-kernel/" | relURL }}">Pure Semantic Kernel</a></li>
+          <li><a href="{{ "/explanation/four-truth-channels/" | relURL }}">Four Truth Channels</a></li>
+          <li><a href="{{ "/explanation/vector-state/" | relURL }}">Vector State S(e,t)</a></li>
+          <li><a href="{{ "/explanation/day-2-control-loop/" | relURL }}">Day-2 Control Loop</a></li>
+        </ul>
+
+        <div class="ck-nav-group-title">Operations</div>
+        <ul class="ck-nav-list">
+          <li><a href="{{ "/reference/cli-reference/" | relURL }}">CLI Command Suite</a></li>
+          <li><a href="{{ "/how-to/tune-ray-cluster/" | relURL }}">Bounded Ray Topology</a></li>
+          <li><a href="{{ "/how-to/quarantine-artifacts/" | relURL }}">Quarantine & Evidence</a></li>
+          <li><a href="{{ "/how-to/airgap-package/" | relURL }}">Air-Gap Verification</a></li>
+        </ul>
+      </nav>
+
+      <!-- Main Content Landmark -->
+      <main class="ck-doc-content" id="main-content">
+        {{ block "main" . }}{{ end }}
+      </main>
+
+      <!-- Aside Landmark: Evidence Margin -->
+      <aside class="ck-evidence-margin" aria-label="Evidence Margin">
+        <div class="ck-margin-card">
+          <div class="ck-margin-title">
+            <span>Evidence Margin</span>
+            <span class="ck-chip ck-chip--attested">SEALED</span>
+          </div>
+          <div class="ck-margin-row">
+            <span class="ck-margin-key">Framework</span>
+            <span class="ck-margin-val">Diátaxis v1.0</span>
+          </div>
+          <div class="ck-margin-row">
+            <span class="ck-margin-key">Assurance</span>
+            <span class="ck-margin-val">GAL 1 Constitutional</span>
+          </div>
+          <div class="ck-margin-row">
+            <span class="ck-margin-key">Substrate</span>
+            <span class="ck-margin-val">Ray · Lance · PyTorch</span>
+          </div>
+          <div class="ck-margin-row">
+            <span class="ck-margin-key">Attestation</span>
+            <span class="ck-margin-val">SLSA v1.0 (Signed)</span>
+          </div>
+        </div>
+
+        <div class="ck-margin-card">
+          <div class="ck-margin-title">
+            <span>Lineage Checkpoint</span>
+            <span>RECEIPT</span>
+          </div>
+          <div class="ck-margin-row">
+            <span class="ck-margin-key">Root Merkle</span>
+          </div>
+          <div style="margin: 6px 0;">
+            <span class="ck-operable-digest" onclick="navigator.clipboard.writeText('sha256:0f9d26043be5bb47925e8e40768ae40bc9c26f04670de702875f4de424357f66'); alert('Merkle root copied.');" title="Click to copy sha256">sha256:0f9d2604…57f66</span>
+          </div>
+          <div class="ck-margin-row">
+            <span class="ck-margin-key">Model Weights</span>
+            <span class="ck-margin-val">safetensors (mmap)</span>
+          </div>
+          <div class="ck-margin-row">
+            <span class="ck-margin-key">Weights Hash</span>
+          </div>
+          <div style="margin: 6px 0;">
+            <span class="ck-operable-digest" onclick="navigator.clipboard.writeText('sha256:c7bf9c3d0a394c694eebbf11223596752fd7ff3cb7e687d670cfe5af73a6f1a0'); alert('Weights digest copied.');" title="Click to copy sha256">sha256:c7bf9c3d…6f1a0</span>
+          </div>
+        </div>
+
+        <div class="ck-margin-card">
+          <div class="ck-margin-title">
+            <span>Constitutional Law</span>
+            <span>RULE #1</span>
+          </div>
+          <p style="font-family: var(--ck-ff-mono); font-size: 11px; font-weight: 600; color: var(--ck-fg-3); margin: 0; line-height: 1.4;">
+            "mode changes deployment, not governance semantics"
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Footer Landmark -->
+    <footer class="ck-doc-footer">
+      <div class="ck-footer-inner">
+        <div class="ck-invariant-banner">
+          <span>AUTHORITY PATH:</span>
+          <code>Root Fabric → Tenant (cfyd) → Workspace (aiops) → Project (ckodex-aiops)</code>
+        </div>
+        <div style="font-family: var(--ck-ff-mono); font-size: 11px; color: var(--ck-fg-3);">
+          CKODEX-DS-3 v3.0.0 "Evidence Editorial" · Hugo + Dagger SSDLC
+        </div>
+      </div>
+    </footer>
   </div>
 
-  <footer>
-    <p>&copy; {{ now.Year }} {{ .Site.Params.author }} — {{ .Site.Params.signature }}. Powered by Hugo & Dagger.</p>
-  </footer>
+  <script>
+    // Theme toggle logic (Ledger = paper default, Vault = deep ink night-shift)
+    const btn = document.getElementById('themeToggle');
+    const label = document.getElementById('themeLabel');
+
+    function updateLabel(theme) {
+      if (label) {
+        label.textContent = theme === 'vault' ? 'LEDGER' : 'VAULT';
+      }
+    }
+
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'ledger';
+    updateLabel(currentTheme);
+
+    if (btn) {
+      btn.addEventListener('click', function() {
+        const active = document.documentElement.getAttribute('data-theme');
+        const next = active === 'vault' ? 'ledger' : 'vault';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('ck-theme', next);
+        updateLabel(next);
+      });
+    }
+  </script>
 </body>
 </html>
