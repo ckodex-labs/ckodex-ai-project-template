@@ -168,6 +168,32 @@
       top: 5rem;
     }
 
+    .ck-search-box {
+      margin-bottom: var(--ck-sp-4);
+    }
+
+    .ck-search-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px 10px;
+      background: var(--ck-bg-2);
+      border: 1px solid var(--ck-hairline);
+      color: var(--ck-fg-1);
+      font-family: var(--ck-ff-mono);
+      font-size: 11px;
+      letter-spacing: 0.02em;
+      outline: none;
+      transition: border-color var(--ck-t-micro) ease;
+    }
+
+    .ck-search-input:focus {
+      border-color: var(--ck-accent);
+    }
+
+    .ck-search-input::placeholder {
+      color: var(--ck-fg-mute);
+    }
+
     .ck-nav-group-title {
       font-family: var(--ck-ff-mono);
       font-size: var(--ck-fs-micro, 11px);
@@ -186,6 +212,10 @@
       display: flex;
       flex-direction: column;
       gap: var(--ck-sp-1);
+    }
+
+    .ck-nav-list li {
+      margin: 0;
     }
 
     .ck-nav-list a {
@@ -223,6 +253,175 @@
 
     .ck-measure {
       max-width: var(--ck-measure, 72ch);
+    }
+
+    /* Breadcrumbs */
+    .ck-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: var(--ck-sp-2);
+      font-family: var(--ck-ff-mono);
+      font-size: 11px;
+      color: var(--ck-fg-3);
+      margin-bottom: var(--ck-sp-3);
+    }
+
+    .ck-breadcrumb a {
+      color: var(--ck-fg-3);
+      text-decoration: none;
+    }
+
+    .ck-breadcrumb a:hover {
+      color: var(--ck-accent);
+    }
+
+    .ck-breadcrumb__sep {
+      color: var(--ck-hairline-strong);
+    }
+
+    .ck-breadcrumb__current {
+      color: var(--ck-fg-1);
+      font-weight: 500;
+    }
+
+    /* Table of Contents */
+    .ck-toc-card {
+      background: var(--ck-bg-2);
+      border: 1px solid var(--ck-hairline);
+      margin-bottom: var(--ck-sp-6);
+      padding: var(--ck-sp-3) var(--ck-sp-4);
+    }
+
+    .ck-toc-summary {
+      font-family: var(--ck-ff-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--ck-fg-1);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .ck-toc-body {
+      margin-top: var(--ck-sp-3);
+      padding-top: var(--ck-sp-2);
+      border-top: 1px dashed var(--ck-hairline);
+    }
+
+    .ck-toc-body nav#TableOfContents ul {
+      list-style: none;
+      padding-left: var(--ck-sp-3);
+      margin-bottom: 0;
+    }
+
+    .ck-toc-body nav#TableOfContents > ul {
+      padding-left: 0;
+    }
+
+    .ck-toc-body a {
+      font-size: 13px;
+      color: var(--ck-fg-2);
+      text-decoration: none;
+      line-height: 1.6;
+    }
+
+    .ck-toc-body a:hover {
+      color: var(--ck-accent);
+    }
+
+    /* Code Block with Copy Action */
+    .ck-code-wrapper {
+      position: relative;
+      margin: var(--ck-sp-4) 0;
+    }
+
+    .ck-code-wrapper pre {
+      margin: 0;
+      background: var(--ck-bg-2);
+      border: var(--ck-stroke-1) solid var(--ck-hairline);
+      padding: var(--ck-sp-4);
+      padding-top: var(--ck-sp-6);
+      overflow-x: auto;
+    }
+
+    .ck-copy-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-family: var(--ck-ff-mono);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: var(--ck-bg-1);
+      border: 1px solid var(--ck-hairline);
+      color: var(--ck-fg-3);
+      padding: 2px 8px;
+      cursor: pointer;
+      transition: all var(--ck-t-micro) ease;
+    }
+
+    .ck-copy-btn:hover {
+      color: var(--ck-accent);
+      border-color: var(--ck-accent);
+    }
+
+    /* Pagination */
+    .ck-pagination {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--ck-sp-4);
+      margin-top: var(--ck-sp-10);
+      padding-top: var(--ck-sp-6);
+      border-top: 1px solid var(--ck-hairline);
+    }
+
+    @media (max-width: 600px) {
+      .ck-pagination {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ck-pagination__link {
+      background: var(--ck-bg-2);
+      border: 1px solid var(--ck-hairline);
+      padding: var(--ck-sp-3) var(--ck-sp-4);
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: border-color var(--ck-t-micro) ease;
+    }
+
+    .ck-pagination__link:hover {
+      border-color: var(--ck-fg-1);
+      text-decoration: none;
+    }
+
+    .ck-pagination__link--next {
+      text-align: right;
+    }
+
+    .ck-pagination__title {
+      font-family: var(--ck-ff-ui);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ck-fg-1);
+    }
+
+    /* Stamp Card */
+    .ck-stamp-card {
+      margin-top: var(--ck-sp-8);
+      padding: var(--ck-sp-3) var(--ck-sp-4);
+      background: var(--ck-bg-2);
+      border: 1px solid var(--ck-hairline);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--ck-sp-2);
     }
 
     /* Typography inside content */
@@ -297,14 +496,6 @@
       color: var(--ck-fg-1);
     }
 
-    pre {
-      background: var(--ck-bg-2);
-      border: var(--ck-stroke-1) solid var(--ck-hairline);
-      padding: var(--ck-sp-4);
-      overflow-x: auto;
-      margin: var(--ck-sp-4) 0;
-    }
-
     pre code {
       background: transparent;
       padding: 0;
@@ -319,14 +510,6 @@
       background: var(--ck-bg-2);
       color: var(--ck-fg-2);
       font-style: normal;
-    }
-
-    blockquote.ck-callout--proof {
-      border-left-color: var(--ck-proof);
-    }
-
-    blockquote.ck-callout--alarm {
-      border-left-color: var(--ck-alarm);
     }
 
     table {
@@ -426,6 +609,33 @@
       border-color: var(--ck-proof);
     }
 
+    /* Toast Notification */
+    .ck-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--ck-fg-1);
+      color: var(--ck-bg-0);
+      font-family: var(--ck-ff-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid var(--ck-fg-1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .ck-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* Footer */
     footer.ck-doc-footer {
       background: var(--ck-bg-1);
@@ -481,34 +691,45 @@
     <div class="ck-doc-body">
       <!-- Nav Landmark -->
       <nav class="ck-doc-nav" aria-label="Documentation Navigation">
-        <div class="ck-nav-group-title">Diátaxis System</div>
-        <ul class="ck-nav-list">
-          <li><a href="{{ "" | relURL }}">Overview</a></li>
-          <li><a href="{{ "tutorials/" | relURL }}">⊢ Tutorials</a></li>
-          <li><a href="{{ "how-to/" | relURL }}">○ How-To Guides</a></li>
-          <li><a href="{{ "reference/" | relURL }}">◆ Reference</a></li>
-          <li><a href="{{ "explanation/" | relURL }}">◆ Explanation</a></li>
-        </ul>
+        <!-- Live Topic Filter -->
+        <div class="ck-search-box">
+          <input type="text" id="docSearch" placeholder="Filter topics... (Press /)" class="ck-search-input" autocomplete="off">
+        </div>
 
-        <div class="ck-nav-group-title">Architecture</div>
-        <ul class="ck-nav-list">
-          <li><a href="{{ "explanation/pure-semantic-kernel/" | relURL }}">Pure Semantic Kernel</a></li>
-          <li><a href="{{ "explanation/four-truth-channels/" | relURL }}">Four Truth Channels</a></li>
-          <li><a href="{{ "explanation/vector-state-algebra/" | relURL }}">Vector State S(e,t)</a></li>
-          <li><a href="{{ "explanation/day2-control-loop/" | relURL }}">Day-2 Control Loop</a></li>
-          <li><a href="{{ "explanation/zero-trust-authority/" | relURL }}">Zero Trust Authority</a></li>
-        </ul>
+        <div class="ck-nav-group" data-nav-group="diataxis">
+          <div class="ck-nav-group-title">Diátaxis System</div>
+          <ul class="ck-nav-list">
+            <li><a href="{{ "" | relURL }}">Overview</a></li>
+            <li><a href="{{ "tutorials/" | relURL }}">⊢ Tutorials</a></li>
+            <li><a href="{{ "how-to/" | relURL }}">○ How-To Guides</a></li>
+            <li><a href="{{ "reference/" | relURL }}">◆ Reference</a></li>
+            <li><a href="{{ "explanation/" | relURL }}">◆ Explanation</a></li>
+          </ul>
+        </div>
 
-        <div class="ck-nav-group-title">Operations</div>
-        <ul class="ck-nav-list">
-          <li><a href="{{ "reference/cli-commands/" | relURL }}">CLI Command Suite</a></li>
-          <li><a href="{{ "how-to/manage-configuration/" | relURL }}">Configuration Tuning</a></li>
-          <li><a href="{{ "how-to/quarantine-and-investigation/" | relURL }}">Quarantine & Evidence</a></li>
-          <li><a href="{{ "how-to/airgap-distribution/" | relURL }}">Air-Gap Distribution</a></li>
-          <li><a href="{{ "how-to/reconciliation-and-healing/" | relURL }}">Reconciliation & Healing</a></li>
-          <li><a href="{{ "how-to/governed-replay/" | relURL }}">Governed Replay</a></li>
-          <li><a href="{{ "reference/compliance-matrix/" | relURL }}">NIST SP 800-53 OSCAL</a></li>
-        </ul>
+        <div class="ck-nav-group" data-nav-group="architecture">
+          <div class="ck-nav-group-title">Architecture</div>
+          <ul class="ck-nav-list">
+            <li><a href="{{ "explanation/pure-semantic-kernel/" | relURL }}">Pure Semantic Kernel</a></li>
+            <li><a href="{{ "explanation/four-truth-channels/" | relURL }}">Four Truth Channels</a></li>
+            <li><a href="{{ "explanation/vector-state-algebra/" | relURL }}">Vector State S(e,t)</a></li>
+            <li><a href="{{ "explanation/day2-control-loop/" | relURL }}">Day-2 Control Loop</a></li>
+            <li><a href="{{ "explanation/zero-trust-authority/" | relURL }}">Zero Trust Authority</a></li>
+          </ul>
+        </div>
+
+        <div class="ck-nav-group" data-nav-group="operations">
+          <div class="ck-nav-group-title">Operations</div>
+          <ul class="ck-nav-list">
+            <li><a href="{{ "reference/cli-commands/" | relURL }}">CLI Command Suite</a></li>
+            <li><a href="{{ "how-to/manage-configuration/" | relURL }}">Configuration Tuning</a></li>
+            <li><a href="{{ "how-to/quarantine-and-investigation/" | relURL }}">Quarantine & Evidence</a></li>
+            <li><a href="{{ "how-to/airgap-distribution/" | relURL }}">Air-Gap Distribution</a></li>
+            <li><a href="{{ "how-to/reconciliation-and-healing/" | relURL }}">Reconciliation & Healing</a></li>
+            <li><a href="{{ "how-to/governed-replay/" | relURL }}">Governed Replay</a></li>
+            <li><a href="{{ "reference/compliance-matrix/" | relURL }}">NIST SP 800-53 OSCAL</a></li>
+          </ul>
+        </div>
       </nav>
 
       <!-- Main Content Landmark -->
@@ -550,7 +771,7 @@
             <span class="ck-margin-key">Root Merkle</span>
           </div>
           <div style="margin: 6px 0;">
-            <span class="ck-operable-digest" onclick="navigator.clipboard.writeText('sha256:0f9d26043be5bb47925e8e40768ae40bc9c26f04670de702875f4de424357f66'); alert('Merkle root copied.');" title="Click to copy sha256">sha256:0f9d2604…57f66</span>
+            <span class="ck-operable-digest" onclick="copyDigest('sha256:0f9d26043be5bb47925e8e40768ae40bc9c26f04670de702875f4de424357f66')" title="Click to copy sha256">sha256:0f9d2604…57f66</span>
           </div>
           <div class="ck-margin-row">
             <span class="ck-margin-key">Model Weights</span>
@@ -560,7 +781,7 @@
             <span class="ck-margin-key">Weights Hash</span>
           </div>
           <div style="margin: 6px 0;">
-            <span class="ck-operable-digest" onclick="navigator.clipboard.writeText('sha256:c7bf9c3d0a394c694eebbf11223596752fd7ff3cb7e687d670cfe5af73a6f1a0'); alert('Weights digest copied.');" title="Click to copy sha256">sha256:c7bf9c3d…6f1a0</span>
+            <span class="ck-operable-digest" onclick="copyDigest('sha256:c7bf9c3d0a394c694eebbf11223596752fd7ff3cb7e687d670cfe5af73a6f1a0')" title="Click to copy sha256">sha256:c7bf9c3d…6f1a0</span>
           </div>
         </div>
 
@@ -590,19 +811,43 @@
     </footer>
   </div>
 
+  <!-- Toast Notification element -->
+  <div id="ckToast" class="ck-toast">COPIED TO CLIPBOARD</div>
+
+  <!-- Mermaid.js for architecture diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
   <script>
-    // Theme toggle logic (Ledger = paper default, Vault = deep ink night-shift)
+    // 1. Toast Notification Utility
+    function showToast(msg) {
+      const toast = document.getElementById('ckToast');
+      if (toast) {
+        toast.textContent = msg || 'COPIED TO CLIPBOARD';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 1600);
+      }
+    }
+
+    function copyDigest(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('DIGEST COPIED');
+      }).catch(() => {
+        showToast('FAILED TO COPY');
+      });
+    }
+
+    // 2. Theme Toggle (Ledger = warm paper, Vault = deep ink)
     const btn = document.getElementById('themeToggle');
     const label = document.getElementById('themeLabel');
 
-    function updateLabel(theme) {
+    function updateThemeLabel(theme) {
       if (label) {
         label.textContent = theme === 'vault' ? 'LEDGER' : 'VAULT';
       }
     }
 
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'ledger';
-    updateLabel(currentTheme);
+    updateThemeLabel(currentTheme);
 
     if (btn) {
       btn.addEventListener('click', function() {
@@ -610,9 +855,115 @@
         const next = active === 'vault' ? 'ledger' : 'vault';
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('ck-theme', next);
-        updateLabel(next);
+        updateThemeLabel(next);
+        initMermaid(next);
       });
     }
+
+    // 3. Highlight Active Navigation Item
+    (function highlightNav() {
+      const currentPath = window.location.pathname.replace(/\/$/, "");
+      const links = document.querySelectorAll('.ck-nav-list a');
+      links.forEach(link => {
+        const linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, "");
+        if (linkPath === currentPath) {
+          link.classList.add('active');
+        }
+      });
+    })();
+
+    // 4. Client-side Topic Search / Filter
+    const searchInput = document.getElementById('docSearch');
+    if (searchInput) {
+      searchInput.addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase().trim();
+        const groups = document.querySelectorAll('.ck-nav-group');
+        groups.forEach(group => {
+          let hasMatch = false;
+          const items = group.querySelectorAll('li');
+          items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            if (!query || text.includes(query)) {
+              item.style.display = '';
+              hasMatch = true;
+            } else {
+              item.style.display = 'none';
+            }
+          });
+          group.style.display = hasMatch ? '' : 'none';
+        });
+      });
+
+      // Shortcut '/' to focus search
+      window.addEventListener('keydown', function(e) {
+        if (e.key === '/' && document.activeElement !== searchInput) {
+          e.preventDefault();
+          searchInput.focus();
+        }
+      });
+    }
+
+    // 5. Code Block Copy Buttons
+    document.querySelectorAll('pre').forEach(pre => {
+      // Don't add to mermaid code blocks
+      if (pre.querySelector('code.language-mermaid') || pre.classList.contains('mermaid')) return;
+      
+      const wrapper = document.createElement('div');
+      wrapper.className = 'ck-code-wrapper';
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'ck-copy-btn';
+      copyBtn.textContent = 'COPY';
+      copyBtn.setAttribute('title', 'Copy code to clipboard');
+      wrapper.appendChild(copyBtn);
+
+      copyBtn.addEventListener('click', () => {
+        const codeText = pre.querySelector('code')?.innerText || pre.innerText;
+        navigator.clipboard.writeText(codeText).then(() => {
+          copyBtn.textContent = 'COPIED!';
+          setTimeout(() => copyBtn.textContent = 'COPY', 1500);
+        });
+      });
+    });
+
+    // 6. Mermaid Diagrams Initialization with CKODEX-DS-3 Theme
+    function initMermaid(theme) {
+      if (typeof mermaid === 'undefined') return;
+      
+      // Transform language-mermaid code blocks into mermaid divs
+      document.querySelectorAll('code.language-mermaid').forEach(el => {
+        const pre = el.parentElement;
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = el.textContent;
+        pre.parentNode.replaceChild(div, pre);
+      });
+
+      const isVault = theme === 'vault';
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+          darkMode: isVault,
+          background: isVault ? '#0F1B30' : '#FAF6EF',
+          primaryColor: isVault ? '#14243F' : '#ECE6DA',
+          primaryBorderColor: isVault ? '#EAE5DA' : '#211B14',
+          primaryTextColor: isVault ? '#EAE5DA' : '#211B14',
+          lineColor: isVault ? '#9A9284' : '#6E6457',
+          secondaryColor: isVault ? '#111F36' : '#FCF8F1',
+          tertiaryColor: isVault ? '#0A1322' : '#F6F1E8',
+          fontFamily: 'Geist, sans-serif',
+          fontSize: '13px'
+        }
+      });
+      mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initMermaid(document.documentElement.getAttribute('data-theme') || 'ledger');
+    });
   </script>
 </body>
 </html>

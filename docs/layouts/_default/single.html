@@ -1,32 +1,78 @@
 {{ define "main" }}
 <article class="ck-measure">
-  <div style="margin-bottom: var(--ck-sp-6);">
-    <div style="display: flex; gap: var(--ck-sp-2); align-items: center; margin-bottom: var(--ck-sp-2);">
+  <!-- Breadcrumb Navigation -->
+  <nav class="ck-breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ "" | relURL }}">Home</a>
+    <span class="ck-breadcrumb__sep">/</span>
+    {{ if .Section }}
+    <a href="{{ printf "%s/" .Section | relURL }}">{{ .Section | humanize }}</a>
+    <span class="ck-breadcrumb__sep">/</span>
+    {{ end }}
+    <span class="ck-breadcrumb__current">{{ .Title }}</span>
+  </nav>
+
+  <!-- Article Header -->
+  <header style="margin-bottom: var(--ck-sp-6);">
+    <div style="display: flex; gap: var(--ck-sp-2); align-items: center; margin-bottom: var(--ck-sp-2); flex-wrap: wrap;">
       {{ if .Section }}
       <span class="ck-chip ck-chip--observed">{{ .Section | upper }}</span>
       {{ end }}
-      <span class="ck-label" style="margin: 0;">VERIFIED SPECIFICATION</span>
+      <span class="ck-chip ck-chip--claimed">{{ .ReadingTime }} MIN READ</span>
+      <span class="ck-label" style="margin: 0;">{{ .WordCount }} WORDS</span>
     </div>
-    <h1 class="ck-display">{{ .Title }}</h1>
+    <h1 class="ck-display" style="margin-top: var(--ck-sp-2); margin-bottom: var(--ck-sp-3);">{{ .Title }}</h1>
     {{ if .Description }}
       <p style="font-size: 1.15rem; color: var(--ck-fg-3); margin-bottom: var(--ck-sp-4); line-height: 1.5;">{{ .Description }}</p>
     {{ end }}
-  </div>
+  </header>
 
-  <div class="content">
+  <!-- In-Page Table of Contents -->
+  {{ if .TableOfContents }}
+  <details class="ck-toc-card" open>
+    <summary class="ck-toc-summary">
+      <span>TABLE OF CONTENTS</span>
+      <span class="ck-label" style="font-size: 10px;">CLICK TO TOGGLE</span>
+    </summary>
+    <div class="ck-toc-body">
+      {{ .TableOfContents }}
+    </div>
+  </details>
+  {{ end }}
+
+  <!-- Article Markdown Content -->
+  <div class="ck-article-content">
     {{ .Content }}
   </div>
 
+  <!-- Previous / Next Article Pagination -->
+  <nav class="ck-pagination" aria-label="Adjacent Articles">
+    {{ with .PrevInSection }}
+    <a href="{{ .RelPermalink }}" class="ck-pagination__link ck-pagination__link--prev">
+      <span class="ck-label">← PREVIOUS ARTICLE</span>
+      <span class="ck-pagination__title">{{ .Title }}</span>
+    </a>
+    {{ else }}
+    <div></div>
+    {{ end }}
+
+    {{ with .NextInSection }}
+    <a href="{{ .RelPermalink }}" class="ck-pagination__link ck-pagination__link--next">
+      <span class="ck-label">NEXT ARTICLE →</span>
+      <span class="ck-pagination__title">{{ .Title }}</span>
+    </a>
+    {{ end }}
+  </nav>
+
   <!-- Document Provenance Stamp -->
-  <div style="margin-top: var(--ck-sp-10); padding-top: var(--ck-sp-4); border-top: 1px solid var(--ck-hairline); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--ck-sp-2);">
+  <div class="ck-stamp-card">
     <div style="display: flex; align-items: center; gap: var(--ck-sp-2);">
       <span class="ck-chip ck-chip--attested">◆ ATTESTED</span>
       <span style="font-family: var(--ck-ff-mono); font-size: 11px; color: var(--ck-fg-3);">
-        Living Specification · GAL 1 Enforced
+        Living Specification · GAL 1 Enforced · Authority Verified
       </span>
     </div>
     <div style="font-family: var(--ck-ff-mono); font-size: 11px; color: var(--ck-fg-3);">
-      Last Synchronized: {{ now.Format "2006-01-02 15:04:05 UTC" }}
+      Synchronized: {{ now.Format "2006-01-02 15:04:05 UTC" }}
     </div>
   </div>
 </article>
