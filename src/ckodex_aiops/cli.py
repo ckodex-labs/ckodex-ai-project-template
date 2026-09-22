@@ -1747,11 +1747,12 @@ def ray_status(
     table.add_column("Value", style="green")
 
     table.add_row("Cluster Status", info.get("status", "UNKNOWN"))
+    table.add_row("Execution Mode", info.get("mode", "UNKNOWN"))
     table.add_row("Active Nodes", str(info.get("nodes", 0)))
-    table.add_row("Total CPUs", str(info.get("cpus", 0.0)))
-    table.add_row("Total GPUs", str(info.get("gpus", 0.0)))
-    table.add_row("Cluster RAM", f"{info.get('memory_gb', 0.0)} GB")
-    table.add_row("Object Store Memory", f"{info.get('object_store_gb', 0.0)} GB")
+    table.add_row("Allocated CPUs", str(info.get("cpus", 0.0)))
+    table.add_row("Allocated GPUs", str(info.get("gpus", 0.0)))
+    table.add_row("Worker Heap Budget", f"{info.get('allocated_memory_gb', 0.0)} GB")
+    table.add_row("Plasma Object Store", f"{info.get('object_store_gb', 0.0)} GB")
 
     nodes = info.get("active_nodes", [])
     if nodes:

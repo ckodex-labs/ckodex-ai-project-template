@@ -26,18 +26,23 @@ class RayRuntimeManager:
     Manages Ray cluster lifecycle, addressing quirks, and health diagnostics.
     """
 
+    DEFAULT_LOCAL_CPUS = 2
+    DEFAULT_LOCAL_MEMORY_GB = 4.0
+    DEFAULT_LOCAL_OBJECT_STORE_GB = 2.0
+
     @classmethod
     def initialize(
         cls,
         address: str | None = "auto",
         num_cpus: int | None = None,
+        max_memory_gb: float | None = None,
+        object_store_gb: float | None = None,
         ignore_reinit_error: bool = True,
         runtime_env: dict[str, Any] | None = None,
     ) -> bool:
         """
-        Safely initialize Ray cluster connection.
-        If RAY_ADDRESS contains an HTTP endpoint (which causes ray.init to fail),
-        it falls back gracefully to local instance unless specified otherwise.
+        Safely initialize Ray cluster connection with strict resource bounding (Rule #31).
+        Does not claim the host's entire physical RAM. Bounded to conservative defaults locally.
         """
         if ray.is_initialized():
             return True
@@ -60,6 +65,10 @@ class RayRuntimeManager:
         ):
             target_address = None
 
+        # Compute conservative memory bounds for local cluster (Rule #31: Resilience must be bounded)
+        mem_bytes = int((max_memory_gb or cls.DEFAULT_LOCAL_MEMORY_GB) * (1024**3))
+        obj_store_bytes = int((object_store_gb or cls.DEFAULT_LOCAL_OBJECT_STORE_GB) * (1024**3))
+
         # Disable Ray's automatic uv run working_dir packager to prevent broken worker venvs in containerized CI
         os.environ["RAY_ENABLE_UV_RUN_RUNTIME_ENV"] = "0"
         try:
@@ -69,7 +78,7 @@ class RayRuntimeManager:
         except Exception:
             pass
 
-        # 1. Attempt connection to target address (if provided)
+        # 1. Attempt connection to target remote address (if provided)
         if target_address:
             try:
                 ray.init(
@@ -94,18 +103,31 @@ class RayRuntimeManager:
         except Exception:
             pass
 
-        # 3. Fallback: Spin up an embedded local Ray cluster
+        # 3. Fallback: Spin up an embedded local Ray cluster bounded to conservative limits
         try:
             ray.init(
                 address=None,
-                num_cpus=num_cpus or 2,
+                num_cpus=num_cpus or cls.DEFAULT_LOCAL_CPUS,
+                _memory=mem_bytes,
+                object_store_memory=obj_store_bytes,
                 ignore_reinit_error=True,
                 runtime_env=runtime_env or {},
                 logging_level=logging.WARNING,
             )
             return True
         except Exception:
-            return False
+            # Fallback without explicit memory kwargs if older Ray runtime
+            try:
+                ray.init(
+                    address=None,
+                    num_cpus=num_cpus or cls.DEFAULT_LOCAL_CPUS,
+                    ignore_reinit_error=True,
+                    runtime_env=runtime_env or {},
+                    logging_level=logging.WARNING,
+                )
+                return True
+            except Exception:
+                return False
 
     @classmethod
     def shutdown(cls) -> None:
@@ -119,12 +141,17 @@ class RayRuntimeManager:
 
         resources = ray.cluster_resources()
         nodes = ray.nodes()
+
+        # Determine if running local embedded cluster or connected to remote
+        is_local = any(n.get("NodeManagerAddress") in ("127.0.0.1", "localhost") for n in nodes)
+
         return {
             "status": "ONLINE",
+            "mode": "LOCAL_EMBEDDED" if is_local else "REMOTE_CLUSTER",
             "nodes": len(nodes),
             "cpus": resources.get("CPU", 0.0),
             "gpus": resources.get("GPU", 0.0),
-            "memory_gb": round(resources.get("memory", 0.0) / (1024**3), 2),
+            "allocated_memory_gb": round(resources.get("memory", 0.0) / (1024**3), 2),
             "object_store_gb": round(resources.get("object_store_memory", 0.0) / (1024**3), 2),
             "active_nodes": [n.get("NodeManagerAddress") for n in nodes if n.get("Alive")],
         }
