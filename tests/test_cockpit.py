@@ -66,3 +66,49 @@ def test_cli_tour_execution():
     assert "ACT I: SUBSTRATE & PREFLIGHT DOCTOR" in result.output
     assert "ACT VII: AUTONOMIC DAY-2 RECONCILER" in result.output
     assert "High-Assurance Architectural Tour Complete" in result.output
+
+
+def test_cockpit_server_api_endpoints():
+    import json
+    import threading
+    import urllib.request
+
+    ui = AiopsCockpit()
+    server = ui.create_server(port=0)
+    port = server.server_address[1]
+
+    t = threading.Thread(target=server.serve_forever, daemon=True)
+    t.start()
+
+    base_url = f"http://127.0.0.1:{port}"
+    try:
+        # 1. Healthz
+        with urllib.request.urlopen(f"{base_url}/healthz") as resp:
+            assert resp.status == 200
+            data = json.loads(resp.read().decode())
+            assert data["status"] == "HEALTHY"
+
+        # 2. Telemetry API
+        with urllib.request.urlopen(f"{base_url}/api/telemetry") as resp:
+            assert resp.status == 200
+            data = json.loads(resp.read().decode())
+            assert "state_vector" in data
+            assert "presence" in data["state_vector"]
+            assert "merkle_root" in data
+
+        # 3. HTML dynamic render
+        with urllib.request.urlopen(f"{base_url}/") as resp:
+            assert resp.status == 200
+            html = resp.read().decode()
+            assert "CKODEX-DS-3" in html
+
+        # 4. Reconcile POST API
+        req = urllib.request.Request(f"{base_url}/api/reconcile", data=b"{}", method="POST")
+        with urllib.request.urlopen(req) as resp:
+            assert resp.status == 200
+            data = json.loads(resp.read().decode())
+            assert data["status"] == "RECONCILED"
+            assert "receipt_id" in data
+    finally:
+        server.shutdown()
+        server.server_close()

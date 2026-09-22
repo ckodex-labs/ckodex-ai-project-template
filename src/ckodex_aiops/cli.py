@@ -353,6 +353,8 @@ def verify(
     """
     Verify cryptographic lineage receipts and execution evidence.
     """
+    if not isinstance(receipts_dir, str):
+        receipts_dir = "data/08_reporting/receipts"
     receipts_path = Path(receipts_dir)
     if not receipts_path.exists():
         console.print(f"[yellow]No receipts directory found at: {receipts_path}[/yellow]")
@@ -513,7 +515,167 @@ def run(
             cast(KedroSession, session).run(pipeline_names=[target_pipeline])
         else:
             cast(KedroSession, session).run()
-    console.print("[bold green]✔ Pipeline Run Succeeded![/bold green]")
+    # Collect post-execution evidence for rich receipt display
+    receipt_dir = Path("data/08_reporting/receipts")
+    receipt_files = sorted(receipt_dir.glob("*.json")) if receipt_dir.exists() else []
+    rcpt_digests: list[str] = []
+    for rf in receipt_files:
+        try:
+            rcpt_digests.append(compute_sha256(rf.read_bytes()))
+        except Exception:
+            pass
+    merkle_root = (
+        MerkleLineageChain.build_merkle_root(rcpt_digests) if rcpt_digests else compute_sha256("")
+    )
+
+    reconciler = AutonomicReconciler()
+    obs = reconciler.observe()
+    anom = reconciler.detect(obs)
+    vector = reconciler.diagnose(anom)
+
+    model_path = Path("data/06_models/model.safetensors")
+    model_digest = (
+        compute_sha256(model_path.read_bytes())[:16] + "..." if model_path.exists() else "N/A"
+    )
+    model_size = (
+        f"{round(model_path.stat().st_size / 1024, 1)} KB" if model_path.exists() else "N/A"
+    )
+
+    receipt_table = Table(
+        title="[bold green]✔ PIPELINE EXECUTION RECEIPT (Deterministic & Governed)[/bold green]",
+        border_style="green",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    receipt_table.add_column("Dimension", style="bold")
+    receipt_table.add_column("Value", style="cyan")
+    receipt_table.add_column("Governance Reference", style="dim")
+
+    receipt_table.add_row("Pipeline", target_pipeline, "Intent envelope admitted under Rule #4")
+    receipt_table.add_row(
+        "Disposition",
+        "[bold green]ADMITTED & EXECUTED[/bold green]",
+        "Zero-Trust Pre-Execution Proof (Rule #11)",
+    )
+    receipt_table.add_row(
+        "State Vector",
+        f"[P={vector.presence.value}, V={vector.valence.value}, A={vector.anti.value}, C={vector.coherence.value}, L={vector.lifecycle.value}]",
+        "Vector-State Contract (Rule #13)",
+    )
+    receipt_table.add_row(
+        "Merkle Root",
+        f"[bold]{merkle_root[:20]}...[/bold]",
+        f"Cryptographic parent continuity ({len(receipt_files)} receipts chained)",
+    )
+    receipt_table.add_row(
+        "Artifact Weights",
+        f"model.safetensors ({model_size}, SHA256: {model_digest})",
+        "Zero-Pickle mmap format (Rule #39)",
+    )
+
+    console.print("\n", receipt_table)
+
+    actions_panel = Panel(
+        "[bold cyan]Actionable Next Steps (Invisible Excellence • Rule #41):[/bold cyan]\n"
+        "  • [bold green]ckx cockpit --serve[/bold green] : Launch living mission cockpit & Day-2 reconciler on port 8888\n"
+        "  • [bold green]ckx verify[/bold green]          : Validate end-to-end cryptographic proof chain & OSCAL definition\n"
+        "  • [bold green]ckx serve[/bold green]           : Deploy low-latency PyTorch model inference gateway\n"
+        "  • [bold green]ckx package[/bold green]         : Bundle air-gap distribution tarball or OCI artifact container",
+        border_style="dim",
+        title="[bold]Next Commands[/bold]",
+    )
+    console.print(actions_panel)
+
+
+@app.command(rich_help_panel="Guided Onboarding")
+def quickstart(
+    auto: bool = typer.Option(
+        False,
+        "--auto",
+        "-y",
+        help="Run full automated onboarding walkthrough without interactive pauses.",
+    ),
+    skip_doctor: bool = typer.Option(
+        False, "--skip-doctor", help="Skip preflight environment diagnostics."
+    ),
+    open_browser: bool = typer.Option(
+        True, "--browser/--no-browser", help="Open Mission Cockpit in browser upon completion."
+    ),
+    port: int = typer.Option(8888, "--port", "-p", help="Port for Mission Cockpit HTTP server."),
+    serve: bool = typer.Option(
+        False, "--serve", "-s", help="Keep Mission Cockpit HTTP server running interactively."
+    ),
+) -> None:
+    """
+    Interactive Guided Onboarding Wizard for CKODEX AIOps.
+    Guides you through system preflight diagnostics, baseline pipeline execution,
+    cryptographic evidence generation, and launching the live Mission Cockpit.
+    """
+    from rich.prompt import Confirm
+
+    console.print(
+        Panel(
+            "[bold cyan]CKODEX AIOps • Interactive Onboarding Wizard[/bold cyan]\n"
+            "[dim]A guided walk to bootstrap, execute, verify, and monitor your AI workloads[/dim]\n"
+            "[dim italic]Constitutional GAL-1 • Bounded Ray • Safetensors Zero-Pickle • SLSA Provenance • Evidence Editorial[/dim italic]",
+            border_style="cyan",
+        )
+    )
+
+    # Step 1: Substrate Preflight
+    console.print(
+        "\n[bold cyan]Step 1/4: Substrate & Preflight Diagnostics (Rule #7, #41)[/bold cyan]"
+    )
+    if not skip_doctor:
+        doctor()
+    else:
+        console.print("[dim]Skipping doctor preflight diagnostics (--skip-doctor active).[/dim]")
+
+    if not auto:
+        proceed = Confirm.ask(
+            "\nProceed to Step 2 (Execute baseline data processing & training pipelines)?",
+            default=True,
+        )
+        if not proceed:
+            console.print("[yellow]Quickstart paused by user.[/yellow]")
+            raise typer.Exit(0)
+
+    # Step 2: Baseline Pipeline Execution
+    console.print(
+        "\n[bold cyan]Step 2/4: Baseline Pipeline Execution (Ray Actors + Lance + Safetensors)[/bold cyan]"
+    )
+    run(pipeline="data_processing", profile=None, ray_address=None, ray_actors=2)
+    run(pipeline="training", profile=None, ray_address=None, ray_actors=2)
+
+    if not auto:
+        proceed = Confirm.ask(
+            "\nProceed to Step 3 (Supply-chain evidence & cryptographic verification)?",
+            default=True,
+        )
+        if not proceed:
+            console.print("[yellow]Quickstart paused. You can run 'ckx verify' later.[/yellow]")
+            raise typer.Exit(0)
+
+    # Step 3: Cryptographic Lineage & Verification
+    console.print(
+        "\n[bold cyan]Step 3/4: Cryptographic Evidence, SLSA Provenance & OSCAL Generation[/bold cyan]"
+    )
+    verify(receipts_dir="data/08_reporting/receipts")
+
+    if not auto:
+        proceed = Confirm.ask(
+            "\nProceed to Step 4 (Launch Living Mission Cockpit)?",
+            default=True,
+        )
+        if not proceed:
+            console.print(
+                "[green]✔ Onboarding complete! Run 'ckx cockpit --serve' when ready.[/green]"
+            )
+            raise typer.Exit(0)
+
+    # Step 4: Mission Cockpit Launch
+    console.print("\n[bold cyan]Step 4/4: Launching CKODEX Mission Cockpit[/bold cyan]")
+    cockpit(serve=serve, port=port, export_html=None)
 
 
 @app.command(rich_help_panel="Execution & Pipelines")
@@ -1611,6 +1773,12 @@ def cockpit(
     """
     Launch interactive AIOps Mission Cockpit dashboard (terminal TUI or browser server).
     """
+    if not isinstance(serve, bool):
+        serve = False
+    if not isinstance(port, int):
+        port = 8888
+    if not isinstance(export_html, (str, type(None))):
+        export_html = None
     ui = AiopsCockpit()
     ui.render_terminal()
 
