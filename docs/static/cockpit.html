@@ -1,105 +1,897 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="vault">
 <head>
   <meta charset="UTF-8">
-  <title>CKODEX AIOps Autonomous Cockpit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CKODEX AIOps Autonomous Mission Cockpit</title>
+  <!-- Google Fonts: Instrument Serif, Geist, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #090d16;
-      --card-bg: #111827;
-      --text: #f3f4f6;
-      --accent: #38bdf8;
-      --border: #1f2937;
-      --green: #10b981;
-      --yellow: #f59e0b;
-      --red: #ef4444;
+    /* ==========================================================================
+       CKODEX-DS-3 v3.0.0 "Evidence Editorial" Semantic Color Budget & Tokens
+       ========================================================================== */
+    :root, [data-theme="ledger"] {
+      --ck-paper: #F6F1E8;
+      --ck-surface: #FFFFFF;
+      --ck-surface-2: #ECE6DA;
+      --ck-surface-card: #FAF6EF;
+      --ck-ink: #211B14;
+      --ck-tone: #6E6457;
+      --ck-border: #DCD5C9;
+      --ck-border-subtle: #E8E2D6;
+      --ck-rust: #B4532A;
+      --ck-violet: #6D28D9;
+      --ck-red: #B91C1C;
+      --ck-green: #15803D;
+      --ck-glow: rgba(180, 83, 42, 0.08);
+      --ck-dag-wire: #B8ADA0;
+      --ck-dag-active: #B4532A;
     }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
-      background: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 2rem;
+    [data-theme="vault"] {
+      --ck-paper: #0A1322;
+      --ck-surface: #0F1B30;
+      --ck-surface-2: #14243F;
+      --ck-surface-card: #111F36;
+      --ck-ink: #EAE5DA;
+      --ck-tone: #9A9284;
+      --ck-border: #1E2D4A;
+      --ck-border-subtle: #16233B;
+      --ck-rust: #D2693A;
+      --ck-violet: #A78BFA;
+      --ck-red: #F87171;
+      --ck-green: #34D399;
+      --ck-glow: rgba(210, 105, 58, 0.15);
+      --ck-dag-wire: #2A3C5E;
+      --ck-dag-active: #D2693A;
     }
-    header {
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--ck-paper);
+      color: var(--ck-ink);
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    /* Typography */
+    .ck-display { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; }
+    .ck-mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-ligatures: none; }
+    .ck-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ck-tone); }
+    .ck-invariant { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--ck-tone); }
+
+    /* Layout Shell */
+    .ck-shell {
       display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
+      flex-direction: column;
+      min-height: 100vh;
     }
-    h1 { margin: 0; font-size: 1.5rem; color: var(--accent); }
-    .grid {
+    header.ck-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--ck-border);
+      background: var(--ck-surface);
+    }
+    .ck-brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .ck-badge-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: var(--ck-ink);
+      color: var(--ck-paper);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .ck-title-group h1 {
+      font-size: 1.4rem;
+      color: var(--ck-ink);
+      letter-spacing: -0.02em;
+    }
+    .ck-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .ck-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 6px 14px;
+      border: 1px solid var(--ck-border);
+      background: var(--ck-surface-2);
+      color: var(--ck-ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .ck-btn:hover {
+      border-color: var(--ck-rust);
+      color: var(--ck-rust);
+    }
+    .ck-btn-rust {
+      background: var(--ck-rust);
+      color: #FFFFFF !important;
+      border-color: var(--ck-rust);
+    }
+    .ck-btn-rust:hover {
+      opacity: 0.92;
+    }
+
+    /* Main Console Surface & Evidence Margin */
+    .ck-body-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: 1fr 340px;
+      flex: 1;
+      min-height: calc(100vh - 120px);
+    }
+    .ck-main-content {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      overflow-y: auto;
+    }
+    aside.ck-margin {
+      border-left: 1px solid var(--ck-border);
+      background: var(--ck-surface);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      overflow-y: auto;
+    }
+
+    /* Card geometry: Quiet square card & Attested sealed cut-corner */
+    .ck-card {
+      background: var(--ck-surface-card);
+      border: 1px solid var(--ck-border);
+      padding: 1.25rem;
+      position: relative;
+    }
+    .ck-sealed {
+      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+      border: 1px solid var(--ck-violet);
+    }
+    .ck-card h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Claim chips */
+    .ck-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 2px 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid var(--ck-border);
+      background: var(--ck-surface-2);
+      color: var(--ck-ink);
+    }
+    .ck-chip.attested {
+      border-color: var(--ck-violet);
+      color: var(--ck-violet);
+      background: rgba(167, 139, 250, 0.1);
+    }
+    .ck-chip.observed {
+      border-color: var(--ck-tone);
+      color: var(--ck-ink);
+    }
+    .ck-chip.quarantined {
+      border-color: var(--ck-red);
+      color: var(--ck-red);
+      background: rgba(248, 113, 113, 0.1);
+    }
+    .ck-chip.healthy {
+      border-color: var(--ck-green);
+      color: var(--ck-green);
+      background: rgba(52, 211, 153, 0.1);
+    }
+
+    /* Top Banner / Metrics Bento */
+    .ck-bento {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    .ck-metric-val {
+      font-size: 1.8rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: var(--ck-ink);
+      margin-top: 0.25rem;
+    }
+    .ck-metric-sub {
+      font-size: 11px;
+      color: var(--ck-tone);
+      margin-top: 0.15rem;
+    }
+
+    /* Interactive Pipeline Merkle DAG */
+    .ck-dag-canvas {
+      background: var(--ck-surface);
+      border: 1px solid var(--ck-border);
+      padding: 1.5rem;
+      position: relative;
+    }
+    .ck-dag-nodes {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+    .ck-node {
+      background: var(--ck-surface-2);
+      border: 1px solid var(--ck-border);
+      padding: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .ck-node:hover, .ck-node.active {
+      border-color: var(--ck-rust);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--ck-glow);
+    }
+    .ck-node.sealed {
+      border-color: var(--ck-violet);
+    }
+    .ck-node-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--ck-tone);
+    }
+    .ck-node-name {
+      font-weight: 600;
+      font-size: 12px;
+      margin: 0.2rem 0;
+    }
+    .ck-node-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--ck-tone);
+      word-break: break-all;
+    }
+
+    /* Autonomic Control Loop */
+    .ck-loop-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: var(--ck-surface);
+      border: 1px solid var(--ck-border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+    .ck-loop-step {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--ck-tone);
+    }
+    .ck-loop-step.active {
+      color: var(--ck-rust);
+      font-weight: 700;
+    }
+    .ck-loop-arrow {
+      color: var(--ck-border);
+    }
+
+    /* State Vector Hexagon Radar Grid */
+    .ck-vector-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
       gap: 1.5rem;
     }
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.25rem;
+    .ck-radar-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--ck-surface);
+      border: 1px solid var(--ck-border);
+      padding: 1rem;
     }
-    .card h2 { font-size: 1.1rem; margin-top: 0; color: #9ca3af; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
-    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
-    td, th { padding: 0.5rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
-    .badge {
+
+    /* Evidence Margin Content */
+    .ck-receipt {
+      border: 1px dashed var(--ck-border);
+      padding: 1rem;
+      background: var(--ck-surface-2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+    }
+    .ck-receipt-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid var(--ck-border-subtle);
+    }
+    .ck-receipt-row:last-child { border-bottom: none; }
+    .ck-hash-val {
+      color: var(--ck-rust);
+      cursor: pointer;
+    }
+    .ck-hash-val:hover {
+      text-decoration: underline;
+    }
+    .ck-stamp {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--ck-violet);
+      border: 1px solid var(--ck-violet);
+      padding: 2px 6px;
       display: inline-block;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      background: #1f2937;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
-    .badge-positive { background: rgba(16, 185, 129, 0.2); color: var(--green); }
-    .badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--yellow); }
-    .badge-error { background: rgba(239, 68, 68, 0.2); color: var(--red); }
+
+    /* Flight Recorder Feed */
+    .ck-log-feed {
+      max-height: 220px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .ck-log-entry {
+      padding: 4px 8px;
+      background: var(--ck-surface-2);
+      border-left: 2px solid var(--ck-border);
+    }
+    .ck-log-entry.attested {
+      border-left-color: var(--ck-violet);
+    }
+    .ck-log-entry.alert {
+      border-left-color: var(--ck-rust);
+    }
+
+    /* Toast Notification */
+    #ck-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--ck-ink);
+      color: var(--ck-paper);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 8px 16px;
+      display: none;
+      z-index: 1000;
+      border: 1px solid var(--ck-border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
   </style>
 </head>
 <body>
-  <header>
-    <div>
-      <h1>CKODEX AIOps Autonomic Mission Cockpit</h1>
-      <div style="font-size: 0.85rem; color: #9ca3af; margin-top: 0.25rem;">
-        Baseline: <strong>macos_metal_safetensors</strong> | Accelerator: <strong>mps</strong>
+<div class="ck-shell">
+
+  <!-- Header -->
+  <header class="ck-header">
+    <div class="ck-brand">
+      <div class="ck-badge-logo">CKX</div>
+      <div class="ck-title-group">
+        <h1 class="ck-display">AIOps Autonomous Mission Cockpit</h1>
+        <div class="ck-label" style="margin-top: 2px;">
+          Baseline: <strong>macos_metal_safetensors</strong> • Accelerator: <strong>mps</strong> • Standard: <strong>GAL 1 Constitutional</strong>
+        </div>
       </div>
     </div>
-    <div style="text-align: right; font-size: 0.85rem; color: #9ca3af;">
-      Reported: 2026-09-19 23:43:12Z<br>
-      Assurance: <strong>GAL 1 Constitutional</strong>
+    <div class="ck-controls">
+      <span class="ck-stamp">◆ In-toto SLSA Attested</span>
+      <button class="ck-btn" onclick="toggleTheme()" id="themeBtn">◐ Vault Ground</button>
+      <button class="ck-btn ck-btn-rust" onclick="triggerReconcile()">⟳ Self-Heal Loop</button>
     </div>
   </header>
 
-  <div class="grid">
-    <div class="card">
-      <h2>Operational State Vector S(e, t)</h2>
-      <table>
-        <tr><td>Presence</td><td><span class="badge">PRESENT</span></td></tr>
-        <tr><td>Valence</td><td><span class="badge badge-positive">POSITIVE</span></td></tr>
-        <tr><td>Anti / Conflict</td><td><span class="badge">NONE</span></td></tr>
-        <tr><td>Coherence</td><td><span class="badge badge-positive">COHERENT</span></td></tr>
-        <tr><td>Evidence Status</td><td><span class="badge">VERIFIED</span></td></tr>
-        <tr><td>Lifecycle Mode</td><td><span class="badge badge-positive">NORMAL</span></td></tr>
-        <tr><td>Quarantined Items</td><td><span class="badge">1</span></td></tr>
-        <tr><td>Active Derogations</td><td><span class="badge">2</span></td></tr>
-      </table>
-    </div>
+  <!-- Main Body Grid: Console + Evidence Margin -->
+  <div class="ck-body-grid">
 
-    <div class="card">
-      <h2>Lance Storage Topology</h2>
-      <table>
-        <tr><th>Dataset</th><th>Status</th><th>Fragments</th></tr>
-        <tr><td>events.lance</td><td>ONLINE</td><td>3</td></tr><tr><td>features.lance</td><td>ONLINE</td><td>3</td></tr><tr><td>physical_ai.lance</td><td>ONLINE</td><td>1</td></tr>
-      </table>
-    </div>
+    <!-- Main Left Surface -->
+    <main class="ck-main-content">
 
-    <div class="card">
-      <h2>Recent Cryptographic Receipts</h2>
-      <table>
-        <tr><th>Receipt Identifier</th><th>Status</th></tr>
-        <tr><td><code>rcpt_replay_544ad0a717b1.json</code></td><td><span class='badge badge-positive'>VERIFIED</span></td></tr><tr><td><code>rcpt_release_70738dacf8f4.json</code></td><td><span class='badge badge-positive'>VERIFIED</span></td></tr><tr><td><code>rcpt_768679d3c4aa_run_distributed_inference_node.json</code></td><td><span class='badge badge-positive'>VERIFIED</span></td></tr><tr><td><code>rcpt_a1a660f82858_evaluate_model_conformance_node.json</code></td><td><span class='badge badge-positive'>VERIFIED</span></td></tr><tr><td><code>rcpt_5b5db3614326_train_representation_model_node.json</code></td><td><span class='badge badge-positive'>VERIFIED</span></td></tr>
-      </table>
-    </div>
+      <!-- Bento Metric Strip -->
+      <div class="ck-bento">
+        <div class="ck-card">
+          <div class="ck-label">Operational State Vector</div>
+          <div class="ck-metric-val" style="color: var(--ck-green);">NORMAL</div>
+          <div class="ck-metric-sub">Valence: POSITIVE • Anti: NONE</div>
+        </div>
+        <div class="ck-card">
+          <div class="ck-label">Ray Actor Mesh (Bounded)</div>
+          <div class="ck-metric-val">2.0 CPUs</div>
+          <div class="ck-metric-sub">4.0GB Heap • 2.0GB Plasma</div>
+        </div>
+        <div class="ck-card">
+          <div class="ck-label">Merkle Lineage Root</div>
+          <div class="ck-metric-val ck-mono" style="font-size: 1.1rem; padding-top: 6px;">sha256:b2d6419c9b…</div>
+          <div class="ck-metric-sub">8 Continuous Receipts Minted</div>
+        </div>
+        <div class="ck-card">
+          <div class="ck-label">Quarantine & Derogations</div>
+          <div class="ck-metric-val">1 / 2</div>
+          <div class="ck-metric-sub">0 Active Violations • Rule #32 Vault Active</div>
+        </div>
+      </div>
+
+      <!-- Autonomic Day-2 Control Loop -->
+      <div class="ck-card" style="padding: 0.75rem;">
+        <div class="ck-loop-bar">
+          <div class="ck-loop-step active"><span>[1] OBSERVE</span></div>
+          <div class="ck-loop-arrow">➔</div>
+          <div class="ck-loop-step active"><span>[2] DETECT</span></div>
+          <div class="ck-loop-arrow">➔</div>
+          <div class="ck-loop-step active"><span>[3] DIAGNOSE</span></div>
+          <div class="ck-loop-arrow">➔</div>
+          <div class="ck-loop-step"><span>[4] DEGRADE</span></div>
+          <div class="ck-loop-arrow">➔</div>
+          <div class="ck-loop-step"><span>[5] CONTAIN</span></div>
+          <div class="ck-loop-arrow">➔</div>
+          <div class="ck-loop-step"><span>[6] RECOVER</span></div>
+          <div class="ck-loop-arrow">➔</div>
+          <div class="ck-loop-step active"><span>[7] VERIFY</span></div>
+          <div class="ck-loop-arrow">➔</div>
+          <div class="ck-loop-step active"><span>[8] RECONCILE</span></div>
+        </div>
+      </div>
+
+      <!-- Interactive Merkle Lineage Pipeline DAG -->
+      <div class="ck-dag-canvas">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 class="ck-display" style="font-size: 1.25rem;">Interactive Merkle Lineage Pipeline DAG</h3>
+          <span class="ck-label">Click node to inspect cryptographic receipts in Evidence Margin</span>
+        </div>
+        <div class="ck-dag-nodes">
+
+          <div class="ck-node" onclick="selectNode('raw_events', this)">
+            <div class="ck-node-num">01 // INGEST</div>
+            <div class="ck-node-name">events.lance</div>
+            <div class="ck-node-sub">Zero-Copy Polars Ingest</div>
+            <div style="margin-top: 6px;"><span class="ck-chip observed">⊢ observed</span></div>
+          </div>
+
+          <div class="ck-node" onclick="selectNode('features', this)">
+            <div class="ck-node-num">02 // TRANSFORM</div>
+            <div class="ck-node-name">features.lance</div>
+            <div class="ck-node-sub">Vectorized Lance Table</div>
+            <div style="margin-top: 6px;"><span class="ck-chip observed">⊢ observed</span></div>
+          </div>
+
+          <div class="ck-node" onclick="selectNode('ray_cluster', this)">
+            <div class="ck-node-num">03 // DISTRIBUTE</div>
+            <div class="ck-node-name">Ray Actor Mesh</div>
+            <div class="ck-node-sub">Bounded 4GB Heap Pool</div>
+            <div style="margin-top: 6px;"><span class="ck-chip healthy">● bounded</span></div>
+          </div>
+
+          <div class="ck-node sealed active" onclick="selectNode('model_weights', this)">
+            <div class="ck-node-num">04 // CHECKPOINT</div>
+            <div class="ck-node-name">model.safetensors</div>
+            <div class="ck-node-sub">Zero-Pickle mmap</div>
+            <div style="margin-top: 6px;"><span class="ck-chip attested">◆ attested</span></div>
+          </div>
+
+          <div class="ck-node" onclick="selectNode('quantized', this)">
+            <div class="ck-node-num">05 // QUANTIZE</div>
+            <div class="ck-node-name">model_int8.pt</div>
+            <div class="ck-node-sub">Dynamic Int8 Engine</div>
+            <div style="margin-top: 6px;"><span class="ck-chip observed">⊢ verified</span></div>
+          </div>
+
+          <div class="ck-node sealed" onclick="selectNode('slsa', this)">
+            <div class="ck-node-num">06 // SUPPLY-CHAIN</div>
+            <div class="ck-node-name">In-toto SLSA v1.0</div>
+            <div class="ck-node-sub">Cryptographic Attestation</div>
+            <div style="margin-top: 6px;"><span class="ck-chip attested">◆ attested</span></div>
+          </div>
+
+          <div class="ck-node sealed" onclick="selectNode('oscal', this)">
+            <div class="ck-node-num">07 // COMPLIANCE</div>
+            <div class="ck-node-name">NIST OSCAL Rev 5</div>
+            <div class="ck-node-sub">Machine-Verifiable Controls</div>
+            <div style="margin-top: 6px;"><span class="ck-chip attested">◆ attested</span></div>
+          </div>
+
+          <div class="ck-node sealed" onclick="selectNode('receipt', this)">
+            <div class="ck-node-num">08 // RECEIPT</div>
+            <div class="ck-node-name">Root Lineage Receipt</div>
+            <div class="ck-node-sub">Merkle Chain Terminal</div>
+            <div style="margin-top: 6px;"><span class="ck-chip attested">◆ attested</span></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Vector State Radar & Subsystems -->
+      <div class="ck-vector-grid">
+
+        <!-- Hexagonal State Vector Canvas -->
+        <div class="ck-radar-box">
+          <div class="ck-label" style="margin-bottom: 0.5rem;">State Vector Radar S(e,t)</div>
+          <svg width="240" height="240" viewBox="-120 -120 240 240" id="radarSvg">
+            <!-- Hexagonal Rings -->
+            <polygon points="0,-100 86,-50 86,50 0,100 -86,50 -86,-50" fill="none" stroke="var(--ck-border)" stroke-width="1"/>
+            <polygon points="0,-66 57,-33 57,33 0,66 -57,33 -57,-33" fill="none" stroke="var(--ck-border-subtle)" stroke-width="1"/>
+            <polygon points="0,-33 28,-16 28,16 0,33 -28,16 -28,-16" fill="none" stroke="var(--ck-border-subtle)" stroke-width="1"/>
+            <!-- Axes -->
+            <line x1="0" y1="0" x2="0" y2="-100" stroke="var(--ck-border)" stroke-width="1"/>
+            <line x1="0" y1="0" x2="86" y2="-50" stroke="var(--ck-border)" stroke-width="1"/>
+            <line x1="0" y1="0" x2="86" y2="50" stroke="var(--ck-border)" stroke-width="1"/>
+            <line x1="0" y1="0" x2="0" y2="100" stroke="var(--ck-border)" stroke-width="1"/>
+            <line x1="0" y1="0" x2="-86" y2="50" stroke="var(--ck-border)" stroke-width="1"/>
+            <line x1="0" y1="0" x2="-86" y2="-50" stroke="var(--ck-border)" stroke-width="1"/>
+            <!-- Vector Value Polygon -->
+            <polygon id="vectorPoly" points="0,-90 80,-45 80,45 0,90 -80,45 -80,-45" fill="var(--ck-glow)" stroke="var(--ck-rust)" stroke-width="2"/>
+            <!-- Vertex Dots -->
+            <circle cx="0" cy="-90" r="4" fill="var(--ck-rust)"/>
+            <circle cx="80" cy="-45" r="4" fill="var(--ck-rust)"/>
+            <circle cx="80" cy="45" r="4" fill="var(--ck-rust)"/>
+            <circle cx="0" cy="90" r="4" fill="var(--ck-rust)"/>
+            <circle cx="-80" cy="45" r="4" fill="var(--ck-rust)"/>
+            <circle cx="-80" cy="-45" r="4" fill="var(--ck-rust)"/>
+          </svg>
+          <div class="ck-mono" style="font-size: 11px; margin-top: 0.5rem; text-align: center;">
+            Valence: <strong style="color: var(--ck-green);">POSITIVE</strong> • Anti: <strong>NONE</strong>
+          </div>
+        </div>
+
+        <!-- Subsystems & Flight Recorder -->
+        <div class="ck-card">
+          <h3>
+            <span>Four Truth Channels & Flight Recorder</span>
+            <span class="ck-label">Rule #12 • Rules #10, #38</span>
+          </h3>
+          <div class="ck-log-feed">
+            <div class="ck-log-entry attested">
+              <span class="ck-label">[2026-09-22 00:41:12Z]</span> <strong>MERKLE_ROOT_MINT</strong>: Built root sha256:b2d6419c9b022e08… across 8 node receipts.
+            </div>
+            <div class="ck-log-entry attested">
+              <span class="ck-label">[2026-09-22 00:41:12Z]</span> <strong>CAPABILITY_LEASE_VERIFY</strong>: Active lease granted under AuthorityPath: root.tenant.production.
+            </div>
+            <div class="ck-log-entry">
+              <span class="ck-label">[2026-09-22 00:41:12Z]</span> <strong>STORAGE_INSPECT</strong>: Lance datasets feature tables verified. Fragment count optimal.
+            </div>
+            <div class="ck-log-entry">
+              <span class="ck-label">[2026-09-22 00:41:12Z]</span> <strong>RAY_HEURISTIC_BOUND</strong>: Actor heap allocated bounded to 4.0GB. Host memory protected (Rule #31).
+            </div>
+            <div class="ck-log-entry">
+              <span class="ck-label">[2026-09-22 00:41:12Z]</span> <strong>SAFE_TENSORS_VERIFY</strong>: Zero-pickle model weights loaded via zero-copy mmap. CVE-resistant.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- Persistent Evidence Margin (Right Rail, 320px) -->
+    <aside class="ck-margin">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="ck-label">Evidence Margin</span>
+        <span class="ck-stamp">Rule #10</span>
+      </div>
+
+      <!-- Node Receipt Detail -->
+      <div class="ck-receipt">
+        <div style="font-weight: 700; margin-bottom: 0.5rem; border-bottom: 1px solid var(--ck-border); padding-bottom: 4px;" id="marginTitle">
+          model.safetensors
+        </div>
+        <div class="ck-receipt-row">
+          <span class="ck-label">Status</span>
+          <span id="marginStatus" class="ck-chip attested">◆ ATTESTED</span>
+        </div>
+        <div class="ck-receipt-row">
+          <span class="ck-label">Content Digest</span>
+          <span class="ck-hash-val" id="marginDigest" onclick="copyDigest(this.innerText)">sha256:06dce1e86fec…</span>
+        </div>
+        <div class="ck-receipt-row">
+          <span class="ck-label">Artifact Size</span>
+          <span id="marginSize">78.6 KB</span>
+        </div>
+        <div class="ck-receipt-row">
+          <span class="ck-label">Storage Engine</span>
+          <span id="marginEngine">Safetensors (mmap)</span>
+        </div>
+        <div class="ck-receipt-row">
+          <span class="ck-label">Parent Merkle</span>
+          <span class="ck-mono" id="marginParent" style="font-size: 10px;">sha256:b2d6419c9b…</span>
+        </div>
+        <div class="ck-receipt-row">
+          <span class="ck-label">SLSA Builder</span>
+          <span class="ck-mono" style="font-size: 10px;">https://ckodex.com/v1</span>
+        </div>
+      </div>
+
+      <!-- Invariant Stamp -->
+      <div class="ck-card" style="padding: 1rem; background: var(--ck-surface-2);">
+        <div class="ck-label" style="margin-bottom: 0.35rem;">Constitutional Invariant</div>
+        <div class="ck-invariant">
+          mode changes deployment, not governance semantics
+        </div>
+      </div>
+
+      <!-- Quick Operable Commands -->
+      <div class="ck-card">
+        <div class="ck-label" style="margin-bottom: 0.5rem;">Operable Commands</div>
+        <div style="display: flex; flex-direction: column; gap: 0.4rem; font-family: 'JetBrains Mono', monospace; font-size: 11px;">
+          <div style="cursor: pointer;" onclick="copyDigest('ckx reconcile')"><code>$ ckx reconcile</code></div>
+          <div style="cursor: pointer;" onclick="copyDigest('ckx tour')"><code>$ ckx tour</code></div>
+          <div style="cursor: pointer;" onclick="copyDigest('ckx airgap pack')"><code>$ ckx airgap pack</code></div>
+          <div style="cursor: pointer;" onclick="copyDigest('ckx oci pack')"><code>$ ckx oci pack</code></div>
+        </div>
+      </div>
+
+      <div style="margin-top: auto; font-size: 11px; color: var(--ck-tone); text-align: center;">
+        CKODEX Architectural Signature • Day-2 Native
+      </div>
+    </aside>
+
   </div>
+
+</div>
+
+<!-- Toast -->
+<div id="ck-toast">Copied to clipboard</div>
+
+<script>
+  const telemetry = {
+  "timestamp": "2026-09-22 00:41:12Z",
+  "profile": "macos_metal_safetensors",
+  "accelerator": "mps",
+  "weights_format": "safetensors",
+  "merkle_root": "b2d6419c9b022e082acbeba8586ac427db876f8ad261ff927759aa3a150da0a5",
+  "state_vector": {
+    "presence": "PRESENT",
+    "valence": "POSITIVE",
+    "anti": "NONE",
+    "coherence": "COHERENT",
+    "evidence": "VERIFIED",
+    "lifecycle": "NORMAL"
+  },
+  "ray": {
+    "status": "ONLINE",
+    "mode": "LOCAL_EMBEDDED",
+    "nodes": 1,
+    "cpus": 2.0,
+    "gpus": 1.0,
+    "allocated_memory_gb": 4.0,
+    "memory_gb": 4.0,
+    "object_store_gb": 2.0,
+    "active_nodes": [
+      "127.0.0.1"
+    ]
+  },
+  "model": {
+    "exists": true,
+    "size_kb": 78.6,
+    "digest": "06dce1e86fec42a4014c83b983638c38eada625d06906fb40081cf0be245f824",
+    "type": "safetensors (zero-pickle, native mmap)"
+  },
+  "quant": {
+    "exists": true,
+    "size_kb": 34.1,
+    "digest": "d9cad201a4a5b778d1074b8c012512fc0850e09f99ba9b2adde59aa6305c8cdc"
+  },
+  "slsa": {
+    "exists": true,
+    "digest": "8b8c61009b16da240326ca30c9b51ca400b67c2b95d7ff71c3512998cd91258d"
+  },
+  "oscal": {
+    "exists": true,
+    "digest": "e1ef45eed8520d58f0c11020981799ab2c5832c1beba22af15db232423b55f65"
+  },
+  "receipts": [
+    {
+      "name": "rcpt_release_b8766df06eba.json",
+      "receipt_id": "rcpt_release_b8766df06eba",
+      "digest": "5b5a09e03506b384ce86e0ebea98c5898c67f3e564d81d595e429b07bc685e05",
+      "timestamp": "2026-09-22T00:29:10.948551+00:00",
+      "node": "quarantine_release"
+    },
+    {
+      "name": "rcpt_release_7ac3ebeac1ee.json",
+      "receipt_id": "rcpt_release_7ac3ebeac1ee",
+      "digest": "0978ccfb1047a064f302e679aff8163af8947a8838a54c666a1fd0ee342047cd",
+      "timestamp": "2026-09-22T00:20:13.510169+00:00",
+      "node": "quarantine_release"
+    },
+    {
+      "name": "rcpt_release_86693f30e62c.json",
+      "receipt_id": "rcpt_release_86693f30e62c",
+      "digest": "6d953ef4caa216fcb6af44e8904e3208841134cb664201350b3d4165b55a6dc5",
+      "timestamp": "2026-09-21T23:59:32.117325+00:00",
+      "node": "quarantine_release"
+    },
+    {
+      "name": "rcpt_release_ada0543fd041.json",
+      "receipt_id": "rcpt_release_ada0543fd041",
+      "digest": "1588ad31f7b79d990f8341b263c13370abef4033c15a4a3387aa50db38a02232",
+      "timestamp": "2026-09-21T23:59:09.564630+00:00",
+      "node": "quarantine_release"
+    },
+    {
+      "name": "rcpt_release_490ef8947995.json",
+      "receipt_id": "rcpt_release_490ef8947995",
+      "digest": "596905433f7e2c9b417574eaee0d999974e2c6b1de2378ebbb761c870745e17f",
+      "timestamp": "2026-09-21T01:18:38.198661+00:00",
+      "node": "quarantine_release"
+    },
+    {
+      "name": "rcpt_release_e8a496fa6869.json",
+      "receipt_id": "rcpt_release_e8a496fa6869",
+      "digest": "70216c3e9fae1c7d535f7899ea63cffe681e66ab5a31a88ab4ce94efde674c02",
+      "timestamp": "2026-09-21T01:09:43.118197+00:00",
+      "node": "quarantine_release"
+    },
+    {
+      "name": "rcpt_release_f40ca259bbbc.json",
+      "receipt_id": "rcpt_release_f40ca259bbbc",
+      "digest": "3db55b82950fb80a1f5a073b75ce1d677e774a4890b03895c2c07c6ece2fa56e",
+      "timestamp": "2026-09-21T00:40:17.089078+00:00",
+      "node": "quarantine_release"
+    },
+    {
+      "name": "rcpt_oci_427781a9944a.json",
+      "receipt_id": "rcpt_oci_427781a9944a",
+      "digest": "ed1daa82aec35d8422691c1980ef72f553932b1880d4d3c93eeef8a41cfb809b",
+      "timestamp": "2026-09-21T00:38:23.214911+00:00",
+      "node": "oci:pack"
+    }
+  ],
+  "datasets": {
+    "events.lance": {
+      "exists": true,
+      "fragment_files": 1
+    },
+    "features.lance": {
+      "exists": true,
+      "fragment_files": 1
+    },
+    "physical_ai.lance": {
+      "exists": true,
+      "fragment_files": 3
+    }
+  }
+};
+
+  const nodeMetadata = {
+    raw_events: {
+      title: "events.lance",
+      status: "⊢ OBSERVED",
+      statusClass: "observed",
+      digest: "sha256:7e8a9f20cd18b456",
+      size: "420 KB",
+      engine: "Lance Columnar v12",
+      parent: "sha256:genesis_raw_001"
+    },
+    features: {
+      title: "features.lance",
+      status: "⊢ OBSERVED",
+      statusClass: "observed",
+      digest: "sha256:1a84f932e01b4478",
+      size: "380 KB",
+      engine: "Lance IVF-PQ Indexed",
+      parent: "sha256:7e8a9f20cd18b456"
+    },
+    ray_cluster: {
+      title: "Ray Actor Mesh",
+      status: "● BOUNDED",
+      statusClass: "healthy",
+      digest: "sha256:ray_actor_mesh_lease",
+      size: telemetry.ray.allocated_memory_gb + " GB Heap",
+      engine: telemetry.ray.mode || "LOCAL_EMBEDDED",
+      parent: "sha256:1a84f932e01b4478"
+    },
+    model_weights: {
+      title: "model.safetensors",
+      status: "◆ ATTESTED",
+      statusClass: "attested",
+      digest: "sha256:" + (telemetry.model.digest || "none").slice(0, 16),
+      size: telemetry.model.size_kb + " KB",
+      engine: "Safetensors (Zero-Pickle)",
+      parent: "sha256:ray_actor_mesh_lease"
+    },
+    quantized: {
+      title: "model_int8.pt",
+      status: "⊢ VERIFIED",
+      statusClass: "observed",
+      digest: "sha256:" + (telemetry.quant.digest || "none").slice(0, 16),
+      size: telemetry.quant.size_kb + " KB",
+      engine: "PyTorch Dynamic Int8",
+      parent: "sha256:" + (telemetry.model.digest || "none").slice(0, 16)
+    },
+    slsa: {
+      title: "provenance.intoto.jsonl",
+      status: "◆ ATTESTED",
+      statusClass: "attested",
+      digest: "sha256:" + (telemetry.slsa.digest || "none").slice(0, 16),
+      size: "SLSA v1.0 Statement",
+      engine: "In-toto Attestor",
+      parent: "sha256:" + (telemetry.model.digest || "none").slice(0, 16)
+    },
+    oscal: {
+      title: "component_definition.json",
+      status: "◆ ATTESTED",
+      statusClass: "attested",
+      digest: "sha256:" + (telemetry.oscal.digest || "none").slice(0, 16),
+      size: "NIST SP 800-53 Rev 5",
+      engine: "OSCAL Compliance Generator",
+      parent: "sha256:" + (telemetry.slsa.digest || "none").slice(0, 16)
+    },
+    receipt: {
+      title: "LineageReceipt Terminal",
+      status: "◆ ATTESTED",
+      statusClass: "attested",
+      digest: "sha256:" + telemetry.merkle_root.slice(0, 16),
+      size: telemetry.receipts.length + " Receipts in Chain",
+      engine: "Merkle Continuity Root",
+      parent: "sha256:parent_link_007"
+    }
+  };
+
+  function selectNode(nodeKey, el) {
+    document.querySelectorAll('.ck-node').forEach(n => n.classList.remove('active'));
+    if (el) el.classList.add('active');
+
+    const meta = nodeMetadata[nodeKey];
+    if (!meta) return;
+
+    document.getElementById('marginTitle').innerText = meta.title;
+    const stEl = document.getElementById('marginStatus');
+    stEl.innerText = meta.status;
+    stEl.className = 'ck-chip ' + meta.statusClass;
+    document.getElementById('marginDigest').innerText = meta.digest + '…';
+    document.getElementById('marginSize').innerText = meta.size;
+    document.getElementById('marginEngine').innerText = meta.engine;
+    document.getElementById('marginParent').innerText = meta.parent.slice(0, 18) + '…';
+  }
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const btn = document.getElementById('themeBtn');
+    const current = html.getAttribute('data-theme');
+    const next = current === 'vault' ? 'ledger' : 'vault';
+    html.setAttribute('data-theme', next);
+    btn.innerText = next === 'vault' ? '◐ Vault Ground' : '☀ Archival Ledger';
+  }
+
+  function copyDigest(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      const toast = document.getElementById('ck-toast');
+      toast.innerText = 'Copied: ' + text.slice(0, 24) + '…';
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2200);
+    });
+  }
+
+  function triggerReconcile() {
+    const toast = document.getElementById('ck-toast');
+    toast.innerText = '⟳ Reconciler Loop: OBSERVE ➔ DETECT ➔ RECONCILE (Healthy)';
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 3000);
+  }
+</script>
 </body>
 </html>

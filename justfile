@@ -98,6 +98,14 @@ benchmark samples="5000":
 cockpit:
     uv run ckodex-aiops cockpit --export-html docs/static/cockpit.html
 
+# Launch living Evidence Editorial Cockpit on local HTTP server and open browser
+cockpit-serve port="8888":
+    uv run ckodex-aiops cockpit --serve --port {{port}}
+
+# Execute high-assurance guided architectural 7-Act tour
+tour:
+    uv run ckodex-aiops tour --no-browser
+
 # Launch zero-copy Model Serving HTTP Gateway
 serve port="8080" model="data/06_models/model.safetensors":
     uv run ckodex-aiops serve --port {{port}} --model {{model}}
