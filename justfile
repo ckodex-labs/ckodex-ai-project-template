@@ -58,8 +58,25 @@ doctor:
     uv run ckodex-aiops doctor
 
 # Execute full Kedro end-to-end pipeline DAG
-run-pipeline pipeline="__default__":
-    uv run ckodex-aiops run --pipeline {{pipeline}}
+run-pipeline pipeline="__default__" profile="":
+    uv run ckodex-aiops run --pipeline {{pipeline}} {{ if profile != "" { "--profile " + profile } else { "" } }}
+
+# Run pipeline on Ray (local or remote cluster)
+run-ray pipeline="__default__" address="" actors="4":
+    uv run ckodex-aiops run --pipeline {{pipeline}} --ray-actors {{actors}} {{ if address != "" { "--ray-address " + address } else { "" } }}
+
+# Inspect Ray cluster resources and topology
+ray-status address="":
+    uv run ckodex-aiops ray status {{ if address != "" { "--address " + address } else { "" } }}
+
+# Start local Ray head daemon node
+ray-start cpus="4":
+    uv run ckodex-aiops ray start --cpus {{cpus}}
+
+# Stop local Ray daemon processes
+ray-stop:
+    uv run ckodex-aiops ray stop
+
 
 # Run autonomic self-healing reconciler loop
 reconcile:

@@ -42,13 +42,23 @@ class RayRuntimeManager:
         if ray.is_initialized():
             return True
 
-        # Check for invalid RAY_ADDRESS (e.g. HTTP URL rather than GCS redis/port)
-        env_addr = os.environ.get("RAY_ADDRESS", "")
-        if env_addr.startswith("http://") or env_addr.startswith("https://"):
-            # Ray core cannot init directly to HTTP dashboard/job address; sanitize for local init
+        # Unconditionally sanitize invalid RAY_ADDRESS in ambient environment
+        ambient_env_addr = os.environ.get("RAY_ADDRESS", "").strip()
+        if ambient_env_addr.startswith("http://") or ambient_env_addr.startswith("https://"):
             os.environ.pop("RAY_ADDRESS", None)
-            if address == "auto":
-                address = None
+
+        # Parse address candidates: explicit address, RAY_ADDRESS, or auto
+        target_address = address
+        if target_address == "auto":
+            env_addr = os.environ.get("RAY_ADDRESS", "").strip()
+            if env_addr and not (env_addr.startswith("http://") or env_addr.startswith("https://")):
+                target_address = env_addr
+            else:
+                target_address = None
+        elif target_address and (
+            target_address.startswith("http://") or target_address.startswith("https://")
+        ):
+            target_address = None
 
         # Disable Ray's automatic uv run working_dir packager to prevent broken worker venvs in containerized CI
         os.environ["RAY_ENABLE_UV_RUN_RUNTIME_ENV"] = "0"
@@ -59,26 +69,43 @@ class RayRuntimeManager:
         except Exception:
             pass
 
+        # 1. Attempt connection to target address (if provided)
+        if target_address:
+            try:
+                ray.init(
+                    address=target_address,
+                    ignore_reinit_error=ignore_reinit_error,
+                    runtime_env=runtime_env or {},
+                    logging_level=logging.WARNING,
+                )
+                return True
+            except Exception:
+                pass  # Fall back to local below
+
+        # 2. Attempt connection to local existing Ray instance (address="auto")
         try:
             ray.init(
-                address=address if address != "auto" else None,
-                num_cpus=num_cpus,
+                address="auto",
                 ignore_reinit_error=ignore_reinit_error,
                 runtime_env=runtime_env or {},
                 logging_level=logging.WARNING,
             )
             return True
         except Exception:
-            # Fallback to pure local cluster
-            try:
-                ray.init(
-                    num_cpus=num_cpus or 2,
-                    ignore_reinit_error=True,
-                    logging_level=logging.WARNING,
-                )
-                return True
-            except Exception:
-                return False
+            pass
+
+        # 3. Fallback: Spin up an embedded local Ray cluster
+        try:
+            ray.init(
+                address=None,
+                num_cpus=num_cpus or 2,
+                ignore_reinit_error=True,
+                runtime_env=runtime_env or {},
+                logging_level=logging.WARNING,
+            )
+            return True
+        except Exception:
+            return False
 
     @classmethod
     def shutdown(cls) -> None:

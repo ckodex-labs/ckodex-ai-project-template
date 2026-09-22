@@ -43,12 +43,13 @@ just [RECIPE]
 | `profile` | List, show, or promote platform profiles | `list`, `show`, `promote` |
 | `quantize` | Dynamically quantize model weights to Int8 | `--source`, `--out` |
 | `quarantine` | Isolate suspect artifacts and preserve evidence | `isolate`, `release`, `list` |
+| `ray` | Ray Distributed Computing & Cluster Management | `status`, `start`, `stop`, `pg` |
 | `ray-pg` | Allocate Ray Placement Groups for gang scheduling | `--name`, `--num-actors` |
 | `reconcile` | Day-2 autonomic reconciler self-healing loop | `--auto-heal`, `--profile` |
 | `recover` | Reconstruct checkpoint and verify disk digests | `--checkpoint`, `--verify-only` |
 | `replay` | Governed replay under lease with side-effect fencing | `--receipt`, `--dry-run` |
 | `resilience` | Inspect failure budgets, circuit breakers & quarantine vaults | `status` |
-| `run` | Execute Kedro pipeline DAG under capability lease | `--pipeline`, `--profile` |
+| `run` | Execute Kedro pipeline DAG under capability lease | `--pipeline`, `--profile`, `--ray-address`, `--ray-actors` |
 | `sbom` | Generate CycloneDX v1.5 and SPDX 2.3 JSON SBOMs | `--out-dir` |
 | `serve` | High-performance Model Serving HTTP Gateway | `--port`, `--model` |
 | `trace` | Four Truth Channels, Flight Recorder & Research Evidence | `correlate`, `flight-recorder`, `research-evidence` |
@@ -61,9 +62,10 @@ just [RECIPE]
 When executing `uv run ckodex-aiops --help`, commands are categorized into 6 operational panels:
 
 1. **Configuration & Profiles**: `config`, `profile`
-2. **Execution & Pipelines**: `run`, `serve`, `quantize`, `mine`, `ray-pg`, `benchmark`
+2. **Execution & Pipelines**: `run`, `ray`, `serve`, `quantize`, `mine`, `ray-pg`, `benchmark`
 3. **Day-2 Operations & Recovery**: `reconcile`, `recover`, `replay`, `quarantine`, `compact`, `optimize`
 4. **Integrity & Observability**: `integrity`, `verify`, `drift`, `trace`, `cockpit`, `inspect`
 5. **Governance & Compliance**: `doctor`, `conformance`, `explain`, `derogation`, `oscal`, `lifecycle`, `onboard`, `offboard`
 6. **Distribution & Packaging**: `airgap-pack`, `airgap-verify`, `oci`, `attest`, `sbom`
+
 

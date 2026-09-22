@@ -118,6 +118,57 @@ class ProfileRegistry:
             },
             is_baseline=False,
         ),
+        "ray_local_dev": PlatformProfile(
+            name="ray_local_dev",
+            description="Local Ray cluster on workstation with shared plasma memory and multi-actor pools",
+            device="auto",
+            accelerator="auto",
+            checkpoint_format="safetensors",
+            batch_size=64,
+            ray_actors=4,
+            default_pipeline="__default__",
+            parameters={
+                "ray": {
+                    "address": "auto",
+                    "num_cpus": 4,
+                },
+                "feature_engineering": {
+                    "num_ray_actors": 4,
+                    "batch_size": 128,
+                },
+                "inference": {
+                    "num_ray_actors": 4,
+                    "batch_size": 128,
+                },
+            },
+            is_baseline=True,
+            baseline_receipt_id="rcpt_baseline_ray_local",
+            baseline_digest="d41d8cd98f00b204e9800998ecf8427e",
+        ),
+        "ray_remote_cluster": PlatformProfile(
+            name="ray_remote_cluster",
+            description="Remote Ray Mesh cluster connection (via ray:// client port 10001 or Redis 6379)",
+            device="cuda",
+            accelerator="cuda",
+            checkpoint_format="safetensors",
+            batch_size=256,
+            ray_actors=8,
+            default_pipeline="__default__",
+            parameters={
+                "ray": {
+                    "address": "auto",
+                },
+                "feature_engineering": {
+                    "num_ray_actors": 8,
+                    "batch_size": 256,
+                },
+                "inference": {
+                    "num_ray_actors": 8,
+                    "batch_size": 256,
+                },
+            },
+            is_baseline=False,
+        ),
         "ci_headless_verification": PlatformProfile(
             name="ci_headless_verification",
             description="Headless CPU execution profile for strict CI/CD conformance verification",

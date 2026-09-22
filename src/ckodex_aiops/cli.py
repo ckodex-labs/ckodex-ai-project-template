@@ -445,17 +445,29 @@ def run(
         None,
         help="Profile to activate (e.g. macos_metal_safetensors, physical_ai_robotics, cuda_distributed_pretraining)",
     ),
+    ray_address: str | None = typer.Option(
+        None,
+        "--ray-address",
+        "-r",
+        help="Ray cluster address (e.g. 'auto', 'ray://remote-host:10001', '127.0.0.1:6379').",
+    ),
+    ray_actors: int | None = typer.Option(
+        None,
+        "--ray-actors",
+        help="Override number of distributed Ray worker actors for pipeline nodes.",
+    ),
 ) -> None:
     """
-    Execute a Kedro pipeline with optional profile activation.
+    Execute a Kedro pipeline with optional profile activation and Ray cluster routing.
     """
     from kedro.framework.session import KedroSession
     from kedro.framework.startup import bootstrap_project
 
+    from ckodex_aiops.adapters.ray.runtime import RayRuntimeManager
     from ckodex_aiops.kernel.profiles import ProfileRegistry
 
     target_pipeline = pipeline
-    extra_params = {}
+    extra_params: dict[str, Any] = {}
 
     if profile is not None:
         try:
@@ -469,10 +481,21 @@ def run(
             )
             if target_pipeline is None:
                 target_pipeline = prof.default_pipeline
-            extra_params = prof.parameters
+            extra_params = dict(prof.parameters)
         except KeyError as e:
             console.print(f"[red]Error:[/red] {e}")
             raise typer.Exit(1)
+
+    # Apply explicit ray CLI overrides
+    if ray_address is not None:
+        os.environ["RAY_ADDRESS"] = ray_address
+        console.print(f"[dim]Routing Ray compute to:[/] [cyan]{ray_address}[/cyan]")
+        RayRuntimeManager.initialize(address=ray_address)
+
+    if ray_actors is not None:
+        extra_params.setdefault("feature_engineering", {})["num_ray_actors"] = ray_actors
+        extra_params.setdefault("inference", {})["num_ray_actors"] = ray_actors
+        console.print(f"[dim]Ray Actor Pool Concurrency set to:[/] [cyan]{ray_actors}[/cyan]")
 
     if target_pipeline is None:
         target_pipeline = "__default__"
@@ -1689,10 +1712,115 @@ def ray_pg(
     )
 
 
+# -----------------------------------------------------------------------------
+# Ray Distributed Cluster Management Commands
+# -----------------------------------------------------------------------------
+ray_app = typer.Typer(
+    name="ray",
+    help="Ray Distributed Computing & Cluster Management (Local and Remote)",
+)
+app.add_typer(ray_app, name="ray", rich_help_panel="Execution & Pipelines")
+
+
+@ray_app.command(name="status")
+def ray_status(
+    address: str | None = typer.Option(
+        None,
+        "--address",
+        "-a",
+        help="Ray cluster address (e.g. 'auto', 'ray://remote-host:10001', 'redis://head:6379').",
+    ),
+) -> None:
+    """Inspect Ray cluster connectivity, available CPUs/GPUs, active nodes, and memory."""
+    console.print(
+        Panel.fit("[bold cyan]CKODEX Ray Cluster Inspection[/bold cyan]", border_style="cyan")
+    )
+
+    success = RayRuntimeManager.initialize(address=address)
+    if not success:
+        console.print("[bold red]Error:[/] Could not connect to or initialize Ray cluster.")
+        raise typer.Exit(1)
+
+    info = RayRuntimeManager.get_cluster_info()
+    table = Table(title="Ray Cluster Topography", border_style="dim")
+    table.add_column("Property", style="bold cyan")
+    table.add_column("Value", style="green")
+
+    table.add_row("Cluster Status", info.get("status", "UNKNOWN"))
+    table.add_row("Active Nodes", str(info.get("nodes", 0)))
+    table.add_row("Total CPUs", str(info.get("cpus", 0.0)))
+    table.add_row("Total GPUs", str(info.get("gpus", 0.0)))
+    table.add_row("Cluster RAM", f"{info.get('memory_gb', 0.0)} GB")
+    table.add_row("Object Store Memory", f"{info.get('object_store_gb', 0.0)} GB")
+
+    nodes = info.get("active_nodes", [])
+    if nodes:
+        table.add_row("Worker Node Addresses", ", ".join(str(n) for n in nodes))
+
+    console.print(table)
+
+
+@ray_app.command(name="start")
+def ray_start_local(
+    num_cpus: int = typer.Option(4, "--cpus", "-c", help="Number of CPUs for local cluster."),
+    port: int = typer.Option(6379, "--port", "-p", help="GCS port for head node."),
+    dashboard_port: int = typer.Option(8265, "--dashboard-port", help="Dashboard port."),
+) -> None:
+    """Launch a local background Ray head cluster daemon."""
+    import subprocess
+
+    console.print(
+        f"[bold cyan]Launching Local Ray Head Node[/bold cyan] (Port: {port}, CPUs: {num_cpus})..."
+    )
+    cmd = [
+        "ray",
+        "start",
+        "--head",
+        f"--port={port}",
+        f"--dashboard-port={dashboard_port}",
+        f"--num-cpus={num_cpus}",
+    ]
+    try:
+        res = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        console.print(f"[bold green]✔ Ray Head Started Successfully![/bold green]\n{res.stdout}")
+        console.print(f"[dim]Web Dashboard:[/] http://localhost:{dashboard_port}")
+        console.print(f"[dim]Client Address:[/] ray://127.0.0.1:10001 or 127.0.0.1:{port}")
+    except subprocess.CalledProcessError as e:
+        console.print(f"[bold red]Ray Start Error:[/] {e.stderr or e.stdout}")
+        raise typer.Exit(1)
+    except FileNotFoundError:
+        console.print("[bold red]Error:[/] 'ray' CLI binary not found on PATH.")
+        raise typer.Exit(1)
+
+
+@ray_app.command(name="stop")
+def ray_stop_local() -> None:
+    """Stop locally running Ray daemon processes on this machine."""
+    import subprocess
+
+    console.print("[bold cyan]Stopping Local Ray Cluster...[/bold cyan]")
+    try:
+        subprocess.run(["ray", "stop"], capture_output=True, text=True, check=True)
+        console.print("[bold green]✔ Local Ray processes stopped.[/bold green]")
+    except Exception as e:
+        console.print(f"[yellow]Ray stop result:[/] {e}")
+
+
+@ray_app.command(name="pg")
+def ray_pg_alias(
+    name: str = typer.Option("infer_pg", "--name", "-n", help="Placement group name."),
+    num_actors: int = typer.Option(2, "--num-actors", "-a", help="Number of actor slots."),
+    cpus_per_actor: int = typer.Option(1, "--cpus", "-c", help="CPUs per actor bundle."),
+) -> None:
+    """Allocate and inspect Ray Placement Groups (Alias for ckx ray-pg)."""
+    ray_pg(name=name, num_actors=num_actors, cpus_per_actor=cpus_per_actor)
+
+
 oci_app = typer.Typer(
     name="oci",
     help="OCI Artifact Packaging & Distribution Engine (OCI Spec v1.1.0, ORAS, Cosign)",
 )
+
 app.add_typer(oci_app, name="oci", rich_help_panel="Distribution & Packaging")
 
 
