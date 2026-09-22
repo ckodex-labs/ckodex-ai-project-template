@@ -5,7 +5,7 @@ title = 'ckx-ai-project-template Documentation'
 [params]
   description = "High-Assurance AI Architecture & DevSecOps Platform (Diátaxis Framework)"
   author = "CKODEX Core Engineering"
-  version = "1.0.0"
+  version = "0.3.0"
   signature = "GAL 1 Constitutional"
   enableMermaid = true
 
