@@ -11,6 +11,7 @@ from typer.testing import CliRunner
 
 from ckodex_aiops.adapters.observability.cockpit import AiopsCockpit
 from ckodex_aiops.cli import app
+from ckodex_aiops.kernel.state_vector import Anti, StateVector
 
 runner = CliRunner()
 
@@ -25,7 +26,9 @@ def test_cockpit_telemetry_collection():
     assert "ray_info" in data
     assert "merkle_root" in data
     assert "datasets" in data
-    assert data["state_vector"].is_healthy()
+    vec = data["state_vector"]
+    assert isinstance(vec, StateVector)
+    assert vec.anti == Anti.NONE
 
 
 def test_cockpit_html_export_ds3_compliance(tmp_path: Path):

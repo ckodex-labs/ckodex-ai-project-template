@@ -5,6 +5,7 @@ Trains PyTorch VectorRepresentationNet model on Lance feature embeddings with ha
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -79,6 +80,10 @@ def train_representation_model(
         "device": training_results.get("device"),
         "epochs": epochs,
     }
+
+    metadata_path = Path(checkpoint_dir) / "model_metadata.json"
+    metadata_path.parent.mkdir(parents=True, exist_ok=True)
+    metadata_path.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
 
     console.print(
         f"[bold green]✔ Training Complete:[/bold green] Checkpoints saved at {safetensors_path} and {pt_path} [dim](SHA256: {safetensors_sha256[:16]}...)[/dim]"

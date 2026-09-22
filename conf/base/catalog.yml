@@ -19,3 +19,8 @@ predictions_lance:
   type: ckodex_aiops.datasets.LanceDataset
   filepath: data/07_model_output/predictions.lance
   mode: overwrite
+
+model_artifact:
+  type: ckodex_aiops.datasets.ModelArtifactDataset
+  filepath: data/06_models/model.safetensors
+
