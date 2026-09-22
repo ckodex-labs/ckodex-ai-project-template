@@ -710,17 +710,13 @@ def tour(
     console.print(
         "\n[bold cyan]─── ACT I: SUBSTRATE & PREFLIGHT DOCTOR (Rules #7, #41) ───[/bold cyan]"
     )
-    with console.status(
-        "[bold cyan]Inspecting compute accelerators, storage engines, and Ray runtime...[/bold cyan]"
-    ):
-        time.sleep(0.4)
-        accel = (
-            "Apple Silicon MPS"
-            if torch.backends.mps.is_available()
-            else ("CUDA" if torch.cuda.is_available() else "CPU Fallback")
-        )
-        RayRuntimeManager.initialize()
-        ray_info = RayRuntimeManager.get_cluster_info()
+    accel = (
+        "Apple Silicon MPS"
+        if torch.backends.mps.is_available()
+        else ("CUDA" if torch.cuda.is_available() else "CPU Fallback")
+    )
+    RayRuntimeManager.initialize()
+    ray_info = RayRuntimeManager.get_cluster_info()
     console.print(
         f"  [bold green]✔ Substrate Verified:[/] {accel} active | Polars {pl.__version__} | Lance v12"
     )
@@ -732,21 +728,17 @@ def tour(
     console.print(
         "\n[bold cyan]─── ACT II: INTENT ENVELOPE & CAPABILITY LEASE (Rules #2, #4, #25) ───[/bold cyan]"
     )
-    with console.status(
-        "[bold cyan]Evaluating standing authority and minting bounded execution lease...[/bold cyan]"
-    ):
-        time.sleep(0.3)
-        auth_path = AuthorityPath(
-            tenant="ckodex",
-            workspace="workload-plane",
-            environment="production",
-            project="aiops-pipeline",
-        )
-        lease = CapabilityLease(
-            lease_id=f"lease_{uuid4().hex[:8]}",
-            granted_to="operator:governed-agent",
-            capabilities=("pipeline:execute", "storage:lance:write", "receipt:mint"),
-        )
+    auth_path = AuthorityPath(
+        tenant="ckodex",
+        workspace="workload-plane",
+        environment="production",
+        project="aiops-pipeline",
+    )
+    lease = CapabilityLease(
+        lease_id=f"lease_{uuid4().hex[:8]}",
+        granted_to="operator:governed-agent",
+        capabilities=("pipeline:execute", "storage:lance:write", "receipt:mint"),
+    )
     console.print(f"  [bold green]✔ Authority Path:[/] [cyan]{auth_path.to_urn()}[/cyan]")
     console.print(
         f"  [bold green]✔ Ephemeral Lease:[/] [yellow]{lease.lease_id}[/yellow] (Subject: {lease.granted_to}, Valid: {lease.is_valid()})"
@@ -756,40 +748,30 @@ def tour(
     console.print(
         "\n[bold cyan]─── ACT III: MULTIMODAL VECTOR PIPELINE (Rules #6, #9) ───[/bold cyan]"
     )
-    with console.status(
-        "[bold cyan]Transforming kinematics sensor data to zero-copy columnar Lance table...[/bold cyan]"
-    ):
-        time.sleep(0.3)
-        features_path = Path("data/04_feature/features.lance")
-        frag_count = 1
-        if features_path.exists():
-            try:
-                import lance
+    features_path = Path("data/04_feature/features.lance")
+    if not features_path.exists():
+        run(pipeline="data_processing", profile=None, ray_address=None, ray_actors=2)
+    import lance
 
-                ds = lance.dataset(str(features_path))
-                frag_count = len(ds.get_fragments())
-            except Exception:
-                pass
+    ds = lance.dataset(str(features_path))
+    frag_count = len(ds.get_fragments())
+    row_count = ds.count_rows()
     console.print(
-        f"  [bold green]✔ Lance Table Ready:[/] {features_path} ({frag_count} fragments, zero-copy Arrow streaming)"
+        f"  [bold green]✔ Lance Table Verified:[/] {features_path} ({row_count:,} rows, {frag_count} fragments, zero-copy Arrow)"
     )
 
     # --- ACT IV: BOUNDED RAY DISTRIBUTED TRAINING ---
     console.print(
         "\n[bold cyan]─── ACT IV: BOUNDED RAY DISTRIBUTED EXECUTION (Rules #6, #31) ───[/bold cyan]"
     )
-    with console.status(
-        "[bold cyan]Dispatching actor tasks under strict 4GB heap budget...[/bold cyan]"
-    ):
-        time.sleep(0.4)
-        model_path = Path("data/06_models/model.safetensors")
-        m_digest = (
-            compute_sha256(model_path.read_bytes())
-            if model_path.exists()
-            else "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        )
+    model_path = Path("data/06_models/model.safetensors")
+    if not model_path.exists():
+        run(pipeline="training", profile=None, ray_address=None, ray_actors=2)
+    m_bytes = model_path.read_bytes()
+    m_digest = compute_sha256(m_bytes)
+    m_size_kb = round(len(m_bytes) / 1024, 1)
     console.print(
-        "  [bold green]✔ Weights Checkpointed:[/] [cyan]model.safetensors[/cyan] (Native mmap, Zero-Pickle, CVE-Resistant)"
+        f"  [bold green]✔ Weights Checkpointed:[/] [cyan]{model_path.name}[/cyan] ({m_size_kb} KB, Native mmap, Zero-Pickle)"
     )
     console.print(f"  [bold green]✔ Content Digest:[/] [dim]sha256:{m_digest[:18]}...[/dim]")
 
@@ -797,48 +779,55 @@ def tour(
     console.print(
         "\n[bold cyan]─── ACT V: DYNAMIC QUANTIZATION & FIDELITY (Rule #8) ───[/bold cyan]"
     )
-    with console.status(
-        "[bold cyan]Quantizing model weights to Int8 and evaluating tensor fidelity...[/bold cyan]"
-    ):
-        time.sleep(0.3)
-        quant_path = Path("data/06_models/model_int8.pt")
-        q_size = round(quant_path.stat().st_size / 1024, 1) if quant_path.exists() else 12.4
+    quant_report = DynamicModelQuantizer.quantize_model(
+        source_model_path=str(model_path),
+        output_model_path="data/06_models/model_int8.pt",
+        fidelity_threshold=0.98,
+    )
     console.print(
-        f"  [bold green]✔ Int8 Model Quantized:[/] {q_size} KB (Representation fidelity verified, MSE delta < 1e-4)"
+        f"  [bold green]✔ Int8 Model Quantized:[/] {round(quant_report.quantized_size_bytes / 1024, 1)} KB "
+        f"(Cosine Similarity: {quant_report.fidelity_cosine_similarity:.4f}, Ratio: {quant_report.compression_ratio:.2f}x)"
     )
 
     # --- ACT VI: CRYPTOGRAPHIC EVIDENCE & SUPPLY-CHAIN ---
     console.print(
         "\n[bold cyan]─── ACT VI: EVIDENCE FABRIC & SUPPLY-CHAIN INTEGRITY (Rules #10, #39) ───[/bold cyan]"
     )
-    with console.status(
-        "[bold cyan]Building Merkle lineage chain, In-toto SLSA attestation & OSCAL definition...[/bold cyan]"
-    ):
-        time.sleep(0.4)
-        receipt_dir = Path("data/08_reporting/receipts")
-        rcpt_count = len(list(receipt_dir.glob("*.json"))) if receipt_dir.exists() else 5
-    console.print(
-        f"  [bold green]✔ Merkle Lineage Chain:[/] {rcpt_count} verified execution receipts chained (parent continuity proven)"
+    receipt_dir = Path("data/08_reporting/receipts")
+    receipt_files = sorted(receipt_dir.glob("*.json")) if receipt_dir.exists() else []
+    rcpt_digests = [compute_sha256(rf.read_bytes()) for rf in receipt_files]
+    merkle_root = (
+        MerkleLineageChain.build_merkle_root(rcpt_digests) if rcpt_digests else compute_sha256("")
+    )
+    slsa_statement = IntotoProvenanceAttestor.generate_attestation(subject_path=model_path)
+    slsa_dest = IntotoProvenanceAttestor.write_attestation(
+        slsa_statement,
+        output_path="data/08_reporting/attestations/provenance.intoto.jsonl",
+    )
+    oscal_dest = OscalComplianceGenerator.write_oscal(
+        output_path="data/08_reporting/oscal/component_definition.json"
     )
     console.print(
-        "  [bold green]✔ In-toto Statement:[/] SLSA v1.0 provenance generated at [cyan]data/08_reporting/attestations/provenance.intoto.jsonl[/cyan]"
+        f"  [bold green]✔ Merkle Lineage Chain:[/] {len(receipt_files)} receipts chained (Root: sha256:{merkle_root[:16]}...)"
     )
     console.print(
-        "  [bold green]✔ NIST SP 800-53 OSCAL:[/] Machine-verifiable component definition at [cyan]data/08_reporting/oscal/component_definition.json[/cyan]"
+        f"  [bold green]✔ In-toto Statement:[/] SLSA v1.0 provenance generated at [cyan]{slsa_dest}[/cyan]"
+    )
+    console.print(
+        f"  [bold green]✔ NIST SP 800-53 OSCAL:[/] Machine-verifiable component definition at [cyan]{oscal_dest}[/cyan]"
     )
 
     # --- ACT VII: AUTONOMIC DAY-2 RECONCILER & LIVING COCKPIT ---
     console.print(
         "\n[bold cyan]─── ACT VII: AUTONOMIC DAY-2 RECONCILER & MISSION COCKPIT (Rules #28, #35, #37) ───[/bold cyan]"
     )
-    with console.status(
-        "[bold cyan]Running continuous Day-2 reconciliation loop and compiling Cockpit...[/bold cyan]"
-    ):
-        ui = AiopsCockpit()
-        out_html = ui.export_html(output_path="docs/static/cockpit.html")
-        time.sleep(0.3)
+    reconciler = AutonomicReconciler()
+    rec = reconciler.run_reconciliation(auto_heal=True)
+    ui = AiopsCockpit()
+    out_html = ui.export_html(output_path="docs/static/cockpit.html")
     console.print(
-        "  [bold green]✔ Day-2 Reconciler Loop:[/] OBSERVE ➔ DETECT ➔ DIAGNOSE ➔ RECOVER ➔ RECONCILE (0 drift, State: NORMAL)"
+        f"  [bold green]✔ Day-2 Reconciler Loop:[/] State: {rec.resulting_vector.lifecycle.value} "
+        f"(Anomalies: {len(rec.anomalies_detected)}, Actions: {len(rec.actions_executed)})"
     )
     console.print(
         f"  [bold green]✔ Evidence Editorial Cockpit Compiled:[/] [bold]{out_html}[/bold]"
