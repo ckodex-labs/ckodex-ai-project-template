@@ -27,7 +27,8 @@ venv/
 ENV/
 
 # Kedro & Pipelines
-conf/local/
+conf/local/*
+!conf/local/.gitkeep
 data/01_raw/*
 !data/01_raw/.gitkeep
 data/02_intermediate/*

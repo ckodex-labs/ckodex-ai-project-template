@@ -514,6 +514,7 @@ def run(
     console.print(
         Panel.fit(f"[bold cyan]Executing Kedro Pipeline: '{target_pipeline}'[/bold cyan]")
     )
+    Path("conf/local").mkdir(parents=True, exist_ok=True)
     bootstrap_project(Path.cwd())
     with KedroSession.create(project_path=Path.cwd(), runtime_params=extra_params) as session:
         if target_pipeline and target_pipeline != "__default__":
