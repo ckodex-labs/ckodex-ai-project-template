@@ -140,21 +140,28 @@
       flex: 1;
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1180px) {
       .ck-doc-body {
-        grid-template-columns: var(--ck-nav-w, 220px) minmax(0, 1fr);
-      }
-      .ck-evidence-margin {
-        display: none;
+        grid-template-columns: var(--ck-nav-w, 200px) minmax(0, 1fr) 280px;
+        gap: var(--ck-sp-4);
+        padding: var(--ck-sp-4);
       }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 960px) {
       .ck-doc-body {
         grid-template-columns: 1fr;
+        gap: var(--ck-sp-6);
       }
       nav.ck-doc-nav {
-        display: none;
+        position: static;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      aside.ck-evidence-margin {
+        position: static;
+        width: 100%;
+        box-sizing: border-box;
       }
     }
 
@@ -544,9 +551,12 @@
       top: 5rem;
     }
 
-    .ck-margin-card {
+    .ck-margin-card,
+    .ck-card {
       background: var(--ck-bg-1);
       border: var(--ck-stroke-1) solid var(--ck-hairline);
+      border-radius: 0 !important;
+      box-shadow: none !important;
       padding: var(--ck-sp-4);
     }
 
@@ -739,7 +749,7 @@
 
       <!-- Aside Landmark: Evidence Margin -->
       <aside class="ck-evidence-margin" aria-label="Evidence Margin">
-        <div class="ck-margin-card">
+        <div class="ck-margin-card ck-sealed ck-sealed--proof">
           <div class="ck-margin-title">
             <span>Evidence Margin</span>
             <span class="ck-chip ck-chip--attested">SEALED</span>

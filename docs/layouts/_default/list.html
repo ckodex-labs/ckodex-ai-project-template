@@ -20,7 +20,7 @@
   <div style="display: flex; flex-direction: column; gap: var(--ck-sp-3);">
     {{ range .Pages }}
     <a href="{{ .RelPermalink }}" style="text-decoration: none; color: inherit;">
-      <div class="ck-margin-card" style="transition: border-color var(--ck-t-micro) ease;" onmouseover="this.style.borderColor='var(--ck-fg-1)'" onmouseout="this.style.borderColor='var(--ck-hairline)'">
+      <div class="ck-card ck-quiet" style="padding: var(--ck-sp-4); transition: border-color var(--ck-t-micro) ease;" onmouseover="this.style.borderColor='var(--ck-fg-1)'" onmouseout="this.style.borderColor='var(--ck-hairline)'">
         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
           <h3 style="margin: 0; font-family: var(--ck-ff-ui); font-size: 1.05rem; font-weight: 600; color: var(--ck-fg-1);">{{ .Title }}</h3>
           <span style="font-family: var(--ck-ff-mono); font-size: 11px; color: var(--ck-fg-3);">ARTICLE ↗</span>

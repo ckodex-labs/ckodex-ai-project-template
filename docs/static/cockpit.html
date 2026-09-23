@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="vault">
+<html lang="en" data-theme="ledger">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,61 +8,66 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    (function() {
+      const saved = localStorage.getItem('ck-theme');
+      if (saved && (saved === 'vault' || saved === 'ledger' || saved === 'hc')) {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    })();
+  </script>
   <style>
     /* ==========================================================================
-       CKODEX-DS-3 v3.0.0 "Evidence Editorial" Semantic Color Budget & Tokens
+       CKODEX-DS-3 v3.0.0 "Evidence Editorial" Cockpit Adaptations
        ========================================================================== */
     :root, [data-theme="ledger"] {
-      --ck-paper: #F6F1E8;
-      --ck-surface: #FFFFFF;
-      --ck-surface-2: #ECE6DA;
-      --ck-surface-card: #FAF6EF;
-      --ck-ink: #211B14;
-      --ck-tone: #6E6457;
-      --ck-border: #DCD5C9;
-      --ck-border-subtle: #E8E2D6;
+      --ck-surface: var(--ck-bg-0);
+      --ck-surface-2: var(--ck-bg-2);
+      --ck-surface-card: var(--ck-bg-1);
+      --ck-paper: var(--ck-bg-0, #FCF8F1);
+      --ck-ink: var(--ck-fg-1, #1A1915);
       --ck-rust: #B4532A;
-      --ck-violet: #6D28D9;
-      --ck-red: #B91C1C;
-      --ck-green: #15803D;
+      --ck-violet: #6E56CF;
+      --ck-seal: var(--ck-hairline-strong, #D8D2C5);
+      --ck-border: var(--ck-hairline);
+      --ck-border-subtle: var(--ck-bg-2);
       --ck-glow: rgba(180, 83, 42, 0.08);
-      --ck-dag-wire: #B8ADA0;
-      --ck-dag-active: #B4532A;
+      --ck-dag-wire: var(--ck-hairline-strong);
+      --ck-dag-active: var(--ck-rust);
     }
     [data-theme="vault"] {
-      --ck-paper: #0A1322;
-      --ck-surface: #0F1B30;
-      --ck-surface-2: #14243F;
-      --ck-surface-card: #111F36;
-      --ck-ink: #EAE5DA;
-      --ck-tone: #9A9284;
-      --ck-border: #1E2D4A;
-      --ck-border-subtle: #16233B;
+      --ck-surface: var(--ck-bg-0);
+      --ck-surface-2: var(--ck-bg-2);
+      --ck-surface-card: var(--ck-bg-1);
+      --ck-paper: var(--ck-bg-0, #0E0F12);
+      --ck-ink: var(--ck-fg-1, #EDE8DF);
       --ck-rust: #D2693A;
-      --ck-violet: #A78BFA;
-      --ck-red: #F87171;
-      --ck-green: #34D399;
+      --ck-violet: #8E78ED;
+      --ck-seal: var(--ck-hairline-strong, #2B2F38);
+      --ck-border: var(--ck-hairline);
+      --ck-border-subtle: var(--ck-bg-2);
       --ck-glow: rgba(210, 105, 58, 0.15);
-      --ck-dag-wire: #2A3C5E;
-      --ck-dag-active: #D2693A;
+      --ck-dag-wire: var(--ck-hairline-strong);
+      --ck-dag-active: var(--ck-rust);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
-      background: var(--ck-paper);
-      color: var(--ck-ink);
-      font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--ck-bg-0);
+      color: var(--ck-fg-1);
+      font-family: var(--ck-ff-ui);
       font-size: 14px;
       line-height: 1.5;
       min-height: 100vh;
-      transition: background 0.25s ease, color 0.25s ease;
+      transition: background var(--ck-t-state) ease, color var(--ck-t-state) ease;
     }
 
     /* Typography */
-    .ck-display { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; }
-    .ck-mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-ligatures: none; }
-    .ck-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ck-tone); }
-    .ck-invariant { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--ck-tone); }
+    .ck-display { font-family: var(--ck-ff-display); font-weight: 400; }
+    .ck-mono { font-family: var(--ck-ff-mono); font-variant-ligatures: none; }
+    .ck-label { font-family: var(--ck-ff-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ck-fg-3); font-variant-ligatures: none; }
+    .ck-invariant { font-family: var(--ck-ff-mono); font-size: 11px; font-weight: 600; color: var(--ck-fg-1); font-variant-ligatures: none; }
 
     /* Layout Shell */
     .ck-shell {
@@ -75,8 +80,8 @@
       align-items: center;
       justify-content: space-between;
       padding: 1rem 2rem;
-      border-bottom: 1px solid var(--ck-border);
-      background: var(--ck-surface);
+      border-bottom: 1px solid var(--ck-hairline);
+      background: var(--ck-bg-1);
     }
     .ck-brand {
       display: flex;
@@ -92,12 +97,12 @@
       background: var(--ck-ink);
       color: var(--ck-paper);
       font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 12px;
     }
     .ck-title-group h1 {
       font-size: 1.4rem;
-      color: var(--ck-ink);
+      color: var(--ck-fg-1);
       letter-spacing: -0.02em;
     }
     .ck-controls {
@@ -107,29 +112,32 @@
     }
 
     .ck-btn {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 12px;
+      font-weight: 600;
+      font-variant-ligatures: none;
       padding: 6px 14px;
-      border: 1px solid var(--ck-border);
-      background: var(--ck-surface-2);
-      color: var(--ck-ink);
+      border: 1px solid var(--ck-hairline-strong);
+      background: var(--ck-bg-2);
+      color: var(--ck-fg-1);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.15s ease;
+      border-radius: 0;
+      transition: border-color var(--ck-t-micro) ease, color var(--ck-t-micro) ease;
     }
     .ck-btn:hover {
-      border-color: var(--ck-rust);
-      color: var(--ck-rust);
+      border-color: var(--ck-fg-1);
+      color: var(--ck-fg-1);
     }
     .ck-btn-rust {
-      background: var(--ck-rust);
-      color: #FFFFFF !important;
-      border-color: var(--ck-rust);
+      background: var(--ck-accent);
+      color: var(--ck-accent-ink) !important;
+      border-color: var(--ck-accent);
     }
     .ck-btn-rust:hover {
-      opacity: 0.92;
+      filter: brightness(1.07);
     }
 
     /* Main Console Surface & Evidence Margin */
@@ -139,6 +147,15 @@
       flex: 1;
       min-height: calc(100vh - 120px);
     }
+    @media (max-width: 960px) {
+      .ck-body-grid {
+        grid-template-columns: 1fr;
+      }
+      aside.ck-margin {
+        border-left: none;
+        border-top: 1px solid var(--ck-hairline);
+      }
+    }
     .ck-main-content {
       padding: 2rem;
       display: flex;
@@ -147,8 +164,8 @@
       overflow-y: auto;
     }
     aside.ck-margin {
-      border-left: 1px solid var(--ck-border);
-      background: var(--ck-surface);
+      border-left: 1px solid var(--ck-hairline);
+      background: var(--ck-bg-0);
       padding: 1.5rem;
       display: flex;
       flex-direction: column;
@@ -156,16 +173,23 @@
       overflow-y: auto;
     }
 
-    /* Card geometry: Quiet square card & Attested sealed cut-corner */
-    .ck-card {
-      background: var(--ck-surface-card);
-      border: 1px solid var(--ck-border);
+    /* Card geometry: Quiet square paper card */
+    .ck-card,
+    .ck-quiet {
+      background: var(--ck-bg-1);
+      border: 1px solid var(--ck-hairline);
+      border-radius: 0 !important;
+      box-shadow: none !important;
       padding: 1.25rem;
       position: relative;
+      color: var(--ck-fg-1);
     }
-    .ck-sealed {
-      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-      border: 1px solid var(--ck-violet);
+    .ck-card--recessed,
+    .ck-quiet--recessed {
+      background: var(--ck-bg-2);
+      border: 1px solid var(--ck-hairline);
+      border-radius: 0 !important;
+      box-shadow: none !important;
     }
     .ck-card h3 {
       font-size: 0.95rem;
@@ -173,38 +197,85 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      color: var(--ck-fg-1);
+    }
+
+    /* Sealed surface — the ONLY chamfered thing in DS-3 (10px cut corner with seal contour) */
+    .ck-sealed,
+    .ck-card.ck-sealed {
+      position: relative;
+      background: var(--ck-bg-1);
+      border: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      clip-path: polygon(
+        10px 0, calc(100% - 10px) 0,
+        100% 10px, 100% calc(100% - 10px),
+        calc(100% - 10px) 100%, 10px 100%,
+        0 calc(100% - 10px), 0 10px
+      );
+    }
+    .ck-sealed::after,
+    .ck-card.ck-sealed::after {
+      content: "";
+      position: absolute; inset: 0;
+      pointer-events: none;
+      clip-path: inherit;
+      box-shadow: inset 0 0 0 2px var(--ck-seal);
+    }
+    .ck-sealed--proof,
+    .ck-card--attested,
+    .ck-sealed.ck-sealed--proof {
+      position: relative;
+      background: var(--ck-bg-1);
+      border: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      clip-path: polygon(
+        10px 0, calc(100% - 10px) 0,
+        100% 10px, 100% calc(100% - 10px),
+        calc(100% - 10px) 100%, 10px 100%,
+        0 calc(100% - 10px), 0 10px
+      );
+    }
+    .ck-sealed--proof::after,
+    .ck-card--attested::after,
+    .ck-sealed.ck-sealed--proof::after {
+      content: "";
+      position: absolute; inset: 0;
+      pointer-events: none;
+      clip-path: inherit;
+      box-shadow: inset 0 0 0 2px var(--ck-proof) !important;
     }
 
     /* Claim chips */
     .ck-chip {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 11px;
+      font-variant-ligatures: none;
       padding: 2px 8px;
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      border: 1px solid var(--ck-border);
-      background: var(--ck-surface-2);
-      color: var(--ck-ink);
+      border: 1px solid var(--ck-hairline);
+      background: var(--ck-bg-2);
+      color: var(--ck-fg-1);
+      border-radius: 0;
     }
     .ck-chip.attested {
-      border-color: var(--ck-violet);
-      color: var(--ck-violet);
-      background: rgba(167, 139, 250, 0.1);
+      border-color: var(--ck-proof);
+      color: var(--ck-proof);
+      background: color-mix(in oklab, var(--ck-proof) 10%, var(--ck-bg-1));
     }
     .ck-chip.observed {
-      border-color: var(--ck-tone);
-      color: var(--ck-ink);
+      border-color: var(--ck-hairline-strong);
+      color: var(--ck-fg-1);
+      background: var(--ck-bg-2);
     }
     .ck-chip.quarantined {
-      border-color: var(--ck-red);
-      color: var(--ck-red);
-      background: rgba(248, 113, 113, 0.1);
-    }
-    .ck-chip.healthy {
-      border-color: var(--ck-green);
-      color: var(--ck-green);
-      background: rgba(52, 211, 153, 0.1);
+      border-color: var(--ck-alarm);
+      color: var(--ck-alarm);
+      background: color-mix(in oklab, var(--ck-alarm) 10%, var(--ck-bg-1));
     }
 
     /* Top Banner / Metrics Bento */
@@ -215,21 +286,24 @@
     }
     .ck-metric-val {
       font-size: 1.8rem;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-weight: 600;
-      color: var(--ck-ink);
+      color: var(--ck-fg-1);
       margin-top: 0.25rem;
+      font-variant-numeric: tabular-nums;
+      font-variant-ligatures: none;
+      letter-spacing: -0.02em;
     }
     .ck-metric-sub {
       font-size: 11px;
-      color: var(--ck-tone);
+      color: var(--ck-fg-3);
       margin-top: 0.15rem;
     }
 
     /* Interactive Pipeline Merkle DAG */
     .ck-dag-canvas {
-      background: var(--ck-surface);
-      border: 1px solid var(--ck-border);
+      background: var(--ck-bg-1);
+      border: 1px solid var(--ck-hairline);
       padding: 1.5rem;
       position: relative;
     }
@@ -240,36 +314,54 @@
       margin-top: 1rem;
     }
     .ck-node {
-      background: var(--ck-surface-2);
-      border: 1px solid var(--ck-border);
+      background: var(--ck-bg-2);
+      border: 1px solid var(--ck-hairline);
       padding: 0.85rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: border-color var(--ck-t-micro) ease;
       position: relative;
+      border-radius: 0;
     }
     .ck-node:hover, .ck-node.active {
       border-color: var(--ck-rust);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px var(--ck-glow);
     }
     .ck-node.sealed {
-      border-color: var(--ck-violet);
+      border: 0 !important;
+      clip-path: polygon(
+        8px 0, calc(100% - 8px) 0,
+        100% 8px, 100% calc(100% - 8px),
+        calc(100% - 8px) 100%, 8px 100%,
+        0 calc(100% - 8px), 0 8px
+      );
+    }
+    .ck-node.sealed::after {
+      content: "";
+      position: absolute; inset: 0;
+      pointer-events: none;
+      clip-path: inherit;
+      box-shadow: inset 0 0 0 1.5px var(--ck-proof);
+    }
+    .ck-node.sealed.active::after {
+      box-shadow: inset 0 0 0 2px var(--ck-rust);
     }
     .ck-node-num {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 10px;
-      color: var(--ck-tone);
+      color: var(--ck-fg-3);
+      font-variant-ligatures: none;
     }
     .ck-node-name {
       font-weight: 600;
       font-size: 12px;
       margin: 0.2rem 0;
+      color: var(--ck-fg-1);
     }
     .ck-node-sub {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 11px;
-      color: var(--ck-tone);
+      color: var(--ck-fg-3);
       word-break: break-all;
+      font-variant-ligatures: none;
     }
 
     /* Autonomic Control Loop */
@@ -278,23 +370,24 @@
       align-items: center;
       justify-content: space-between;
       padding: 0.75rem 1rem;
-      background: var(--ck-surface);
-      border: 1px solid var(--ck-border);
-      font-family: 'JetBrains Mono', monospace;
+      background: var(--ck-bg-1);
+      border: 1px solid var(--ck-hairline);
+      font-family: var(--ck-ff-mono);
       font-size: 11px;
+      font-variant-ligatures: none;
     }
     .ck-loop-step {
       display: flex;
       align-items: center;
       gap: 6px;
-      color: var(--ck-tone);
+      color: var(--ck-fg-3);
     }
     .ck-loop-step.active {
       color: var(--ck-rust);
       font-weight: 700;
     }
     .ck-loop-arrow {
-      color: var(--ck-border);
+      color: var(--ck-hairline-strong);
     }
 
     /* State Vector Hexagon Radar Grid */
@@ -308,24 +401,25 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: var(--ck-surface);
-      border: 1px solid var(--ck-border);
+      background: var(--ck-bg-1);
+      border: 1px solid var(--ck-hairline);
       padding: 1rem;
     }
 
     /* Evidence Margin Content */
     .ck-receipt {
-      border: 1px dashed var(--ck-border);
+      border: 1px dashed var(--ck-hairline-strong);
       padding: 1rem;
-      background: var(--ck-surface-2);
-      font-family: 'JetBrains Mono', monospace;
+      background: var(--ck-bg-1);
+      font-family: var(--ck-ff-mono);
       font-size: 11.5px;
+      font-variant-ligatures: none;
     }
     .ck-receipt-row {
       display: flex;
       justify-content: space-between;
       padding: 0.35rem 0;
-      border-bottom: 1px solid var(--ck-border-subtle);
+      border-bottom: 1px solid var(--ck-hairline);
     }
     .ck-receipt-row:last-child { border-bottom: none; }
     .ck-hash-val {
@@ -336,33 +430,35 @@
       text-decoration: underline;
     }
     .ck-stamp {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 10px;
-      color: var(--ck-violet);
-      border: 1px solid var(--ck-violet);
+      color: var(--ck-proof);
+      border: 1px solid var(--ck-proof);
       padding: 2px 6px;
       display: inline-block;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      font-variant-ligatures: none;
     }
 
     /* Flight Recorder Feed */
     .ck-log-feed {
       max-height: 220px;
       overflow-y: auto;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 11px;
+      font-variant-ligatures: none;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
     }
     .ck-log-entry {
       padding: 4px 8px;
-      background: var(--ck-surface-2);
-      border-left: 2px solid var(--ck-border);
+      background: var(--ck-bg-2);
+      border-left: 2px solid var(--ck-hairline-strong);
     }
     .ck-log-entry.attested {
-      border-left-color: var(--ck-violet);
+      border-left-color: var(--ck-proof);
     }
     .ck-log-entry.alert {
       border-left-color: var(--ck-rust);
@@ -375,13 +471,14 @@
       right: 24px;
       background: var(--ck-ink);
       color: var(--ck-paper);
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 12px;
+      font-variant-ligatures: none;
       padding: 8px 16px;
       display: none;
       z-index: 1000;
-      border: 1px solid var(--ck-border);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      border: 1px solid var(--ck-hairline);
+      box-shadow: none;
     }
   </style>
 </head>
@@ -416,7 +513,7 @@
       <div class="ck-bento">
         <div class="ck-card">
           <div class="ck-label">Operational State Vector</div>
-          <div class="ck-metric-val" style="color: var(--ck-green);">NORMAL</div>
+          <div class="ck-metric-val" style="font-weight: 600; color: var(--ck-fg-1);">NORMAL</div>
           <div class="ck-metric-sub">Valence: POSITIVE • Anti: NONE</div>
         </div>
         <div class="ck-card">
@@ -426,7 +523,7 @@
         </div>
         <div class="ck-card">
           <div class="ck-label">Merkle Lineage Root</div>
-          <div class="ck-metric-val ck-mono" style="font-size: 1.1rem; padding-top: 6px;">sha256:0f9d26043b…</div>
+          <div class="ck-metric-val ck-mono" style="font-size: 1.1rem; padding-top: 6px;">sha256:c32684c783…</div>
           <div class="ck-metric-sub">8 Continuous Receipts Minted</div>
         </div>
         <div class="ck-card">
@@ -483,7 +580,7 @@
             <div class="ck-node-num">03 // DISTRIBUTE</div>
             <div class="ck-node-name">Ray Actor Mesh</div>
             <div class="ck-node-sub">Bounded 4GB Heap Pool</div>
-            <div style="margin-top: 6px;"><span class="ck-chip healthy">● bounded</span></div>
+            <div style="margin-top: 6px;"><span class="ck-chip observed">⊢ bounded</span></div>
           </div>
 
           <div class="ck-node sealed active" onclick="selectNode('model_weights', this)">
@@ -553,7 +650,7 @@
             <circle cx="-80" cy="-45" r="4" fill="var(--ck-rust)"/>
           </svg>
           <div class="ck-mono" style="font-size: 11px; margin-top: 0.5rem; text-align: center;">
-            Valence: <strong style="color: var(--ck-green);">POSITIVE</strong> • Anti: <strong>NONE</strong>
+            Valence: <strong>POSITIVE</strong> • Anti: <strong>NONE</strong>
           </div>
         </div>
 
@@ -565,19 +662,19 @@
           </h3>
           <div class="ck-log-feed">
             <div class="ck-log-entry attested">
-              <span class="ck-label">[2026-09-22 18:04:08Z]</span> <strong>MERKLE_ROOT_MINT</strong>: Built root sha256:0f9d26043be5bb47… across 8 node receipts.
+              <span class="ck-label">[2026-09-23 22:27:25Z]</span> <strong>MERKLE_ROOT_MINT</strong>: Built root sha256:c32684c783523bf5… across 8 node receipts.
             </div>
             <div class="ck-log-entry attested">
-              <span class="ck-label">[2026-09-22 18:04:08Z]</span> <strong>CAPABILITY_LEASE_VERIFY</strong>: Active lease granted under AuthorityPath: root.tenant.production.
+              <span class="ck-label">[2026-09-23 22:27:25Z]</span> <strong>CAPABILITY_LEASE_VERIFY</strong>: Active lease granted under AuthorityPath: root.tenant.production.
             </div>
             <div class="ck-log-entry">
-              <span class="ck-label">[2026-09-22 18:04:08Z]</span> <strong>STORAGE_INSPECT</strong>: Lance datasets feature tables verified. Fragment count optimal.
+              <span class="ck-label">[2026-09-23 22:27:25Z]</span> <strong>STORAGE_INSPECT</strong>: Lance datasets feature tables verified. Fragment count optimal.
             </div>
             <div class="ck-log-entry">
-              <span class="ck-label">[2026-09-22 18:04:08Z]</span> <strong>RAY_HEURISTIC_BOUND</strong>: Actor heap allocated bounded to 4.0GB. Host memory protected (Rule #31).
+              <span class="ck-label">[2026-09-23 22:27:25Z]</span> <strong>RAY_HEURISTIC_BOUND</strong>: Actor heap allocated bounded to 4.0GB. Host memory protected (Rule #31).
             </div>
             <div class="ck-log-entry">
-              <span class="ck-label">[2026-09-22 18:04:08Z]</span> <strong>SAFE_TENSORS_VERIFY</strong>: Zero-pickle model weights loaded via zero-copy mmap. CVE-resistant.
+              <span class="ck-label">[2026-09-23 22:27:25Z]</span> <strong>SAFE_TENSORS_VERIFY</strong>: Zero-pickle model weights loaded via zero-copy mmap. CVE-resistant.
             </div>
           </div>
         </div>
@@ -594,7 +691,7 @@
       </div>
 
       <!-- Node Receipt Detail -->
-      <div class="ck-receipt">
+      <div class="ck-receipt ck-card">
         <div style="font-weight: 700; margin-bottom: 0.5rem; border-bottom: 1px solid var(--ck-border); padding-bottom: 4px;" id="marginTitle">
           model.safetensors
         </div>
@@ -604,7 +701,7 @@
         </div>
         <div class="ck-receipt-row">
           <span class="ck-label">Content Digest</span>
-          <span class="ck-hash-val" id="marginDigest" onclick="copyDigest(this.innerText)">sha256:c7bf9c3d0a39…</span>
+          <span class="ck-hash-val" id="marginDigest" onclick="copyDigest(this.innerText)">sha256:d4453f196ecc…</span>
         </div>
         <div class="ck-receipt-row">
           <span class="ck-label">Artifact Size</span>
@@ -616,7 +713,7 @@
         </div>
         <div class="ck-receipt-row">
           <span class="ck-label">Parent Merkle</span>
-          <span class="ck-mono" id="marginParent" style="font-size: 10px;">sha256:0f9d26043b…</span>
+          <span class="ck-mono" id="marginParent" style="font-size: 10px;">sha256:c32684c783…</span>
         </div>
         <div class="ck-receipt-row">
           <span class="ck-label">SLSA Builder</span>
@@ -625,7 +722,7 @@
       </div>
 
       <!-- Invariant Stamp -->
-      <div class="ck-card" style="padding: 1rem; background: var(--ck-surface-2);">
+      <div class="ck-card ck-sealed ck-sealed--proof" style="padding: 1rem; background: var(--ck-bg-1);">
         <div class="ck-label" style="margin-bottom: 0.35rem;">Constitutional Invariant</div>
         <div class="ck-invariant">
           mode changes deployment, not governance semantics
@@ -657,11 +754,11 @@
 
 <script>
   const telemetry = {
-  "timestamp": "2026-09-22 18:04:08Z",
+  "timestamp": "2026-09-23 22:27:25Z",
   "profile": "macos_metal_safetensors",
   "accelerator": "mps",
   "weights_format": "safetensors",
-  "merkle_root": "0f9d26043be5bb47925e8e40768ae40bc9c26f04670de702875f4de424357f66",
+  "merkle_root": "c32684c783523bf5ca475b7eee415c652099df6b7991196ecb620385dba6e898",
   "state_vector": {
     "presence": "PRESENT",
     "valence": "POSITIVE",
@@ -686,88 +783,88 @@
   "model": {
     "exists": true,
     "size_kb": 78.6,
-    "digest": "c7bf9c3d0a394c694eebbf11223596752fd7ff3cb7e687d670cfe5af73a6f1a0",
+    "digest": "d4453f196ecc28b0fd0c8b98c9071624115067bc11dad886363b83a5f613be19",
     "type": "safetensors (zero-pickle, native mmap)"
   },
   "quant": {
     "exists": true,
     "size_kb": 34.1,
-    "digest": "b76f24aa00e106069426feca2a727a28a06be089d0e5b8c306f0cb47389fc38c"
+    "digest": "d71936dc4cf6d3bddafed12ff3b8c23b43a3820fdd280fdb77d34480094598b5"
   },
   "slsa": {
     "exists": true,
-    "digest": "5d720cb5af327b5641945e0186ae4f97a07ae7398c7c14ccd18e98d0b0f98508"
+    "digest": "c8612a32c36e217149294ba1007722e372d3148fc6706a5078d9c4e4f3e90c5b"
   },
   "oscal": {
     "exists": true,
-    "digest": "e9cff5f6f8c7ea08ae518818afc179a4545391d5184b79b87fe203be2a527a34"
+    "digest": "00c6b29f4afb58bd909cfd7c6ab391b33eef63f7d6d3485ec66b3f5aafb6e9ce"
   },
   "receipts": [
     {
-      "name": "rcpt_821764f95335_train_representation_model_node.json",
-      "receipt_id": "rcpt_821764f95335",
-      "digest": "24dfd6dc9d379d5a2b65ad3c382c94c05831a09fbfcb52d38442ecb550a57a90",
-      "timestamp": "2026-09-22T14:27:04.551603+00:00",
+      "name": "rcpt_c3a2c07b0e92_train_representation_model_node.json",
+      "receipt_id": "rcpt_c3a2c07b0e92",
+      "digest": "4e7904cbb837f6c8f8e73081b0d06402798281a9279925e5a1ec427c9f46b10d",
+      "timestamp": "2026-09-23T22:27:24.436805+00:00",
       "node": "train_representation_model_node"
     },
     {
-      "name": "rcpt_1058084d0155_generate_distributed_embeddings_node.json",
-      "receipt_id": "rcpt_1058084d0155",
-      "digest": "bf76bfce0d574742bf5c43c2c47231652f8bb207e78221d7bd4df71d993f1495",
-      "timestamp": "2026-09-22T14:27:02.515466+00:00",
+      "name": "rcpt_aa515af764e4_generate_distributed_embeddings_node.json",
+      "receipt_id": "rcpt_aa515af764e4",
+      "digest": "d0cb5a4ab4e7607386f1d57e4631c68a17cd4be87260434aa8cb611bcb6ba468",
+      "timestamp": "2026-09-23T22:27:22.481261+00:00",
       "node": "generate_distributed_embeddings_node"
     },
     {
-      "name": "rcpt_55305caf04e9_compute_polars_features_node.json",
-      "receipt_id": "rcpt_55305caf04e9",
-      "digest": "e09cab5fb50bccce7c332b6bf5fac4d7ba78cd21f291460557bb13d65aa0f635",
-      "timestamp": "2026-09-22T14:27:01.668700+00:00",
+      "name": "rcpt_c24255a3d5e3_compute_polars_features_node.json",
+      "receipt_id": "rcpt_c24255a3d5e3",
+      "digest": "08f41e94b1ad6ac1b66c2dfd1d131ab0b32e3043cc8cb20812ffe4de8ea40fbe",
+      "timestamp": "2026-09-23T22:27:21.706788+00:00",
       "node": "compute_polars_features_node"
     },
     {
-      "name": "rcpt_f3048ba240d6_validate_and_filter_raw_node.json",
-      "receipt_id": "rcpt_f3048ba240d6",
-      "digest": "191b9b04130fdd7e9116a7ee142d40eb1f8ab462d1c58c99d2d1c4696b88db04",
-      "timestamp": "2026-09-22T14:27:01.535353+00:00",
+      "name": "rcpt_4aebd490e70d_validate_and_filter_raw_node.json",
+      "receipt_id": "rcpt_4aebd490e70d",
+      "digest": "9035cee0b450f9dc459f1d3f44ee1793db05414de21eb8ac6d54e484852ed5ff",
+      "timestamp": "2026-09-23T22:27:21.692849+00:00",
       "node": "validate_and_filter_raw_node"
     },
     {
-      "name": "rcpt_6ecf3ce78b76_generate_synthetic_telemetry_node.json",
-      "receipt_id": "rcpt_6ecf3ce78b76",
-      "digest": "1c8e6019c3ebd154233c7d9e78bb3526c51599fc136d80988a136cb740552738",
-      "timestamp": "2026-09-22T14:27:01.506958+00:00",
+      "name": "rcpt_f8b3d5062caf_generate_synthetic_telemetry_node.json",
+      "receipt_id": "rcpt_f8b3d5062caf",
+      "digest": "bd88b47ceb693f939b8a5389089f5564975933e1cf81ff93acc6cdb65748e8b9",
+      "timestamp": "2026-09-23T22:27:21.682741+00:00",
       "node": "generate_synthetic_telemetry_node"
     },
     {
-      "name": "rcpt_release_ae7843c33946.json",
-      "receipt_id": "rcpt_release_ae7843c33946",
-      "digest": "f37d4f0830aff99474a3c136ccc7d63f0ffae452f0ff71f15844e8802ee05b39",
-      "timestamp": "2026-09-22T14:21:11.766120+00:00",
+      "name": "rcpt_release_f9261bd8ecc8.json",
+      "receipt_id": "rcpt_release_f9261bd8ecc8",
+      "digest": "613e046295d27f11be27a41d3047b6f6217d97b8276e5f9db77405b39d4ae91d",
+      "timestamp": "2026-09-23T22:19:53.920654+00:00",
       "node": "quarantine_release"
     },
     {
-      "name": "rcpt_e2fa75863901_train_representation_model_node.json",
-      "receipt_id": "rcpt_e2fa75863901",
-      "digest": "f538ef72d366e698773282bb0186541f0b2cd394cdb36aea709b5e34b1a37972",
-      "timestamp": "2026-09-22T14:21:00.856973+00:00",
+      "name": "rcpt_1a703a6ebb25_train_representation_model_node.json",
+      "receipt_id": "rcpt_1a703a6ebb25",
+      "digest": "92a3ede867e48c8dbad63e956f599943add0b3e17085fcb4f23e7c496ff66394",
+      "timestamp": "2026-09-23T22:19:43.577343+00:00",
       "node": "train_representation_model_node"
     },
     {
-      "name": "rcpt_99cc4c19bfba_generate_distributed_embeddings_node.json",
-      "receipt_id": "rcpt_99cc4c19bfba",
-      "digest": "b62fbaea7d11fae5f8acd06cc00799c78434020af6adfccdd30a4c1b9def8b3d",
-      "timestamp": "2026-09-22T14:20:59.247951+00:00",
+      "name": "rcpt_9a02c9a2beeb_generate_distributed_embeddings_node.json",
+      "receipt_id": "rcpt_9a02c9a2beeb",
+      "digest": "12d738083516bb78044e4e95cb1ced4fe90df974b32b7421a44d3356a37b55d6",
+      "timestamp": "2026-09-23T22:19:41.430893+00:00",
       "node": "generate_distributed_embeddings_node"
     }
   ],
   "datasets": {
     "events.lance": {
       "exists": true,
-      "fragment_files": 3
+      "fragment_files": 1
     },
     "features.lance": {
       "exists": true,
-      "fragment_files": 3
+      "fragment_files": 1
     },
     "physical_ai.lance": {
       "exists": true,
@@ -797,8 +894,8 @@
     },
     ray_cluster: {
       title: "Ray Actor Mesh",
-      status: "● BOUNDED",
-      statusClass: "healthy",
+      status: "⊢ BOUNDED",
+      statusClass: "observed",
       digest: "sha256:ray_actor_mesh_lease",
       size: telemetry.ray.allocated_memory_gb + " GB Heap",
       engine: telemetry.ray.mode || "LOCAL_EMBEDDED",
@@ -868,14 +965,26 @@
     document.getElementById('marginParent').innerText = meta.parent.slice(0, 18) + '…';
   }
 
+  function updateThemeButton(theme) {
+    const btn = document.getElementById('themeBtn');
+    if (btn) {
+      btn.innerText = theme === 'vault' ? '☀ Archival Ledger' : '◐ Vault Ground';
+    }
+  }
+
   function toggleTheme() {
     const html = document.documentElement;
-    const btn = document.getElementById('themeBtn');
-    const current = html.getAttribute('data-theme');
+    const current = html.getAttribute('data-theme') || 'ledger';
     const next = current === 'vault' ? 'ledger' : 'vault';
     html.setAttribute('data-theme', next);
-    btn.innerText = next === 'vault' ? '◐ Vault Ground' : '☀ Archival Ledger';
+    try { localStorage.setItem('ck-theme', next); } catch(e) {}
+    updateThemeButton(next);
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'ledger';
+    updateThemeButton(current);
+  });
 
   function copyDigest(text) {
     navigator.clipboard.writeText(text).then(() => {

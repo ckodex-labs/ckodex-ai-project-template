@@ -359,7 +359,7 @@ class AiopsCockpit:
         )
 
         html_content = f"""<!DOCTYPE html>
-<html lang="en" data-theme="vault">
+<html lang="en" data-theme="ledger">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -368,61 +368,66 @@ class AiopsCockpit:
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    (function() {{
+      const saved = localStorage.getItem('ck-theme');
+      if (saved && (saved === 'vault' || saved === 'ledger' || saved === 'hc')) {{
+        document.documentElement.setAttribute('data-theme', saved);
+      }}
+    }})();
+  </script>
   <style>
     /* ==========================================================================
-       CKODEX-DS-3 v3.0.0 "Evidence Editorial" Semantic Color Budget & Tokens
+       CKODEX-DS-3 v3.0.0 "Evidence Editorial" Cockpit Adaptations
        ========================================================================== */
     :root, [data-theme="ledger"] {{
-      --ck-paper: #F6F1E8;
-      --ck-surface: #FFFFFF;
-      --ck-surface-2: #ECE6DA;
-      --ck-surface-card: #FAF6EF;
-      --ck-ink: #211B14;
-      --ck-tone: #6E6457;
-      --ck-border: #DCD5C9;
-      --ck-border-subtle: #E8E2D6;
+      --ck-surface: var(--ck-bg-0);
+      --ck-surface-2: var(--ck-bg-2);
+      --ck-surface-card: var(--ck-bg-1);
+      --ck-paper: var(--ck-bg-0, #FCF8F1);
+      --ck-ink: var(--ck-fg-1, #1A1915);
       --ck-rust: #B4532A;
-      --ck-violet: #6D28D9;
-      --ck-red: #B91C1C;
-      --ck-green: #15803D;
+      --ck-violet: #6E56CF;
+      --ck-seal: var(--ck-hairline-strong, #D8D2C5);
+      --ck-border: var(--ck-hairline);
+      --ck-border-subtle: var(--ck-bg-2);
       --ck-glow: rgba(180, 83, 42, 0.08);
-      --ck-dag-wire: #B8ADA0;
-      --ck-dag-active: #B4532A;
+      --ck-dag-wire: var(--ck-hairline-strong);
+      --ck-dag-active: var(--ck-rust);
     }}
     [data-theme="vault"] {{
-      --ck-paper: #0A1322;
-      --ck-surface: #0F1B30;
-      --ck-surface-2: #14243F;
-      --ck-surface-card: #111F36;
-      --ck-ink: #EAE5DA;
-      --ck-tone: #9A9284;
-      --ck-border: #1E2D4A;
-      --ck-border-subtle: #16233B;
+      --ck-surface: var(--ck-bg-0);
+      --ck-surface-2: var(--ck-bg-2);
+      --ck-surface-card: var(--ck-bg-1);
+      --ck-paper: var(--ck-bg-0, #0E0F12);
+      --ck-ink: var(--ck-fg-1, #EDE8DF);
       --ck-rust: #D2693A;
-      --ck-violet: #A78BFA;
-      --ck-red: #F87171;
-      --ck-green: #34D399;
+      --ck-violet: #8E78ED;
+      --ck-seal: var(--ck-hairline-strong, #2B2F38);
+      --ck-border: var(--ck-hairline);
+      --ck-border-subtle: var(--ck-bg-2);
       --ck-glow: rgba(210, 105, 58, 0.15);
-      --ck-dag-wire: #2A3C5E;
-      --ck-dag-active: #D2693A;
+      --ck-dag-wire: var(--ck-hairline-strong);
+      --ck-dag-active: var(--ck-rust);
     }}
 
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
     html, body {{
-      background: var(--ck-paper);
-      color: var(--ck-ink);
-      font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--ck-bg-0);
+      color: var(--ck-fg-1);
+      font-family: var(--ck-ff-ui);
       font-size: 14px;
       line-height: 1.5;
       min-height: 100vh;
-      transition: background 0.25s ease, color 0.25s ease;
+      transition: background var(--ck-t-state) ease, color var(--ck-t-state) ease;
     }}
 
     /* Typography */
-    .ck-display {{ font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; }}
-    .ck-mono {{ font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; font-variant-ligatures: none; }}
-    .ck-label {{ font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ck-tone); }}
-    .ck-invariant {{ font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--ck-tone); }}
+    .ck-display {{ font-family: var(--ck-ff-display); font-weight: 400; }}
+    .ck-mono {{ font-family: var(--ck-ff-mono); font-variant-ligatures: none; }}
+    .ck-label {{ font-family: var(--ck-ff-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ck-fg-3); font-variant-ligatures: none; }}
+    .ck-invariant {{ font-family: var(--ck-ff-mono); font-size: 11px; font-weight: 600; color: var(--ck-fg-1); font-variant-ligatures: none; }}
 
     /* Layout Shell */
     .ck-shell {{
@@ -435,8 +440,8 @@ class AiopsCockpit:
       align-items: center;
       justify-content: space-between;
       padding: 1rem 2rem;
-      border-bottom: 1px solid var(--ck-border);
-      background: var(--ck-surface);
+      border-bottom: 1px solid var(--ck-hairline);
+      background: var(--ck-bg-1);
     }}
     .ck-brand {{
       display: flex;
@@ -452,12 +457,12 @@ class AiopsCockpit:
       background: var(--ck-ink);
       color: var(--ck-paper);
       font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 12px;
     }}
     .ck-title-group h1 {{
       font-size: 1.4rem;
-      color: var(--ck-ink);
+      color: var(--ck-fg-1);
       letter-spacing: -0.02em;
     }}
     .ck-controls {{
@@ -467,29 +472,32 @@ class AiopsCockpit:
     }}
 
     .ck-btn {{
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 12px;
+      font-weight: 600;
+      font-variant-ligatures: none;
       padding: 6px 14px;
-      border: 1px solid var(--ck-border);
-      background: var(--ck-surface-2);
-      color: var(--ck-ink);
+      border: 1px solid var(--ck-hairline-strong);
+      background: var(--ck-bg-2);
+      color: var(--ck-fg-1);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.15s ease;
+      border-radius: 0;
+      transition: border-color var(--ck-t-micro) ease, color var(--ck-t-micro) ease;
     }}
     .ck-btn:hover {{
-      border-color: var(--ck-rust);
-      color: var(--ck-rust);
+      border-color: var(--ck-fg-1);
+      color: var(--ck-fg-1);
     }}
     .ck-btn-rust {{
-      background: var(--ck-rust);
-      color: #FFFFFF !important;
-      border-color: var(--ck-rust);
+      background: var(--ck-accent);
+      color: var(--ck-accent-ink) !important;
+      border-color: var(--ck-accent);
     }}
     .ck-btn-rust:hover {{
-      opacity: 0.92;
+      filter: brightness(1.07);
     }}
 
     /* Main Console Surface & Evidence Margin */
@@ -499,6 +507,15 @@ class AiopsCockpit:
       flex: 1;
       min-height: calc(100vh - 120px);
     }}
+    @media (max-width: 960px) {{
+      .ck-body-grid {{
+        grid-template-columns: 1fr;
+      }}
+      aside.ck-margin {{
+        border-left: none;
+        border-top: 1px solid var(--ck-hairline);
+      }}
+    }}
     .ck-main-content {{
       padding: 2rem;
       display: flex;
@@ -507,8 +524,8 @@ class AiopsCockpit:
       overflow-y: auto;
     }}
     aside.ck-margin {{
-      border-left: 1px solid var(--ck-border);
-      background: var(--ck-surface);
+      border-left: 1px solid var(--ck-hairline);
+      background: var(--ck-bg-0);
       padding: 1.5rem;
       display: flex;
       flex-direction: column;
@@ -516,16 +533,23 @@ class AiopsCockpit:
       overflow-y: auto;
     }}
 
-    /* Card geometry: Quiet square card & Attested sealed cut-corner */
-    .ck-card {{
-      background: var(--ck-surface-card);
-      border: 1px solid var(--ck-border);
+    /* Card geometry: Quiet square paper card */
+    .ck-card,
+    .ck-quiet {{
+      background: var(--ck-bg-1);
+      border: 1px solid var(--ck-hairline);
+      border-radius: 0 !important;
+      box-shadow: none !important;
       padding: 1.25rem;
       position: relative;
+      color: var(--ck-fg-1);
     }}
-    .ck-sealed {{
-      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-      border: 1px solid var(--ck-violet);
+    .ck-card--recessed,
+    .ck-quiet--recessed {{
+      background: var(--ck-bg-2);
+      border: 1px solid var(--ck-hairline);
+      border-radius: 0 !important;
+      box-shadow: none !important;
     }}
     .ck-card h3 {{
       font-size: 0.95rem;
@@ -533,38 +557,85 @@ class AiopsCockpit:
       display: flex;
       align-items: center;
       justify-content: space-between;
+      color: var(--ck-fg-1);
+    }}
+
+    /* Sealed surface — the ONLY chamfered thing in DS-3 (10px cut corner with seal contour) */
+    .ck-sealed,
+    .ck-card.ck-sealed {{
+      position: relative;
+      background: var(--ck-bg-1);
+      border: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      clip-path: polygon(
+        10px 0, calc(100% - 10px) 0,
+        100% 10px, 100% calc(100% - 10px),
+        calc(100% - 10px) 100%, 10px 100%,
+        0 calc(100% - 10px), 0 10px
+      );
+    }}
+    .ck-sealed::after,
+    .ck-card.ck-sealed::after {{
+      content: "";
+      position: absolute; inset: 0;
+      pointer-events: none;
+      clip-path: inherit;
+      box-shadow: inset 0 0 0 2px var(--ck-seal);
+    }}
+    .ck-sealed--proof,
+    .ck-card--attested,
+    .ck-sealed.ck-sealed--proof {{
+      position: relative;
+      background: var(--ck-bg-1);
+      border: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      clip-path: polygon(
+        10px 0, calc(100% - 10px) 0,
+        100% 10px, 100% calc(100% - 10px),
+        calc(100% - 10px) 100%, 10px 100%,
+        0 calc(100% - 10px), 0 10px
+      );
+    }}
+    .ck-sealed--proof::after,
+    .ck-card--attested::after,
+    .ck-sealed.ck-sealed--proof::after {{
+      content: "";
+      position: absolute; inset: 0;
+      pointer-events: none;
+      clip-path: inherit;
+      box-shadow: inset 0 0 0 2px var(--ck-proof) !important;
     }}
 
     /* Claim chips */
     .ck-chip {{
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 11px;
+      font-variant-ligatures: none;
       padding: 2px 8px;
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      border: 1px solid var(--ck-border);
-      background: var(--ck-surface-2);
-      color: var(--ck-ink);
+      border: 1px solid var(--ck-hairline);
+      background: var(--ck-bg-2);
+      color: var(--ck-fg-1);
+      border-radius: 0;
     }}
     .ck-chip.attested {{
-      border-color: var(--ck-violet);
-      color: var(--ck-violet);
-      background: rgba(167, 139, 250, 0.1);
+      border-color: var(--ck-proof);
+      color: var(--ck-proof);
+      background: color-mix(in oklab, var(--ck-proof) 10%, var(--ck-bg-1));
     }}
     .ck-chip.observed {{
-      border-color: var(--ck-tone);
-      color: var(--ck-ink);
+      border-color: var(--ck-hairline-strong);
+      color: var(--ck-fg-1);
+      background: var(--ck-bg-2);
     }}
     .ck-chip.quarantined {{
-      border-color: var(--ck-red);
-      color: var(--ck-red);
-      background: rgba(248, 113, 113, 0.1);
-    }}
-    .ck-chip.healthy {{
-      border-color: var(--ck-green);
-      color: var(--ck-green);
-      background: rgba(52, 211, 153, 0.1);
+      border-color: var(--ck-alarm);
+      color: var(--ck-alarm);
+      background: color-mix(in oklab, var(--ck-alarm) 10%, var(--ck-bg-1));
     }}
 
     /* Top Banner / Metrics Bento */
@@ -575,21 +646,24 @@ class AiopsCockpit:
     }}
     .ck-metric-val {{
       font-size: 1.8rem;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-weight: 600;
-      color: var(--ck-ink);
+      color: var(--ck-fg-1);
       margin-top: 0.25rem;
+      font-variant-numeric: tabular-nums;
+      font-variant-ligatures: none;
+      letter-spacing: -0.02em;
     }}
     .ck-metric-sub {{
       font-size: 11px;
-      color: var(--ck-tone);
+      color: var(--ck-fg-3);
       margin-top: 0.15rem;
     }}
 
     /* Interactive Pipeline Merkle DAG */
     .ck-dag-canvas {{
-      background: var(--ck-surface);
-      border: 1px solid var(--ck-border);
+      background: var(--ck-bg-1);
+      border: 1px solid var(--ck-hairline);
       padding: 1.5rem;
       position: relative;
     }}
@@ -600,36 +674,54 @@ class AiopsCockpit:
       margin-top: 1rem;
     }}
     .ck-node {{
-      background: var(--ck-surface-2);
-      border: 1px solid var(--ck-border);
+      background: var(--ck-bg-2);
+      border: 1px solid var(--ck-hairline);
       padding: 0.85rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: border-color var(--ck-t-micro) ease;
       position: relative;
+      border-radius: 0;
     }}
     .ck-node:hover, .ck-node.active {{
       border-color: var(--ck-rust);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px var(--ck-glow);
     }}
     .ck-node.sealed {{
-      border-color: var(--ck-violet);
+      border: 0 !important;
+      clip-path: polygon(
+        8px 0, calc(100% - 8px) 0,
+        100% 8px, 100% calc(100% - 8px),
+        calc(100% - 8px) 100%, 8px 100%,
+        0 calc(100% - 8px), 0 8px
+      );
+    }}
+    .ck-node.sealed::after {{
+      content: "";
+      position: absolute; inset: 0;
+      pointer-events: none;
+      clip-path: inherit;
+      box-shadow: inset 0 0 0 1.5px var(--ck-proof);
+    }}
+    .ck-node.sealed.active::after {{
+      box-shadow: inset 0 0 0 2px var(--ck-rust);
     }}
     .ck-node-num {{
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 10px;
-      color: var(--ck-tone);
+      color: var(--ck-fg-3);
+      font-variant-ligatures: none;
     }}
     .ck-node-name {{
       font-weight: 600;
       font-size: 12px;
       margin: 0.2rem 0;
+      color: var(--ck-fg-1);
     }}
     .ck-node-sub {{
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 11px;
-      color: var(--ck-tone);
+      color: var(--ck-fg-3);
       word-break: break-all;
+      font-variant-ligatures: none;
     }}
 
     /* Autonomic Control Loop */
@@ -638,23 +730,24 @@ class AiopsCockpit:
       align-items: center;
       justify-content: space-between;
       padding: 0.75rem 1rem;
-      background: var(--ck-surface);
-      border: 1px solid var(--ck-border);
-      font-family: 'JetBrains Mono', monospace;
+      background: var(--ck-bg-1);
+      border: 1px solid var(--ck-hairline);
+      font-family: var(--ck-ff-mono);
       font-size: 11px;
+      font-variant-ligatures: none;
     }}
     .ck-loop-step {{
       display: flex;
       align-items: center;
       gap: 6px;
-      color: var(--ck-tone);
+      color: var(--ck-fg-3);
     }}
     .ck-loop-step.active {{
       color: var(--ck-rust);
       font-weight: 700;
     }}
     .ck-loop-arrow {{
-      color: var(--ck-border);
+      color: var(--ck-hairline-strong);
     }}
 
     /* State Vector Hexagon Radar Grid */
@@ -668,24 +761,25 @@ class AiopsCockpit:
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: var(--ck-surface);
-      border: 1px solid var(--ck-border);
+      background: var(--ck-bg-1);
+      border: 1px solid var(--ck-hairline);
       padding: 1rem;
     }}
 
     /* Evidence Margin Content */
     .ck-receipt {{
-      border: 1px dashed var(--ck-border);
+      border: 1px dashed var(--ck-hairline-strong);
       padding: 1rem;
-      background: var(--ck-surface-2);
-      font-family: 'JetBrains Mono', monospace;
+      background: var(--ck-bg-1);
+      font-family: var(--ck-ff-mono);
       font-size: 11.5px;
+      font-variant-ligatures: none;
     }}
     .ck-receipt-row {{
       display: flex;
       justify-content: space-between;
       padding: 0.35rem 0;
-      border-bottom: 1px solid var(--ck-border-subtle);
+      border-bottom: 1px solid var(--ck-hairline);
     }}
     .ck-receipt-row:last-child {{ border-bottom: none; }}
     .ck-hash-val {{
@@ -696,33 +790,35 @@ class AiopsCockpit:
       text-decoration: underline;
     }}
     .ck-stamp {{
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 10px;
-      color: var(--ck-violet);
-      border: 1px solid var(--ck-violet);
+      color: var(--ck-proof);
+      border: 1px solid var(--ck-proof);
       padding: 2px 6px;
       display: inline-block;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      font-variant-ligatures: none;
     }}
 
     /* Flight Recorder Feed */
     .ck-log-feed {{
       max-height: 220px;
       overflow-y: auto;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 11px;
+      font-variant-ligatures: none;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
     }}
     .ck-log-entry {{
       padding: 4px 8px;
-      background: var(--ck-surface-2);
-      border-left: 2px solid var(--ck-border);
+      background: var(--ck-bg-2);
+      border-left: 2px solid var(--ck-hairline-strong);
     }}
     .ck-log-entry.attested {{
-      border-left-color: var(--ck-violet);
+      border-left-color: var(--ck-proof);
     }}
     .ck-log-entry.alert {{
       border-left-color: var(--ck-rust);
@@ -735,13 +831,14 @@ class AiopsCockpit:
       right: 24px;
       background: var(--ck-ink);
       color: var(--ck-paper);
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--ck-ff-mono);
       font-size: 12px;
+      font-variant-ligatures: none;
       padding: 8px 16px;
       display: none;
       z-index: 1000;
-      border: 1px solid var(--ck-border);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      border: 1px solid var(--ck-hairline);
+      box-shadow: none;
     }}
   </style>
 </head>
@@ -776,7 +873,7 @@ class AiopsCockpit:
       <div class="ck-bento">
         <div class="ck-card">
           <div class="ck-label">Operational State Vector</div>
-          <div class="ck-metric-val" style="color: var(--ck-green);">{vec.lifecycle.value}</div>
+          <div class="ck-metric-val" style="font-weight: 600; color: var(--ck-fg-1);">{vec.lifecycle.value}</div>
           <div class="ck-metric-sub">Valence: {vec.valence.value} • Anti: {vec.anti.value}</div>
         </div>
         <div class="ck-card">
@@ -843,7 +940,7 @@ class AiopsCockpit:
             <div class="ck-node-num">03 // DISTRIBUTE</div>
             <div class="ck-node-name">Ray Actor Mesh</div>
             <div class="ck-node-sub">Bounded 4GB Heap Pool</div>
-            <div style="margin-top: 6px;"><span class="ck-chip healthy">● bounded</span></div>
+            <div style="margin-top: 6px;"><span class="ck-chip observed">⊢ bounded</span></div>
           </div>
 
           <div class="ck-node sealed active" onclick="selectNode('model_weights', this)">
@@ -913,7 +1010,7 @@ class AiopsCockpit:
             <circle cx="-80" cy="-45" r="4" fill="var(--ck-rust)"/>
           </svg>
           <div class="ck-mono" style="font-size: 11px; margin-top: 0.5rem; text-align: center;">
-            Valence: <strong style="color: var(--ck-green);">{vec.valence.value}</strong> • Anti: <strong>{vec.anti.value}</strong>
+            Valence: <strong>{vec.valence.value}</strong> • Anti: <strong>{vec.anti.value}</strong>
           </div>
         </div>
 
@@ -954,7 +1051,7 @@ class AiopsCockpit:
       </div>
 
       <!-- Node Receipt Detail -->
-      <div class="ck-receipt">
+      <div class="ck-receipt ck-card">
         <div style="font-weight: 700; margin-bottom: 0.5rem; border-bottom: 1px solid var(--ck-border); padding-bottom: 4px;" id="marginTitle">
           model.safetensors
         </div>
@@ -985,7 +1082,7 @@ class AiopsCockpit:
       </div>
 
       <!-- Invariant Stamp -->
-      <div class="ck-card" style="padding: 1rem; background: var(--ck-surface-2);">
+      <div class="ck-card ck-sealed ck-sealed--proof" style="padding: 1rem; background: var(--ck-bg-1);">
         <div class="ck-label" style="margin-bottom: 0.35rem;">Constitutional Invariant</div>
         <div class="ck-invariant">
           mode changes deployment, not governance semantics
@@ -1039,8 +1136,8 @@ class AiopsCockpit:
     }},
     ray_cluster: {{
       title: "Ray Actor Mesh",
-      status: "● BOUNDED",
-      statusClass: "healthy",
+      status: "⊢ BOUNDED",
+      statusClass: "observed",
       digest: "sha256:ray_actor_mesh_lease",
       size: telemetry.ray.allocated_memory_gb + " GB Heap",
       engine: telemetry.ray.mode || "LOCAL_EMBEDDED",
@@ -1110,14 +1207,26 @@ class AiopsCockpit:
     document.getElementById('marginParent').innerText = meta.parent.slice(0, 18) + '…';
   }}
 
+  function updateThemeButton(theme) {{
+    const btn = document.getElementById('themeBtn');
+    if (btn) {{
+      btn.innerText = theme === 'vault' ? '☀ Archival Ledger' : '◐ Vault Ground';
+    }}
+  }}
+
   function toggleTheme() {{
     const html = document.documentElement;
-    const btn = document.getElementById('themeBtn');
-    const current = html.getAttribute('data-theme');
+    const current = html.getAttribute('data-theme') || 'ledger';
     const next = current === 'vault' ? 'ledger' : 'vault';
     html.setAttribute('data-theme', next);
-    btn.innerText = next === 'vault' ? '◐ Vault Ground' : '☀ Archival Ledger';
+    try {{ localStorage.setItem('ck-theme', next); }} catch(e) {{}}
+    updateThemeButton(next);
   }}
+
+  document.addEventListener('DOMContentLoaded', () => {{
+    const current = document.documentElement.getAttribute('data-theme') || 'ledger';
+    updateThemeButton(current);
+  }});
 
   function copyDigest(text) {{
     navigator.clipboard.writeText(text).then(() => {{
@@ -1166,7 +1275,6 @@ class AiopsCockpit:
                 if self.path == "/api/telemetry":
                     self.send_response(200)
                     self.send_header("Content-Type", "application/json; charset=utf-8")
-                    self.end_headers()
                     data = self_cockpit.collect_telemetry()
                     vec = data["state_vector"]
                     serializable = {
@@ -1190,12 +1298,17 @@ class AiopsCockpit:
                         "receipt_count": data["receipt_count"],
                         "ray_info": data["ray_info"],
                     }
-                    self.wfile.write(json.dumps(serializable, indent=2).encode("utf-8"))
+                    body = json.dumps(serializable, indent=2).encode("utf-8")
+                    self.send_header("Content-Length", str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
                 elif self.path == "/healthz":
+                    body = b'{"status":"HEALTHY"}'
                     self.send_response(200)
                     self.send_header("Content-Type", "application/json")
+                    self.send_header("Content-Length", str(len(body)))
                     self.end_headers()
-                    self.wfile.write(b'{"status":"HEALTHY"}')
+                    self.wfile.write(body)
                 else:
                     html_path = self_cockpit.export_html(output_path="docs/static/cockpit.html")
                     content = html_path.read_bytes()
@@ -1206,6 +1319,9 @@ class AiopsCockpit:
                     self.wfile.write(content)
 
             def do_POST(self) -> None:
+                content_length = int(self.headers.get("Content-Length", 0))
+                if content_length > 0:
+                    _ = self.rfile.read(content_length)
                 if self.path == "/api/reconcile":
                     rec = self_cockpit.reconciler.run_reconciliation(auto_heal=True)
                     resp = {
@@ -1215,10 +1331,12 @@ class AiopsCockpit:
                         "receipt_id": rec.receipt_id,
                         "actions": rec.actions_executed,
                     }
+                    body = json.dumps(resp).encode("utf-8")
                     self.send_response(200)
                     self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.send_header("Content-Length", str(len(body)))
                     self.end_headers()
-                    self.wfile.write(json.dumps(resp).encode("utf-8"))
+                    self.wfile.write(body)
                 else:
                     self.send_response(404)
                     self.end_headers()
