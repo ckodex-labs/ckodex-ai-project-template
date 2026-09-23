@@ -23,10 +23,14 @@ class ResearchEvidenceTracker:
     with opaque correlation bindings to models, datasets, and execution receipts.
     """
 
-    DEFAULT_DISCOVERY_PATHS = [
-        Path.home() / "Documents" / "projects" / "operations" / "ckodex-research-evidence",
-        Path("/Users/mchorfa/Documents/projects/operations/ckodex-research-evidence"),
-    ]
+    @classmethod
+    def get_discovery_paths(cls) -> list[Path]:
+        paths: list[Path] = []
+        if env_path := os.environ.get("CKODEX_RESEARCH_EVIDENCE_PATH"):
+            paths.append(Path(env_path))
+        paths.append(Path.home() / ".ckodex" / "research-evidence")
+        paths.append(Path.home() / "Documents" / "projects" / "operations" / "ckodex-research-evidence")
+        return paths
 
     def __init__(
         self,
@@ -55,7 +59,7 @@ class ResearchEvidenceTracker:
             candidate_paths: list[Path] = []
             if self.sdk_path:
                 candidate_paths.append(Path(self.sdk_path))
-            candidate_paths.extend(self.DEFAULT_DISCOVERY_PATHS)
+            candidate_paths.extend(self.get_discovery_paths())
 
             for cand in candidate_paths:
                 py_path = cand / "python"

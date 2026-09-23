@@ -6,13 +6,13 @@ weight: 35
 
 # Governance & Resilience Hooks Reference
 
-The `ckx-ai-project-template` integrates five enterprise lifecycle hooks registered directly in Kedro's [`settings.py`](file:///Users/mchorfa/Documents/projects/runbase/ckodex-cfyd-aiops/src/ckodex_aiops/settings.py). These hooks enforce the CKODEX constitutional signature without contaminating pure domain code.
+The `ckx-ai-project-template` integrates five enterprise lifecycle hooks registered directly in Kedro's [`settings.py`](https://github.com/ckodex-labs/ckodex-ai-project-template/blob/main/src/ckodex_aiops/settings.py). These hooks enforce the CKODEX constitutional signature without contaminating pure domain code.
 
 ---
 
 ## 1. AuthorityAdmissionHook
 
-- **Module**: [`ckodex_aiops.hooks.authority_admission`](file:///Users/mchorfa/Documents/projects/runbase/ckodex-cfyd-aiops/src/ckodex_aiops/hooks/authority_admission.py)
+- **Module**: `ckodex_aiops.hooks.authority_admission`
 - **Constitutional Rules**: Rule #2 (Authority Precedes Everything), Rule #4 (Intent as Unit of Work), Rule #11 (Proof Before Side Effects), Rule #25 (Zero-Trust Capability Leases).
 - **Execution Points**:
   - `before_pipeline_run`: Preflight validation of standing authority and capability lease.
@@ -25,7 +25,7 @@ The `ckx-ai-project-template` integrates five enterprise lifecycle hooks registe
 
 ## 2. DataIntegrityHook
 
-- **Module**: [`ckodex_aiops.hooks.data_integrity`](file:///Users/mchorfa/Documents/projects/runbase/ckodex-cfyd-aiops/src/ckodex_aiops/hooks/data_integrity.py)
+- **Module**: `ckodex_aiops.hooks.data_integrity`
 - **Constitutional Rules**: Rule #8 (Shared Validation), Rule #14 (Empty Is Not Negative), Rule #18 (State Lineage).
 - **Execution Points**:
   - `before_node_run`: Computes content-addressable digests for all node inputs; halts on unexpected empty data.
@@ -39,18 +39,18 @@ The `ckx-ai-project-template` integrates five enterprise lifecycle hooks registe
 
 ## 3. ResilienceCircuitBreakerHook
 
-- **Module**: [`ckodex_aiops.hooks.resilience_circuit`](file:///Users/mchorfa/Documents/projects/runbase/ckodex-cfyd-aiops/src/ckodex_aiops/hooks/resilience_circuit.py)
+- **Module**: `ckodex_aiops.hooks.resilience_circuit`
 - **Constitutional Rules**: Rule #29 (Runtime Modes), Rule #30 (Degraded Mode Contract), Rule #31 (Bounded Resilience), Rule #32 (Quarantine Preserves Evidence).
 - **Execution Points**:
   - `before_node_run`: Checks circuit breaker state (`CLOSED`, `OPEN`, `HALF_OPEN`). Rejects execution if failure budget is exhausted and cooldown timer has not expired.
-  - `on_node_error`: Increments failure budget. If threshold (`max_consecutive_failures=3`) is reached, trips the circuit to `OPEN`, isolates failing input payloads into the forensic Quarantine Vault (`data/08_reporting/quarantine/`), and records incident metadata.
+  - `on_node_error`: Increments failure budget. If threshold (`max_consecutive failures=3`) is reached, trips the circuit to `OPEN`, isolates failing input payloads into the forensic Quarantine Vault (`data/08_reporting/quarantine/`), and records incident metadata.
   - `after_node_run`: Resets failure counter upon successful execution (completing half-open probe recovery).
 
 ---
 
 ## 4. TraceabilityEvidenceHook
 
-- **Module**: [`ckodex_aiops.hooks.traceability_evidence`](file:///Users/mchorfa/Documents/projects/runbase/ckodex-cfyd-aiops/src/ckodex_aiops/hooks/traceability_evidence.py)
+- **Module**: `ckodex_aiops.hooks.traceability_evidence`
 - **Constitutional Rules**: Rule #10 (Evidence Fabric), Rule #12 (Four Truth Channels), Rule #38 (Flight Recorder).
 - **Execution Points**:
   - `before_pipeline_run`: Initializes root W3C TraceContext (`traceparent`).
@@ -61,7 +61,7 @@ The `ckx-ai-project-template` integrates five enterprise lifecycle hooks registe
 
 ## 5. RayLifecycleHook
 
-- **Module**: [`ckodex_aiops.hooks.ray_lifecycle`](file:///Users/mchorfa/Documents/projects/runbase/ckodex-cfyd-aiops/src/ckodex_aiops/hooks/ray_lifecycle.py)
+- **Module**: `ckodex_aiops.hooks.ray_lifecycle`
 - **Constitutional Rules**: Rule #7 (Runtime Substrate Separation), Rule #37 (Deep Observability).
 - **Execution Points**:
   - `before_pipeline_run`: Prewarms the Ray runtime substrate via `RayRuntimeManager.initialize()`, logging available CPU, GPU, and memory resources.
