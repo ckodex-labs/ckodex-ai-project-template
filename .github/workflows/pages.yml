@@ -27,7 +27,7 @@ jobs:
         with:
           version: "0.21.8"
           verb: call
-          args: -m ./ci build-docs --source . --base-url "https://ckodex-labs.github.io/ckx-ai-project-template/" export --path ./public
+          args: -m ./ci build-docs --source . --base-url "https://ckodex-labs.github.io/ckodex-ai-project-template/" export --path ./public
 
       - name: Upload GitHub Pages Artifact
         uses: actions/upload-pages-artifact@v3

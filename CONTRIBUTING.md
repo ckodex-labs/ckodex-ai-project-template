@@ -20,8 +20,8 @@ Ensure you have the following installed on your workstation:
 
 ### Step 1: Clone & Setup
 ```bash
-git clone https://github.com/cfyd-ai/ckodex-aiops.git
-cd ckodex-aiops
+git clone https://github.com/ckodex-labs/ckodex-ai-project-template.git
+cd ckodex-ai-project-template
 
 # Install and synchronize virtual environment deterministically
 just install
@@ -39,7 +39,7 @@ Run fast unit tests in < 2 seconds during active development:
 just test-fast
 ```
 
-Run the full distributed test suite (69 tests):
+Run the full distributed test suite (128 tests):
 ```bash
 just test
 ```

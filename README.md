@@ -2,7 +2,7 @@
 
 [![Python 3.12](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
 [![UV](https://img.shields.io/badge/package%20manager-uv-green.svg)](https://astral.sh/uv)
-[![Tests: 116 Passing](https://img.shields.io/badge/tests-116%20passed-22c55e.svg)]()
+[![Tests: 128 Passing](https://img.shields.io/badge/tests-128%20passed-22c55e.svg)]()
 [![Kedro 0.19+](https://img.shields.io/badge/orchestration-kedro-ff9900.svg)](https://kedro.org/)
 [![Ray Actors & Mesh](https://img.shields.io/badge/distributed-bounded%20ray-028CF0.svg)](https://www.ray.io/)
 [![Lance & LanceDB](https://img.shields.io/badge/vector%20store-lance%20%7C%20lancedb-blueviolet.svg)](https://lancedb.com/)
@@ -64,7 +64,7 @@ flowchart TD
 
     subgraph CockpitPlane ["Cockpit & Living Documentation"]
         direction TB
-        HugoDocs["Hugo Living Docs Site<br/>(docs/ • 25 ms compilation)"]
+        HugoDocs["Hugo Living Docs Site<br/>(docs/ • 56 pages Diátaxis)"]
         Cockpit["AIOps Mission Cockpit<br/>(Terminal UI & Static HTML Dashboard)"]
         OscalGen["NIST SP 800-53 OSCAL<br/>(Component Definition Machine Schema)"]
     end
@@ -89,11 +89,12 @@ flowchart TD
 | **Deep Learning & Accel** | [PyTorch](https://pytorch.org/) + [Safetensors](https://github.com/huggingface/safetensors) | Zero-pickle `mmap` tensor checkpoints on **Apple Silicon Metal (MPS)** and NVIDIA CUDA. |
 | **Actor & Co-Actor Concurrency** | [Ray Core](https://www.ray.io/) | Compute-heavy `InferenceActor` decoupled from companion `TelemetryCoactor` ring buffers. |
 | **SSDLC CI/CD Engine** | [Dagger](https://dagger.io/) | Containerized local/CI pipeline: Ruff lint, Pytest, Syft SBOM, Grype CVE gating, Gitleaks, and multi-arch OCI image builds (`linux/amd64`, `linux/arm64`). |
-| **Living Documentation** | [Hugo Extended](https://gohugo.io/) | 17-page dark-themed architecture, DevSecOps, and Day-2 operations documentation site built in **23 ms**. |
+| **Living Documentation** | [Hugo Extended](https://gohugo.io/) | 56-page Diátaxis architecture, DevSecOps, and Day-2 operations documentation site built in **28 ms**. |
 | **Zero-Trust Secrets** | HashiCorp Vault • KMS • Keyless | Memory-safe `SecretValue` (redacted in `repr`/`str`), time-bounded `SecretLease`, and ambient OIDC workload identity. |
 | **Distributed Tracing** | [OpenTelemetry](https://opentelemetry.io/) | W3C `traceparent` carrier injection/extraction across Ray RPC and Kedro node boundaries. |
 | **Day-2 Autonomic Control** | CKODEX Reconciler | Canonical loop: `OBSERVE -> DETECT -> DIAGNOSE -> RECOVER -> RECONCILE`. Automatically heals fragmentation and drift. |
 | **Supply-Chain Attestation** | In-toto + SLSA + OSCAL | SLSA v1.0 provenance statements and NIST SP 800-53 Rev 5 OSCAL component definitions. |
+| **Scientific SDK** | Governed Scientific Kernels | `@governed_scientific` zero-ceremony decorator, FASTA/PDB zero-copy connectors, and automatic asset tombstoning. |
 | **Governance & Lifecycle** | Pure Semantic Kernel | Self-documenting on/offboarding engine: authority hierarchy, bounded `CapabilityLease` issuance/revocation, cryptographic lineage receipts, and automated Hugo docs. |
 
 ---
@@ -107,7 +108,7 @@ ckx-ai-project-template/
 ├── justfile                     # Modern, self-documenting command runner
 ├── Makefile                     # Standardized developer workflows
 ├── README.md                    # Platform architecture dossier
-├── .github/workflows/ssdlc.yml  # GitHub Actions harness delegating to Dagger
+├── .github/workflows/ci.yml     # GitHub Actions harness delegating to Dagger
 ├── ci/                          # Dagger SSDLC Python Module
 │   ├── dagger.json              # Dagger module manifest
 │   └── src/ckodex_cicd/main.py  # Lint, test, Syft SBOM, Grype gate, Gitleaks, multi-arch OCI
@@ -131,6 +132,7 @@ ckx-ai-project-template/
 │   └── 08_reporting/            # Receipts, attestations, OSCAL, SBOMs, Lifecycle
 ├── src/ckodex_aiops/
 │   ├── cli.py                   # Day-2 CLI (doctor, reconcile, attest, cockpit, sbom, onboard, offboard)
+│   ├── scientific/              # Governed Scientific SDK (decorators, FASTA/PDB connectors, tombstoning)
 │   ├── kernel/                  # Pure Semantic Kernel (ZERO external heavy dependencies)
 │   │   ├── state_vector.py      # StateVector S(e,t) product type & ConformanceTransition
 │   │   ├── reconciler.py        # Autonomic Day-2 Reconciler & Self-Healing Loop
@@ -149,7 +151,7 @@ ckx-ai-project-template/
 │   │   └── lance/               # Columnar vector store adapter
 │   ├── models/                  # PyTorch Safetensors network & streaming datasets
 │   └── pipelines/               # Kedro pipeline modules (ingestion, features, train, eval, inference, physical_ai)
-└── tests/                       # 116 Comprehensive Unit & Conformance Test Suites
+└── tests/                       # 128 Comprehensive Unit & Conformance Test Suites
 ```
 
 ---
@@ -175,7 +177,7 @@ just tour
 just cockpit-serve
 # Opens http://127.0.0.1:8888 with SVG Merkle DAG, Hexagonal Radar, and Evidence Margin
 
-# 4. Run the full test suite (116 tests in ~26 seconds)
+# 4. Run the full test suite (128 tests in ~30 seconds)
 just test
 ```
 

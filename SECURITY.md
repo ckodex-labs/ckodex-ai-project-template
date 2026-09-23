@@ -15,7 +15,7 @@ The **CKODEX AIOps Platform** is engineered according to high-assurance zero-tru
 We take the security of this platform seriously. If you discover a security vulnerability, please follow our coordinated disclosure process:
 
 1. **Do NOT open a public GitHub issue** for security vulnerabilities.
-2. Send an encrypted advisory report to: **`security@ckodex.cfyd.ai`**
+2. Send an encrypted advisory report to: **`security@ckodex.ai`**
 3. Include:
    - Description of the vulnerability and attack vector.
    - Affected components (`src/ckodex_aiops/`, `deploy/`, `ci/`).
@@ -37,5 +37,5 @@ We take the security of this platform seriously. If you discover a security vuln
 
 | Version | Supported | Security Patch Cadence |
 | :--- | :---: | :--- |
-| `1.0.x` | Yes | Critical & High CVE patches within 48 hours |
-| `< 1.0` | No | Upgrade to 1.0.x required |
+| `0.3.x` | Yes | Active release |
+| `< 0.3` | No | Upgrade to 0.3.x required |
