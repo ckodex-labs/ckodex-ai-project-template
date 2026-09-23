@@ -3122,6 +3122,138 @@ def show_research_evidence(
     )
 
 
+# -----------------------------------------------------------------------------
+# Scientific Tooling & Decommissioning Commands (M1-M3)
+# -----------------------------------------------------------------------------
+scientific_app = typer.Typer(
+    name="scientific",
+    help="Scientific Kernel SDK: Ingestion, Analysis, and Cryptographic Asset Offboarding",
+)
+app.add_typer(scientific_app, name="scientific", rich_help_panel="Execution & Pipelines")
+
+
+@scientific_app.command(name="ingest-fasta")
+def scientific_ingest_fasta(
+    fasta_path: str = typer.Argument(..., help="Path to input FASTA file."),
+    table_name: str = typer.Option("sequences", "--table", "-t", help="Target Lance table name."),
+    store_dir: str = typer.Option(
+        "data/04_feature/lance", "--store", "-s", help="Destination Lance directory."
+    ),
+) -> None:
+    """Ingest sequence records from FASTA into a high-performance Lance dataset."""
+    from ckodex_aiops.scientific.connectors import ScientificDataConnector
+
+    p = Path(fasta_path)
+    if not p.exists():
+        console.print(f"[bold red]Error:[/] FASTA file not found at {fasta_path}")
+        raise typer.Exit(1)
+
+    connector = ScientificDataConnector(lance_store_dir=store_dir)
+    df = connector.parse_fasta(p)
+    manifest = connector.ingest_to_lance(table_name=table_name, df=df)
+
+    console.print(
+        Panel.fit(
+            f"[bold green]✔ Ingested FASTA into Lance Dataset[/bold green]\n\n"
+            f"[dim]Records Ingested:[/] [bold]{manifest.record_count}[/bold]\n"
+            f"[dim]Table URI:[/] [cyan]{manifest.destination_uri}[/cyan]\n"
+            f"[dim]Content Digest:[/] [dim]{manifest.content_digest}[/dim]\n"
+            f"[dim]Columns:[/] {', '.join(manifest.schema_summary)}",
+            border_style="green",
+        )
+    )
+
+
+@scientific_app.command(name="ingest-pdb")
+def scientific_ingest_pdb(
+    pdb_path: str = typer.Argument(..., help="Path to input PDB structure file."),
+    table_name: str = typer.Option(
+        "structure_atoms", "--table", "-t", help="Target Lance table name."
+    ),
+    store_dir: str = typer.Option(
+        "data/04_feature/lance", "--store", "-s", help="Destination Lance directory."
+    ),
+) -> None:
+    """Ingest 3D atomic coordinates from PDB into a high-performance Lance dataset."""
+    from ckodex_aiops.scientific.connectors import ScientificDataConnector
+
+    p = Path(pdb_path)
+    if not p.exists():
+        console.print(f"[bold red]Error:[/] PDB file not found at {pdb_path}")
+        raise typer.Exit(1)
+
+    connector = ScientificDataConnector(lance_store_dir=store_dir)
+    df = connector.parse_pdb_atoms(p)
+    manifest = connector.ingest_to_lance(table_name=table_name, df=df)
+
+    console.print(
+        Panel.fit(
+            f"[bold green]✔ Ingested PDB Coordinates into Lance Dataset[/bold green]\n\n"
+            f"[dim]Atoms Ingested:[/] [bold]{manifest.record_count}[/bold]\n"
+            f"[dim]Table URI:[/] [cyan]{manifest.destination_uri}[/cyan]\n"
+            f"[dim]Content Digest:[/] [dim]{manifest.content_digest}[/dim]\n"
+            f"[dim]Schema:[/] {', '.join(manifest.schema_summary)}",
+            border_style="green",
+        )
+    )
+
+
+@scientific_app.command(name="decommission")
+def scientific_decommission(
+    asset_path: str = typer.Argument(
+        ..., help="Path to model, weights, or scientific dataset to retire."
+    ),
+    reason: str = typer.Option(
+        ..., "--reason", "-r", help="Mandatory justification for decommissioning."
+    ),
+    actor: str = typer.Option(
+        "principal:engineer", "--actor", "-a", help="Governed identity authorizing action."
+    ),
+    archive_dir: str = typer.Option(
+        "data/08_reporting/lifecycle/archive", "--archive", help="Archival destination directory."
+    ),
+    zeroize: bool = typer.Option(
+        False, "--zeroize/--no-zeroize", help="Securely remove/zeroize local active payload."
+    ),
+) -> None:
+    """
+    Cryptographically decommission, tombstone, and offboard a model or scientific asset.
+    Preserves audit lineage and emits an immutable DecommissionCertificate (Rules #16, #27, #32).
+    """
+    from ckodex_aiops.scientific.tombstone import AssetTombstoningEngine
+
+    p = Path(asset_path)
+    if not p.exists():
+        console.print(f"[bold red]Error:[/] Asset file not found at {asset_path}")
+        raise typer.Exit(1)
+
+    engine = AssetTombstoningEngine()
+    cert = engine.decommission(
+        asset_path=p,
+        reason=reason,
+        actor=actor,
+        archive_target_dir=archive_dir,
+        zeroize_local_file=zeroize,
+    )
+
+    console.print(
+        Panel.fit(
+            f"[bold yellow]✔ Asset Decommissioned & Cryptographically Tombstoned[/bold yellow]\n\n"
+            f"[dim]Certificate ID:[/] [bold]{cert.certificate_id}[/bold]\n"
+            f"[dim]Asset ID:[/] [cyan]{cert.asset_id}[/cyan]\n"
+            f"[dim]Authority:[/] [dim]{cert.authority_urn}[/dim]\n"
+            f"[dim]Authorizing Actor:[/] [bold]{cert.actor}[/bold]\n"
+            f"[dim]Reason:[/] [italic]{cert.reason}[/italic]\n"
+            f"[dim]Content Digest:[/] [dim]sha256:{cert.content_sha256}[/dim]\n"
+            f"[dim]Archive URI:[/] [cyan]{cert.archived_uri or 'None'}[/cyan]\n"
+            f"[dim]Active File Zeroized:[/] {zeroize}\n"
+            f"[dim]Vector State:[/] [red]Valence={cert.state_vector['valence']}, Anti={cert.state_vector['anti']}[/red]\n"
+            f"[dim]Receipt Digest:[/] [dim]{cert.receipt_digest}[/dim]",
+            border_style="yellow",
+        )
+    )
+
+
 @click.group(name="ckodex")
 def kedro_commands():
     """CKODEX Day-2 Operations commands registered with Kedro CLI."""
