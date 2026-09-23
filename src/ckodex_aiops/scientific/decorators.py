@@ -18,7 +18,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, ParamSpec, TypeVar
+from typing import Any, ParamSpec, Protocol, TypeVar, cast
 from uuid import uuid4
 
 from ckodex_aiops.kernel.intent import AuthorityPath
@@ -35,6 +35,12 @@ from ckodex_aiops.kernel.state_vector import (
 
 P = ParamSpec("P")
 R = TypeVar("R")
+R_co = TypeVar("R_co", covariant=True)
+
+
+class GovernedScientificCallable(Protocol[P, R_co]):
+    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> R_co: ...
+    def to_kedro_node(self, inputs: str | list[str], outputs: str | list[str]) -> Any: ...
 
 
 def _compute_obj_digest(obj: Any) -> str:
@@ -75,7 +81,7 @@ def scientific_node(
     receipts_dir: str | Path = "data/08_reporting/receipts",
     memory_limit_mb: float | None = None,
     enforce_proof_before: bool = True,
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+) -> Callable[[Callable[P, R]], GovernedScientificCallable[P, R]]:
     """
     Zero-boilerplate decorator for researchers and developers.
     Wraps standard computational functions with:
@@ -205,6 +211,6 @@ def scientific_node(
             )
 
         wrapper.to_kedro_node = to_kedro_node  # type: ignore[attr-defined]
-        return wrapper
+        return cast(GovernedScientificCallable[P, R], wrapper)
 
-    return decorator
+    return cast(Callable[[Callable[P, R]], GovernedScientificCallable[P, R]], decorator)
