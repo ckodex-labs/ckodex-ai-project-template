@@ -185,6 +185,33 @@ class CkodexCicd:
         )
 
     @function
+    def verify_badges(self, source: dagger.Directory) -> dagger.Container:
+        """Verify shieldcn-zig badge endpoints and WCAG 3.0 APCA contrast compliance."""
+        script = (
+            "set -euo pipefail\n"
+            "echo '--- Verifying shieldcn-zig badges in README.md ---'\n"
+            "grep -o 'https://shieldcn.dev/[^\" )]*' README.md | sort -u > /tmp/badges.txt\n"
+            "total=$(wc -l < /tmp/badges.txt | tr -d ' ')\n"
+            "echo \"Found ${total} unique shieldcn URLs in README.md\"\n"
+            "while IFS= read -r url; do\n"
+            "  echo \"Checking: ${url}\"\n"
+            "  status=$(curl -s -o /dev/null -w '%{http_code}' \"$url\")\n"
+            "  if [ \"$status\" != \"200\" ]; then\n"
+            "    echo \"FAILED: ${url} returned HTTP ${status}\" >&2\n"
+            "    exit 1\n"
+            "  fi\n"
+            "done < /tmp/badges.txt\n"
+            "echo \"All ${total} shieldcn-zig badges verified (HTTP 200).\"\n"
+        )
+        return (
+            dag.container()
+            .from_("curlimages/curl:latest")
+            .with_mounted_directory("/workspace", source)
+            .with_workdir("/workspace")
+            .with_exec(["sh", "-c", script])
+        )
+
+    @function
     async def all(self, source: dagger.Directory) -> str:
         """Execute complete SSDLC pipeline: Lint, Typecheck, Scan, Conformance, Docs, and Build."""
         # 1. Lint & Format

@@ -1,16 +1,36 @@
 # ckx-ai-project-template: World-Class AI Operations & DevSecOps Template
 
-[![Python 3.12](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
-[![UV](https://img.shields.io/badge/package%20manager-uv-green.svg)](https://astral.sh/uv)
-[![Tests: 128 Passing](https://img.shields.io/badge/tests-128%20passed-22c55e.svg)]()
-[![Kedro 0.19+](https://img.shields.io/badge/orchestration-kedro-ff9900.svg)](https://kedro.org/)
-[![Ray Actors & Mesh](https://img.shields.io/badge/distributed-bounded%20ray-028CF0.svg)](https://www.ray.io/)
-[![Lance & LanceDB](https://img.shields.io/badge/vector%20store-lance%20%7C%20lancedb-blueviolet.svg)](https://lancedb.com/)
-[![Polars](https://img.shields.io/badge/dataframe-polars-blue.svg)](https://pola.rs/)
-[![PyTorch + Safetensors](https://img.shields.io/badge/deep%20learning-safetensors%20zero--pickle-EE4C2C.svg)](https://pytorch.org/)
-[![Dagger Engine](https://img.shields.io/badge/ssdlc-dagger%20engine-22c55e.svg)](https://dagger.io/)
-[![OCI Spec v1.1.0](https://img.shields.io/badge/packaging-OCI%20v1.1.0-darkblue.svg)]()
-[![Constitutional](https://img.shields.io/badge/conformance-CKODEX%20GAL%201-black.svg)]()
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/header/graph.svg?title=ckx-ai-project-template&subtitle=High-Assurance+AI+Architecture+%26+Day-2+Operational+Platform&logo=kedro&theme=zinc&mode=dark" />
+    <img alt="ckx-ai-project-template" src="https://shieldcn.dev/header/graph.svg?title=ckx-ai-project-template&subtitle=High-Assurance+AI+Architecture+%26+Day-2+Operational+Platform&logo=kedro&theme=zinc&mode=light" />
+  </picture>
+</p>
+
+<p align="center">
+  <a href="https://github.com/ckodex-labs/ckodex-ai-project-template/stargazers"><img src="https://shieldcn.dev/github/stars/ckodex-labs/ckodex-ai-project-template.svg?variant=secondary" alt="GitHub stars" /></a>
+  <a href="https://github.com/ckodex-labs/ckodex-ai-project-template/network/members"><img src="https://shieldcn.dev/github/forks/ckodex-labs/ckodex-ai-project-template.svg?variant=secondary" alt="GitHub forks" /></a>
+  <a href="https://github.com/ckodex-labs/ckodex-ai-project-template/blob/main/LICENSE"><img src="https://shieldcn.dev/github/license/ckodex-labs/ckodex-ai-project-template.svg?variant=secondary" alt="License" /></a>
+  <a href="https://github.com/ckodex-labs/ckodex-ai-project-template/actions/workflows/ci.yml"><img src="https://shieldcn.dev/github/ci/ckodex-labs/ckodex-ai-project-template.svg?workflow=ci.yml&branch=develop&variant=secondary" alt="Dagger CI" /></a>
+  <a href="https://github.com/ckodex-labs/ckodex-ai-project-template/commits/develop"><img src="https://shieldcn.dev/github/last-commit/ckodex-labs/ckodex-ai-project-template.svg?variant=secondary" alt="Last commit" /></a>
+  <a href="https://github.com/ckodex-labs/ckodex-ai-project-template/issues"><img src="https://shieldcn.dev/github/issues/ckodex-labs/ckodex-ai-project-template.svg?variant=secondary" alt="Issues" /></a>
+  <a href="https://github.com/ckodex-labs/ckodex-ai-project-template/graphs/contributors"><img src="https://shieldcn.dev/github/contributors/ckodex-labs/ckodex-ai-project-template.svg?variant=secondary" alt="Contributors" /></a>
+</p>
+
+<p align="center">
+  <a href="https://www.python.org/"><img src="https://shieldcn.dev/badge/python-3.12+-18181b.svg?logo=python&variant=secondary&wcag=3" alt="Python 3.12+" /></a>
+  <a href="https://astral.sh/uv"><img src="https://shieldcn.dev/badge/package%20manager-uv-18181b.svg?logo=uv&variant=secondary&wcag=3" alt="UV" /></a>
+  <img src="https://shieldcn.dev/badge/tests-128%20passed-16a34a.svg?variant=secondary&wcag=3" alt="128 Tests Passing" />
+  <a href="https://kedro.org/"><img src="https://shieldcn.dev/badge/orchestration-kedro-18181b.svg?logo=kedro&variant=secondary&wcag=3" alt="Kedro Orchestration" /></a>
+  <a href="https://www.ray.io/"><img src="https://shieldcn.dev/badge/distributed-bounded%20ray-18181b.svg?logo=ray&variant=secondary&wcag=3" alt="Bounded Ray" /></a>
+  <a href="https://lancedb.com/"><img src="https://shieldcn.dev/badge/vector%20store-lance%20%7C%20lancedb-18181b.svg?variant=secondary&wcag=3" alt="Lance & LanceDB" /></a>
+  <a href="https://pola.rs/"><img src="https://shieldcn.dev/badge/dataframe-polars-18181b.svg?logo=polars&variant=secondary&wcag=3" alt="Polars" /></a>
+  <a href="https://pytorch.org/"><img src="https://shieldcn.dev/badge/deep%20learning-safetensors%20zero--pickle-18181b.svg?logo=pytorch&variant=secondary&wcag=3" alt="Safetensors" /></a>
+  <a href="https://dagger.io/"><img src="https://shieldcn.dev/badge/ssdlc-dagger%20engine-18181b.svg?logo=dagger&variant=secondary&wcag=3" alt="Dagger Engine" /></a>
+  <img src="https://shieldcn.dev/badge/packaging-OCI%20v1.1.0-18181b.svg?variant=secondary&wcag=3" alt="OCI v1.1.0" />
+  <img src="https://shieldcn.dev/badge/conformance-CKODEX%20GAL%201-18181b.svg?variant=secondary&wcag=3" alt="CKODEX GAL 1" />
+  <img src="https://shieldcn.dev/badge/science-CKODEX%20Scientific-18181b.svg?variant=secondary&wcag=3" alt="Scientific" />
+</p>
 
 > **The CKODEX Signature:**  
 > *Pure Kernel. Shared Validation. Explicit Transport. Evidence Everywhere. Vector State, Not Booleans. Proof Before Authority-Bearing Side Effects. Receipts After Execution. Day-2 by Default.*

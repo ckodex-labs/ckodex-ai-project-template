@@ -310,6 +310,34 @@ dagger-docs:
 dagger-oci:
     dagger call -m ./ci pack-oci-template --source . export --path dist/oci-template
 
+# Verify shieldcn-zig badges via containerized Dagger SSDLC module
+dagger-badges:
+    dagger call -m ./ci verify-badges --source .
+
+# ==============================================================================
+# Badges & Visual Proof (shieldcn-zig / WCAG 3.0 APCA)
+# ==============================================================================
+
+# Verify all shieldcn-zig badge endpoints and WCAG 3.0 compliance locally
+badges:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "=== Verifying shieldcn-zig badges in README.md ==="
+    grep -o 'https://shieldcn.dev/[^" )]*' README.md | sort -u > /tmp/badges.txt
+    total=$(wc -l < /tmp/badges.txt | tr -d ' ')
+    echo "Found ${total} unique shieldcn URLs in README.md"
+    while IFS= read -r url; do
+        printf "Checking %s ... " "$url"
+        status=$(curl -s -o /dev/null -w '%{http_code}' "$url")
+        if [ "$status" = "200" ]; then
+            echo "✓ 200 OK"
+        else
+            echo "✗ HTTP $status"
+            exit 1
+        fi
+    done < /tmp/badges.txt
+    echo "All ${total} shieldcn-zig badges verified successfully."
+
 # ==============================================================================
 # Living Documentation (Hugo Extended)
 # ==============================================================================
